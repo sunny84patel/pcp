@@ -11,8 +11,8 @@ import {
 } from "../Redux/Reducers/LoginSlice";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../firebase"; 
-
+import { auth, googleProvider } from "../firebase";
+import { Link } from "react-router-dom";
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
@@ -22,11 +22,11 @@ const Toast = ({ message, type, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-
   return (
     <div
-      className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ${type === "success" ? "bg-green-500 text-white" : "bg-red-500 text-white"
-        }`}
+      className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ${
+        type === "success" ? "bg-green-500 text-white" : "bg-red-500 text-white"
+      }`}
     >
       <div className="flex items-center gap-3">
         <div className="flex-shrink-0">
@@ -255,12 +255,12 @@ const AuthForm = () => {
             </p>
             <p className="text-gray-600">
               Don’t have an account?{" "}
-              <a
-                href="/signup"
+              <Link
+                to="/signup"
                 className="text-blue-600 underline hover:text-blue-800 transition"
               >
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>
@@ -275,4 +275,3 @@ const AuthForm = () => {
 };
 
 export default AuthForm;
- 

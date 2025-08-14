@@ -51,7 +51,7 @@ const SearchBar = ({ onSearch }) => {
     }
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/suggestions?q=${encodeURIComponent(searchTerm)}`);
+      const res = await axios.get(`https://pcp-szng.vercel.app/api/suggestions?q=${encodeURIComponent(searchTerm)}`);
       setSuggestions(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Suggestion fetch failed", err);

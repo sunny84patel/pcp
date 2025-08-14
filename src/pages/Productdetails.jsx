@@ -36,17 +36,24 @@ const ProductDetailsPage = () => {
     }
   }, [id, dispatch]);
 
-  // Recently viewed products
   useEffect(() => {
-    if (product && id) {
-      const viewedProducts = JSON.parse(localStorage.getItem("recentlyViewed")) || [];
-      const isAlreadyViewed = viewedProducts.find(p => p.productId === product.productId);
-      if (!isAlreadyViewed) {
-        const updated = [product, ...viewedProducts.slice(0, 9)];
-        localStorage.setItem("recentlyViewed", JSON.stringify(updated));
+    if (product?.productId && id) {
+      try {
+        const viewedProducts =
+          JSON.parse(localStorage.getItem("viewedProducts")) || [];
+        const isAlreadyViewed = viewedProducts.some(
+          (p) => p.productId === product.productId
+        );
+
+        if (!isAlreadyViewed) {
+          const updated = [product, ...viewedProducts].slice(0, 10); // limit to 10
+          localStorage.setItem("viewedProducts", JSON.stringify(updated));
+        }
+      } catch (err) {
+        console.error("Error saving viewed products:", err);
       }
     }
-  }, [product, id]);
+  }, [product?.productId, id]);
 
   const renderStars = (rating) => (
     <div className="flex items-center space-x-1">
@@ -93,14 +100,24 @@ const ProductDetailsPage = () => {
           <div className="text-sm text-gray-500">
             <span className="text-blue-600 cursor-pointer">← Back</span>
             <span className="mx-2">|</span>
-            <span className="text-blue-600 cursor-pointer hover:underline">Home</span>
+            <span className="text-blue-600 cursor-pointer hover:underline">
+              Home
+            </span>
             {" / "}
-            <span className="text-blue-600 cursor-pointer hover:underline">Tools & Equipments</span>
+            <span className="text-blue-600 cursor-pointer hover:underline">
+              Tools & Equipments
+            </span>
             {" / "}
-            <span className="text-blue-600 cursor-pointer hover:underline">Drills</span>
+            <span className="text-blue-600 cursor-pointer hover:underline">
+              Drills
+            </span>
           </div>
-          <h1 className="font-bold text-gray-800 leading-snug text-2xl md:text-3xl">{product.title}</h1>
-          {product.model && <p className="text-sm text-gray-600">Model {product.model}</p>}
+          <h1 className="font-bold text-gray-800 leading-snug text-2xl md:text-3xl">
+            {product.title}
+          </h1>
+          {product.model && (
+            <p className="text-sm text-gray-600">Model {product.model}</p>
+          )}
         </div>
 
         <div className="flex items-center gap-6 text-sm text-gray-700 whitespace-nowrap mt-4 md:mt-0">
@@ -109,7 +126,10 @@ const ProductDetailsPage = () => {
           </button>
           <label className="flex font-bold items-center gap-2 cursor-pointer hover:text-black">
             Add to Compare
-            <input type="checkbox" className="form-checkbox accent-purple-600 cursor-pointer" />
+            <input
+              type="checkbox"
+              className="form-checkbox accent-purple-600 cursor-pointer"
+            />
           </label>
         </div>
       </div>
@@ -126,7 +146,11 @@ const ProductDetailsPage = () => {
               <Heart className="w-5 h-5 text-black" />
             </button>
           </div>
-          <img src={product.images?.[0] || "/placeholder.jpg"} alt={product.title} className="object-contain w-full h-auto" />
+          <img
+            src={product.images?.[0] || "/placeholder.jpg"}
+            alt={product.title}
+            className="object-contain w-full h-auto"
+          />
         </div>
 
         {/* Retailers / Offers */}
@@ -137,7 +161,11 @@ const ProductDetailsPage = () => {
               className="flex items-center bg-white space-x-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-black transition-colors rounded border border-purple-700"
             >
               <span>{selectedOption}</span>
-              <ChevronDown className={`h-4 w-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
             {isDropdownOpen && (
@@ -146,7 +174,10 @@ const ProductDetailsPage = () => {
                   <button
                     key={idx}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => { setSelectedOption(option); setIsDropdownOpen(false); }}
+                    onClick={() => {
+                      setSelectedOption(option);
+                      setIsDropdownOpen(false);
+                    }}
                   >
                     {option}
                   </button>
@@ -156,18 +187,35 @@ const ProductDetailsPage = () => {
           </div>
 
           {sortedRetailers.map((offer, idx) => (
-            <div key={idx} className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700">
+            <div
+              key={idx}
+              className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700"
+            >
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2">
-                  <img src={offer.store === "Lowe's" ? lowes : homedepot} alt="Store" className="h-5 w-auto" />
+                  <img
+                    src={offer.store === "Lowe's" ? lowes : homedepot}
+                    alt="Store"
+                    className="h-5 w-auto"
+                  />
                   <span className="text-xl font-bold">${offer.price}</span>
-                  <span className="text-sm line-through text-gray-400">${offer.listPrice}</span>
-                  <span className="text-green-600 text-xs font-medium ml-2">Save ${offer.savings?.toFixed(2)}</span>
+                  <span className="text-sm line-through text-gray-400">
+                    ${offer.listPrice}
+                  </span>
+                  <span className="text-green-600 text-xs font-medium ml-2">
+                    Save ${offer.savings?.toFixed(2)}
+                  </span>
                 </div>
                 {offer.offers > 0 && (
                   <div className="flex flex-col items-end text-xs text-purple-700">
-                    <span className="flex items-center gap-1">{offer.offers} Offers <ChevronDown className="h-4 w-4" /></span>
-                    <img src={offericon} alt="Offer icon" className="mt-1 h-4" />
+                    <span className="flex items-center gap-1">
+                      {offer.offers} Offers <ChevronDown className="h-4 w-4" />
+                    </span>
+                    <img
+                      src={offericon}
+                      alt="Offer icon"
+                      className="mt-1 h-4"
+                    />
                   </div>
                 )}
               </div>
@@ -175,20 +223,33 @@ const ProductDetailsPage = () => {
               <div className="text-sm text-gray-700 space-y-1">
                 <span className="flex items-center">
                   {renderStars(offer.reviewScore)}
-                  <span className="ml-4 text-[14px] font-normal text-gray-500">{offer.reviewCount || 0} Reviews</span>
+                  <span className="ml-4 text-[14px] font-normal text-gray-500">
+                    {offer.reviewCount || 0} Reviews
+                  </span>
                 </span>
 
                 <div className="pt-4 pb-4">
                   <p className="mb-0 flex items-center gap-2">
                     <img src={location} alt="Location" className="w-4 h-4" />
-                    Nearby store: <span className="text-blue-600 underline">{offer.storeLocation}</span> ({offer.distance})
-                    <span className="ml-2 text-green-700 flex items-center"><FontAwesomeIcon icon={faCheckCircle} className="mr-1" /> {offer.stockStatus}</span>
+                    Nearby store:{" "}
+                    <span className="text-blue-600 underline">
+                      {offer.storeLocation}
+                    </span>{" "}
+                    ({offer.distance})
+                    <span className="ml-2 text-green-700 flex items-center">
+                      <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />{" "}
+                      {offer.stockStatus}
+                    </span>
                   </p>
                   <p className="flex items-center gap-2 mt-2 mb-0">
                     <img src={truck} alt="truck" className="w-4 h-4" />
                     {offer.delivery}
                     <button className="w-5 h-5 rounded-full bg-[#E3E5FC] text-gray-700 text-xs flex items-center justify-center hover:bg-gray-300">
-                      <img src={informationCircle} alt="Info" className="w-3 h-3 object-contain" />
+                      <img
+                        src={informationCircle}
+                        alt="Info"
+                        className="w-3 h-3 object-contain"
+                      />
                     </button>
                   </p>
                 </div>
@@ -209,27 +270,44 @@ const ProductDetailsPage = () => {
       <div className="max-w-7xl mx-auto px-4 mt-10 bg-white p-6">
         <h3 className="text-2xl font-bold mb-4">Product Details</h3>
         <p className="text-gray-600 text-[16px] mb-4">
-          Compare prices for <span className="font-semibold">{product.title}</span> across multiple stores.
-          Find the best deals, check availability, and view specifications before you buy.
+          Compare prices for{" "}
+          <span className="font-semibold">{product.title}</span> across multiple
+          stores. Find the best deals, check availability, and view
+          specifications before you buy.
         </p>
 
         {product.model && (
-          <p className="text-gray-700 mb-4"><span className="font-medium">Model:</span> {product.model}</p>
+          <p className="text-gray-700 mb-4">
+            <span className="font-medium">Model:</span> {product.model}
+          </p>
         )}
 
-        {product.specifications && Object.keys(product.specifications).length > 0 && (
-          <div className="overflow-hidden border rounded-lg divide-y divide-gray-200 mb-4">
-            {Object.entries(product.specifications).map(([key, value], idx) => (
-              <div key={idx} className="grid grid-cols-3 text-sm border-b last:border-none">
-                <div className="px-4 py-3 font-medium text-gray-700 bg-gray-100 border-r border-gray-200">{key}</div>
-                <div className="col-span-2 px-4 py-3 text-gray-800">{value}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {product.specifications &&
+          Object.keys(product.specifications).length > 0 && (
+            <div className="overflow-hidden border rounded-lg divide-y divide-gray-200 mb-4">
+              {Object.entries(product.specifications).map(
+                ([key, value], idx) => (
+                  <div
+                    key={idx}
+                    className="grid grid-cols-3 text-sm border-b last:border-none"
+                  >
+                    <div className="px-4 py-3 font-medium text-gray-700 bg-gray-100 border-r border-gray-200">
+                      {key}
+                    </div>
+                    <div className="col-span-2 px-4 py-3 text-gray-800">
+                      {value}
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          )}
 
         <ul className="list-disc list-inside text-gray-700">
-          <li>Compare prices from {product.retailers?.length || 0} stores in real time.</li>
+          <li>
+            Compare prices from {product.retailers?.length || 0} stores in real
+            time.
+          </li>
           <li>Check stock availability and nearby store locations.</li>
           <li>View ratings and reviews to make informed decisions.</li>
           <li>Click "Buy Now" to purchase directly from the retailer.</li>
@@ -239,17 +317,34 @@ const ProductDetailsPage = () => {
       <SimilarProducts />
 
       <div className="w-full max-w-7xl mx-auto p-4 mt-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Related Searches</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Related Searches
+        </h2>
         <div className="flex flex-wrap gap-4">
-          {["Tools","Bathroom","Furniture","Dining","Outdoor","Ceiling","Electrical","Plumbing","Hardware"].map((term, idx) => (
-            <button key={idx} className="px-4 py-2 border border-black rounded-full text-sm text-black hover:bg-gray-100 transition-colors cursor-pointer">
+          {[
+            "Tools",
+            "Bathroom",
+            "Furniture",
+            "Dining",
+            "Outdoor",
+            "Ceiling",
+            "Electrical",
+            "Plumbing",
+            "Hardware",
+          ].map((term, idx) => (
+            <button
+              key={idx}
+              className="px-4 py-2 border border-black rounded-full text-sm text-black hover:bg-gray-100 transition-colors cursor-pointer"
+            >
               {term}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mt-10"><RecentlyViewed /></div>
+      <div className="mt-10">
+        <RecentlyViewed />
+      </div>
       <Footer />
     </>
   );

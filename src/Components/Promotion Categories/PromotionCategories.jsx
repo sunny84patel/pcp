@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import compare from "../../assets/images/compare.png";
 import compare1 from "../../assets/images/compare1.png";
 import compare2 from "../../assets/images/compare2.png";
-import star from "../../assets/images/star.png";
+import star from "../../assets/images/Star.png";
 
 const PromotionCategories = () => {
   const navigate = useNavigate();

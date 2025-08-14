@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ArrowRight, Italic } from "lucide-react";
-import buy from "../../assets/images/buy.png";
+import buy from "../../assets/images/Buy.png";
 import authentic from "../../assets/images/authentic.png";
 import save from "../../assets/images/save.png";
 import reliable from "../../assets/images/reliable.png";

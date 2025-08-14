@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({ baseURL: 'https://pcp-szng.vercel.app/api' });
 
 export const signup = createAsyncThunk('signup/user', async (userData, thunkAPI) => {
   try {

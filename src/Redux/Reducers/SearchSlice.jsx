@@ -5,7 +5,7 @@ import axios from 'axios';
 export const fetchSearchResults = createAsyncThunk(
   'search/fetchSearchResults',
   async ({ query, stores, page = 1, limit = 18, sortBy, sortOrder }) => {
-    const response = await axios.get(`http://localhost:5000/api/search`, {
+    const response = await axios.get(`https://pcp-szng.vercel.app/api/search`, {
       params: { query, stores, page, limit, sortBy, sortOrder }
     });
     return response.data;

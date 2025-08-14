@@ -1,7 +1,7 @@
 // src/slices/productSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'https://pcp-szng.vercel.app';
 // Fetch popular products
 export const fetchPopularProducts = createAsyncThunk(
   'products/fetchPopularProducts',

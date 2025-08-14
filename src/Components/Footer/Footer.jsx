@@ -7,9 +7,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ArrowRight, Italic } from "lucide-react";
 import buy from "../../assets/images/Buy.png";
-import authentic from "../../assets/images/authentic.png";
-import save from "../../assets/images/save.png";
-import reliable from "../../assets/images/reliable.png";
+import authentic from "../../assets/images/Authentic.png";
+import save from "../../assets/images/Save.png";
+import reliable from "../../assets/images/Reliable.png";
 import italicLogo from "../../assets/images/ITALIC.png";
 
 export default function Footer() {

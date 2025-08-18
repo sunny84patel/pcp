@@ -1,10 +1,13 @@
+// src/Redux/Reducers/RecentlyViewedSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL || 'https://pcp-szng.vercel.app';
+import API from '../../api';
+
 export const fetchProductsByIds = createAsyncThunk(
   'recent/fetchByIds',
   async (ids) => {
-    const res = await axios.get(`${API_URL}/api/recent?ids=${ids.join(',')}`);
+    const res = await API.get('/recent', {
+      params: { ids: ids.join(',') },   // ✅ proper query params
+    });
     return res.data.results;
   }
 );
@@ -19,14 +22,14 @@ const recentlyViewedSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchProductsByIds.fulfilled, (state, action) => {
-        state.items = action.payload;
+        state.items = Array.isArray(action.payload) ? action.payload : [];
         state.loading = false;
       })
       .addCase(fetchProductsByIds.rejected, (state, action) => {
-        state.error = action.payload || 'Failed to fetch recent products';
+        state.error = action.error?.message || 'Failed to fetch recent products';
         state.loading = false;
       });
-  }
+  },
 });
 
 export default recentlyViewedSlice.reducer;

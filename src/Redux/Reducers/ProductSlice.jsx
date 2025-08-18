@@ -1,13 +1,14 @@
 // src/slices/productSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL || 'https://pcp-szng.vercel.app';
+import API from '../../api';
+// const API_URL = import.meta.env.VITE_API_URL || 'https://pcp-szng.vercel.app';
 // Fetch popular products
 export const fetchPopularProducts = createAsyncThunk(
   'products/fetchPopularProducts',
   async ({ storeId = 'homedepot', limit = 10 }, thunkAPI) => {
     try {
-      const res = await axios.get(`${API_URL}/api/popular?storeId=${storeId}&limit=${limit}`);
+      const res = await axios.get(`${API}/popular?storeId=${storeId}&limit=${limit}`);
       console.log('Popular products response:', res.data);
       return res.data.results;
     } catch (err) {

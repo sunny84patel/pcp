@@ -1,14 +1,13 @@
+// src/Slice/productDetailSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'https://pcp-szng.vercel.app';
+import API from '../../api';
 
 // Thunk to fetch product details by ID
 export const fetchProductDetail = createAsyncThunk(
   'productDetail/fetchProductDetail',
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_URL}/api/products/${id}`);
+      const res = await API.get(`/products/${id}`);   // ✅ use API instance
       console.log("Fetched product detail:", res.data);
       return res.data;
     } catch (error) {
@@ -45,7 +44,7 @@ const productDetailSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
-  }
+  },
 });
 
 export const { clearProductDetail } = productDetailSlice.actions;

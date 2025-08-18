@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
-const API = axios.create({ baseURL: 'https://pcp-szng.vercel.app/api' });
+import API from '../../api';
+// const API = axios.create({ baseURL: 'https://pcp-szng.vercel.app/api' });
 
 // Async thunk for OTP verification
 export const verifyOTP = createAsyncThunk(

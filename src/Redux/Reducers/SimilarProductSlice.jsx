@@ -1,15 +1,13 @@
 // src/Redux/Reducers/similarProductsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'https://pcp-szng.vercel.app';
+import API from '../../api';
 
 // Async thunk to fetch similar products
 export const fetchSimilarProducts = createAsyncThunk(
   'similarProducts/fetchSimilarProducts',
   async (productId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/api/products/${productId}/similar`);
+      const response = await API.get(`/products/${productId}/similar`); // ✅ use API instance
       return response.data;
     } catch (error) {
       console.error('Error fetching similar products:', error);

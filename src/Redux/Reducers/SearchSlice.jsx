@@ -1,12 +1,12 @@
-// Redux slice
+// src/Redux/Reducers/searchSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import API from '../../api';
 
 export const fetchSearchResults = createAsyncThunk(
   'search/fetchSearchResults',
   async ({ query, stores, page = 1, limit = 18, sortBy, sortOrder }) => {
-    const response = await axios.get(`https://pcp-szng.vercel.app/api/search`, {
-      params: { query, stores, page, limit, sortBy, sortOrder }
+    const response = await API.get('/search', {
+      params: { query, stores, page, limit, sortBy, sortOrder },  // ✅ query params
     });
     return response.data;
   }

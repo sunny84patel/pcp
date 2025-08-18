@@ -12,6 +12,8 @@ import userRoutes from './routes/userRoutes.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || 'production';
+const isProd = NODE_ENV === 'production';
 
 // ==================
 // MongoDB Connection (Reusable in serverless)
@@ -20,12 +22,15 @@ let isConnected = false;
 async function connectDB() {
   if (isConnected) return;
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const mongoUri = process.env.MONGO_URI;
+
+    const conn = await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
+
     isConnected = conn.connections[0].readyState === 1;
-    console.log('✅ MongoDB Connected');
+    console.log(`✅ MongoDB Connected [${isProd ? 'Production' : 'Development'}]`);
   } catch (err) {
     console.error('❌ MongoDB connection error:', err);
     throw err;
@@ -33,24 +38,27 @@ async function connectDB() {
 }
 
 // ==================
-// CORS setup
+// CORS setup (hardcoded)
 // ==================
 const allowedOrigins = [
-  'http://localhost:3000',             // Local frontend
-  'https://pcp-pied.vercel.app'        // Deployed frontend
+  'http://localhost:5173',          // Vite dev
+  'http://localhost:3000',          // CRA dev (optional, just in case)
+  'https://pcp-pied.vercel.app'     // Production frontend
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS not allowed for origin: ${origin}`));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(express.json());
 
@@ -75,7 +83,15 @@ app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 
 // ==================
-// Export for Vercel or run locally
+// Local development: run server
 // ==================
+if (!isProd) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+}
 
+// ==================
+// Always export app (needed for Vercel serverless)
+// ==================
 export default app;

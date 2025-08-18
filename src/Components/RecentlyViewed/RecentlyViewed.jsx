@@ -15,18 +15,41 @@ const RecentlyViewed = () => {
   const { items: products, loading, error } = useSelector(
     (state) => state.recent
   );
-  console.log("real price checking", products);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(4.5);
+  const [localProducts, setLocalProducts] = useState([]);
 
-  // Load product IDs from localStorage
+  // Enhanced localStorage reading with better error handling
   const storedViewed = useMemo(() => {
-    const viewed = JSON.parse(localStorage.getItem("recentlyViewed")) || [];
-    return viewed.map((p) => p.productId).filter(Boolean);
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        // Try both keys for backward compatibility
+        const recentlyViewed = JSON.parse(localStorage.getItem("recentlyViewed") || "[]");
+        const viewedProducts = JSON.parse(localStorage.getItem("viewedProducts") || "[]");
+        
+        // Use whichever has more data or the more recent one
+        const combined = [...recentlyViewed, ...viewedProducts];
+        const uniqueProducts = combined.reduce((acc, product) => {
+          if (product && product.productId && !acc.find(p => p.productId === product.productId)) {
+            acc.push(product);
+          }
+          return acc;
+        }, []);
+        
+        console.log("Loaded from localStorage:", uniqueProducts);
+        setLocalProducts(uniqueProducts);
+        
+        return uniqueProducts.map(p => p.productId).filter(Boolean);
+      }
+      return [];
+    } catch (error) {
+      console.error("Error reading from localStorage:", error);
+      return [];
+    }
   }, []);
 
-  // Fetch once on mount
+  // Fetch products from API if we have IDs
   useEffect(() => {
     if (storedViewed.length > 0) {
       dispatch(fetchProductsByIds(storedViewed));
@@ -48,29 +71,44 @@ const RecentlyViewed = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Group products by productId
-  const groupedProducts = useMemo(() => {
-    const map = {};
-    products.forEach((p) => {
-      if (!map[p.productId]) {
-        map[p.productId] = {
-          productId: p.productId,
-          name: p.name,
-          rating: p.rating,
-          images: p.images,
-          stores: {}
+  // Use localStorage data if API data is not available
+  const displayProducts = useMemo(() => {
+    if (products && products.length > 0) {
+      // Group products by productId (API data)
+      const map = {};
+      products.forEach((p) => {
+        if (!map[p.productId]) {
+          map[p.productId] = {
+            productId: p.productId,
+            name: p.name,
+            rating: p.rating,
+            images: p.images,
+            stores: {}
+          };
+        }
+        map[p.productId].stores[p.storeId.toLowerCase()] = {
+          price: p.price,
+          listPrice: p.listPrice,
+          storeUrl: p.storeUrl
         };
-      }
-      map[p.productId].stores[p.storeId.toLowerCase()] = {
-        price: p.price,
-        listPrice: p.listPrice,
-        storeUrl: p.storeUrl
-      };
-    });
-    return Object.values(map);
-  }, [products]);
+      });
+      return Object.values(map);
+    } else if (localProducts.length > 0) {
+      // Fallback to localStorage data
+      return localProducts.map(product => ({
+        productId: product.productId,
+        name: product.name,
+        rating: product.rating,
+        images: product.images || [],
+        stores: {} // No store data available from localStorage
+      }));
+    }
+    return [];
+  }, [products, localProducts]);
 
-  const maxSlide = Math.max(0, groupedProducts.length - itemsPerView);
+  console.log("Display products:", displayProducts);
+
+  const maxSlide = Math.max(0, displayProducts.length - itemsPerView);
 
   const nextSlide = () =>
     setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));
@@ -89,6 +127,18 @@ const RecentlyViewed = () => {
     </div>
   );
 
+  // Debug information
+  useEffect(() => {
+    console.log("RecentlyViewed Debug:", {
+      storedViewedCount: storedViewed.length,
+      localProductsCount: localProducts.length,
+      productsCount: products?.length || 0,
+      displayProductsCount: displayProducts.length,
+      loading,
+      error
+    });
+  }, [storedViewed, localProducts, products, displayProducts, loading, error]);
+
   return (
     <div className="w-full max-w-7xl mx-auto p-4 bg-white">
       <div className="flex justify-between items-center mb-6">
@@ -103,8 +153,18 @@ const RecentlyViewed = () => {
         <p className="text-center text-gray-500">Loading products...</p>
       ) : error ? (
         <p className="text-center text-red-500">Error: {error}</p>
-      ) : groupedProducts.length === 0 ? (
-        <p className="text-center text-gray-500">No recently viewed products</p>
+      ) : displayProducts.length === 0 ? (
+        <div className="text-center text-gray-500">
+          <p>No recently viewed products</p>
+          {/* Debug info in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="text-xs mt-2">
+              <p>localStorage items: {storedViewed.length}</p>
+              <p>Local products: {localProducts.length}</p>
+              <p>API products: {products?.length || 0}</p>
+            </div>
+          )}
+        </div>
       ) : (
         <div className="relative">
           <div className="flex items-center">
@@ -132,22 +192,23 @@ const RecentlyViewed = () => {
                   transform: `translateX(-${
                     currentSlide * (100 / itemsPerView)
                   }%)`,
-                  width: `${(groupedProducts.length / itemsPerView) * 100}%`,
+                  width: `${(displayProducts.length / itemsPerView) * 100}%`,
                 }}
               >
-                {groupedProducts.map((product) => {
-                  const hasLowes = !!product.stores["lowe's"];
-                  const hasHomeDepot = !!product.stores["homedepot"];
+                {displayProducts.map((product) => {
+                  const hasLowes = !!product.stores?.["lowe's"];
+                  const hasHomeDepot = !!product.stores?.["homedepot"];
+                  const hasStoreData = hasLowes || hasHomeDepot;
+                  
                   return (
                     <div
                       key={product.productId}
                       className="px-2"
-                      style={{ width: `${100 / groupedProducts.length}%` }}
+                      style={{ width: `${100 / displayProducts.length}%` }}
                     >
                       <Link
                         to={`/product/${product.productId}`}
-                        className="px-2"
-                        style={{ width: `${100 / groupedProducts.length}%` }}
+                        className="block"
                       >
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                           <div className="relative aspect-square">
@@ -165,56 +226,62 @@ const RecentlyViewed = () => {
                             {renderStars(product.rating || 0)}
 
                             <div className="mt-2">
-                              <div className="flex items-start justify-between">
-                                {/* Left: Store Logos */}
-                                <div className="space-y-2">
-                                  {hasLowes && (
-                                    <img src={lowes} alt="Lowes" className="h-5 w-auto" />
-                                  )}
-                                  {hasHomeDepot && (
-                                    <img src={homedepot} alt="Home Depot" className="h-5 w-auto" />
-                                  )}
-                                </div>
+                              {hasStoreData ? (
+                                <div className="flex items-start justify-between">
+                                  {/* Left: Store Logos */}
+                                  <div className="space-y-2">
+                                    {hasLowes && (
+                                      <img src={lowes} alt="Lowes" className="h-5 w-auto" />
+                                    )}
+                                    {hasHomeDepot && (
+                                      <img src={homedepot} alt="Home Depot" className="h-5 w-auto" />
+                                    )}
+                                  </div>
 
-                                {/* Right: Prices */}
-                                <div className="text-right space-y-2">
-                                  {hasLowes && (
-                                    <div>
-                                      <div className="text-lg font-bold text-gray-800">
-                                        ${product.stores["lowe's"].price}
+                                  {/* Right: Prices */}
+                                  <div className="text-right space-y-2">
+                                    {hasLowes && (
+                                      <div>
+                                        <div className="text-lg font-bold text-gray-800">
+                                          ${product.stores["lowe's"].price}
+                                        </div>
+                                        {product.stores["lowe's"].listPrice &&
+                                          product.stores["lowe's"].listPrice > product.stores["lowe's"].price && (
+                                            <div className="text-xs text-green-600 font-medium">
+                                              Save $
+                                              {(
+                                                product.stores["lowe's"].listPrice -
+                                                product.stores["lowe's"].price
+                                              ).toFixed(2)}
+                                            </div>
+                                          )}
                                       </div>
-                                      {product.stores["lowe's"].listPrice &&
-                                        product.stores["lowe's"].listPrice > product.stores["lowe's"].price && (
-                                          <div className="text-xs text-green-600 font-medium">
-                                            Save $
-                                            {(
-                                              product.stores["lowe's"].listPrice -
-                                              product.stores["lowe's"].price
-                                            ).toFixed(2)}
-                                          </div>
-                                        )}
-                                    </div>
-                                  )}
+                                    )}
 
-                                  {hasHomeDepot && (
-                                    <div>
-                                      <div className="text-lg font-bold text-gray-800">
-                                        ${product.stores["homedepot"].price}
+                                    {hasHomeDepot && (
+                                      <div>
+                                        <div className="text-lg font-bold text-gray-800">
+                                          ${product.stores["homedepot"].price}
+                                        </div>
+                                        {product.stores["homedepot"].listPrice &&
+                                          product.stores["homedepot"].listPrice > product.stores["homedepot"].price && (
+                                            <div className="text-xs text-green-600 font-medium">
+                                              Save $
+                                              {(
+                                                product.stores["homedepot"].listPrice -
+                                                product.stores["homedepot"].price
+                                              ).toFixed(2)}
+                                            </div>
+                                          )}
                                       </div>
-                                      {product.stores["homedepot"].listPrice &&
-                                        product.stores["homedepot"].listPrice > product.stores["homedepot"].price && (
-                                          <div className="text-xs text-green-600 font-medium">
-                                            Save $
-                                            {(
-                                              product.stores["homedepot"].listPrice -
-                                              product.stores["homedepot"].price
-                                            ).toFixed(2)}
-                                          </div>
-                                        )}
-                                    </div>
-                                  )}
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="text-center text-gray-500 text-sm">
+                                  View product details
+                                </div>
+                              )}
 
                               {/* Available in both stores */}
                               {hasLowes && hasHomeDepot && (

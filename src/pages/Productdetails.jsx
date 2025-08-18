@@ -36,24 +36,59 @@ const ProductDetailsPage = () => {
     }
   }, [id, dispatch]);
 
+  // Enhanced localStorage handling with better error checking and debugging
   useEffect(() => {
     if (product?.productId && id) {
       try {
-        const viewedProducts =
-          JSON.parse(localStorage.getItem("viewedProducts")) || [];
-        const isAlreadyViewed = viewedProducts.some(
-          (p) => p.productId === product.productId
-        );
+        // Check if localStorage is available
+        if (typeof Storage === "undefined") {
+          console.warn("localStorage is not supported in this browser");
+          return;
+        }
 
-        if (!isAlreadyViewed) {
-          const updated = [product, ...viewedProducts].slice(0, 10); // limit to 10
-          localStorage.setItem("viewedProducts", JSON.stringify(updated));
+        // Check if we're in a secure context (HTTPS in production)
+        if (typeof window !== "undefined" && window.localStorage) {
+          console.log("Saving product to localStorage:", product.productId);
+          
+          const viewedProducts = JSON.parse(localStorage.getItem("viewedProducts") || "[]");
+          console.log("Current viewed products:", viewedProducts);
+          
+          const isAlreadyViewed = viewedProducts.some(
+            (p) => p.productId === product.productId
+          );
+
+          if (!isAlreadyViewed) {
+            const productToStore = {
+              productId: product.productId,
+              name: product.title,
+              rating: product.rating || 0,
+              images: product.images || [],
+              // Store minimal data to avoid quota issues
+              timestamp: Date.now()
+            };
+            
+            const updated = [productToStore, ...viewedProducts].slice(0, 10);
+            localStorage.setItem("viewedProducts", JSON.stringify(updated));
+            console.log("Product saved successfully:", productToStore);
+            
+            // Also save to recentlyViewed for consistency with RecentlyViewed component
+            localStorage.setItem("recentlyViewed", JSON.stringify(updated));
+          }
+        } else {
+          console.warn("localStorage is not available");
         }
       } catch (err) {
         console.error("Error saving viewed products:", err);
+        // Try to clear corrupted data
+        try {
+          localStorage.removeItem("viewedProducts");
+          localStorage.removeItem("recentlyViewed");
+        } catch (clearErr) {
+          console.error("Could not clear localStorage:", clearErr);
+        }
       }
     }
-  }, [product?.productId, id]);
+  }, [product?.productId, product?.title, product?.rating, product?.images, id]);
 
   const renderStars = (rating) => (
     <div className="flex items-center space-x-1">

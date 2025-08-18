@@ -369,7 +369,7 @@ const SearchBar = ({ onSearch }) => {
                             className="bg-gradient-to-r from-purple-100 to-blue-100 px-3 py-1.5 rounded-full hover:from-purple-200 hover:to-blue-200 text-gray-700 transition-all text-xs font-medium border border-purple-200"
                             onClick={() => handleSearch(item)}
                           >
-                            🔥 {item}
+                             {item}
                           </button>
                         ))}
                       </div>

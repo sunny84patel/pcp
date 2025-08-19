@@ -72,7 +72,7 @@ const SearchResultSchema = new Schema({
 InventorySchema.index({ productId: 1, storeId: 1 }, { unique: true });
 SearchResultSchema.index({ storeId: 1, searchQuery: 1, page: 1 }, { unique: true });
 ImageSchema.index({ url: 1, productId: 1 }, { unique: true });
-
+ProductSchema.index({ name: 'text' });
 // Models
 export const Product = mongoose.model('Product', ProductSchema);
 export const Store = mongoose.model('Store', StoreSchema);

@@ -9,7 +9,7 @@ import truck from "../assets/images/truck.png";
 import informationCircle from "../assets/images/informationCircle.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductDetail } from "../Redux/Reducers/ProductDetailSlice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
@@ -118,8 +118,10 @@ const ProductDetailsPage = () => {
 
   const sortOptions = useMemo(() => ["Lowest Price", "Highest Price"], []);
   const [selectedOption, setSelectedOption] = useState(sortOptions[0]);
-
-  const { product, loading, error } = useSelector((state) => state.productDetails);
+   const navigate = useNavigate();
+  const { product, loading, error } = useSelector(
+    (state) => state.productDetails
+  );
 
   // Debounced localStorage save to reduce blocking operations
   const saveToLocalStorage = useCallback((productData) => {
@@ -243,16 +245,45 @@ const ProductDetailsPage = () => {
 
       {/* Breadcrumb & Title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center max-w-7xl mx-auto px-4 pt-[45px] py-6">
-        <div>
-          <nav className="text-sm text-gray-500" aria-label="Breadcrumb">
-            <span className="text-blue-600 cursor-pointer">← Back</span>
-            <span className="mx-2">|</span>
-            <span className="text-blue-600 cursor-pointer hover:underline">Home</span>
-            {" / "}
-            <span className="text-blue-600 cursor-pointer hover:underline">Tools & Equipments</span>
-            {" / "}
-            <span className="text-blue-600 cursor-pointer hover:underline">Drills</span>
-          </nav>
+        <div className="space-y-1">
+          <div className="text-sm text-gray-500">
+            <div className="flex items-center">
+              {/* Back Button */}
+              <span
+                className="flex items-center cursor-pointer text-[16px] font-semibold text-[#070707]"
+                onClick={() => navigate(-1)} // navigate back
+              >
+                ← Back
+              </span>
+
+              {/* Divider */}
+              <span className="mx-2 text-gray-400">|</span>
+
+              {/* Breadcrumb Links */}
+              <span
+                className="cursor-pointer hover:underline font-normal"
+                onClick={() => navigate("/")}
+              >
+                Home
+              </span>
+              <span className="mx-2 text-gray-400">/</span>
+
+              <span
+                className="cursor-pointer hover:underline font-normal"
+                // onClick={() => navigate("/tools-equipment")}
+              >
+                Tools & Equipments
+              </span>
+              <span className="mx-2 text-gray-400">/</span>
+
+              <span
+                className="cursor-pointer hover:underline font-normal text-[#070707]"
+                // onClick={() => navigate("/drills")}
+              >
+                Drills
+              </span>
+            </div>
+          </div>
           <h1 className="font-bold text-gray-800 leading-snug text-2xl md:text-3xl">
             {product.title}
           </h1>

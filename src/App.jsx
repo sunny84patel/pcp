@@ -8,6 +8,8 @@ import OtpVerification from "./pages/OtpVerification";
 import EnterDetailsForm from "./pages/EnterDetailsForm";
 import FilterCategoryPage from "./pages/Filtercategory";
 import CompareProducts from "./pages/CompareProduct";
+import ProfileOverviewPage from "./pages/UserProfile";
+import WishlistPage from "./pages/Wishlist";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/filter" element={<FilterCategoryPage />} />
         <Route path="/compare" element={<CompareProducts  />} />
+        <Route path="/profile" element={<ProfileOverviewPage  />} />
+        <Route path="/wishlist" element={<WishlistPage  />} />
       </Routes>
     </Router>
   );

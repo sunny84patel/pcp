@@ -4,7 +4,6 @@ import Footer from "../Components/Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { signup, resetSignupState } from "../Redux/Reducers/SignupSlice";
 import { useNavigate } from "react-router-dom";
-
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
@@ -149,12 +148,12 @@ const EnterDetailsForm = () => {
           }}
         >
           {/* Back */}
-          <div className="absolute top-6 left-6 text-sm text-black cursor-pointer flex items-center gap-1 font-semibold">
+          <div
+            onClick={() => navigate(-1)} // navigate back
+            className="absolute top-6 left-6 text-sm text-black cursor-pointer flex items-center gap-1 font-semibold"
+          >
             <span className="text-xl">←</span> Back
           </div>
-
-          {/* Placeholder Logo */}
-          <div className="h-12 bg-gray-300 rounded mx-auto w-24 mt-6" />
 
           {/* Heading */}
           <h2

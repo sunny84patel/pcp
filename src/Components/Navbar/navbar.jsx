@@ -29,11 +29,19 @@ const getInitials = (name = "") => {
 
 const avatarColor = (name = "") => {
   const colors = [
-    "#F59E0B", "#10B981", "#3B82F6", "#EC4899",
-    "#8B5CF6", "#F97316", "#14B8A6", "#EF4444", "#22C55E",
+    "#F59E0B",
+    "#10B981",
+    "#3B82F6",
+    "#EC4899",
+    "#8B5CF6",
+    "#F97316",
+    "#14B8A6",
+    "#EF4444",
+    "#22C55E",
   ];
   let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < name.length; i++)
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
   return colors[Math.abs(hash) % colors.length];
 };
 
@@ -106,7 +114,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <img src={italic} alt="Logo" className="w-32 h-8 object-contain" />
+            <img src={italic} alt="Logo" className="w-32 h-8 object-contain cursor-pointer" onClick={() => navigate("/")}/>
           </div>
 
           {/* Location */}
@@ -125,8 +133,9 @@ const Navbar = () => {
               >
                 <span>All Categories</span>
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""
-                    }`}
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isDropdownOpen ? "rotate-180" : ""
+                  }`}
                 />
               </button>
 
@@ -150,13 +159,15 @@ const Navbar = () => {
               )}
             </div>
 
-
             <button className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 text-white cursor-pointer">
               <Flame className="h-4 w-4" />
               <span>Hot Deals</span>
             </button>
 
-            <button className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 text-white cursor-pointer">
+            <button
+              onClick={() => navigate("/compare")}
+              className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 text-white cursor-pointer"
+            >
               <GitCompare className="h-4 w-4" />
               <span>Compare Product</span>
             </button>
@@ -170,7 +181,10 @@ const Navbar = () => {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center relative">
-              <button className="flex items-center justify-center w-10 h-10 text-white transition-colors duration-200 cursor-pointer">
+              <button
+                onClick={() => navigate("/wishlist")}
+                className="flex items-center justify-center w-10 h-10 text-white transition-colors duration-200 cursor-pointer"
+              >
                 <Heart className="h-5 w-5" />
               </button>
             </div>
@@ -184,11 +198,11 @@ const Navbar = () => {
 
             {/* Login / Profile */}
             {isLoggedIn ? (
-              <div className="relative" ref={profileRef}>
+              <div className="relative curso" ref={profileRef}>
                 {/* Avatar button (image or initials) */}
                 <button
                   onClick={() => setIsProfileOpen((s) => !s)}
-                  className="w-10 h-10 rounded-full overflow-hidden border-2 border-white flex items-center justify-center select-none"
+                  className="w-10 h-10 rounded-full overflow-hidden border-2 border-white flex items-center justify-center select-none cursor-pointer"
                   aria-haspopup="menu"
                   aria-expanded={isProfileOpen}
                 >
@@ -201,7 +215,11 @@ const Navbar = () => {
                   ) : (
                     <span
                       className="w-full h-full flex items-center justify-center text-white font-semibold"
-                      style={{ backgroundColor: avatarColor(user?.name || user?.fullName || "User") }}
+                      style={{
+                        backgroundColor: avatarColor(
+                          user?.name || user?.fullName || "User"
+                        ),
+                      }}
                       aria-hidden="true"
                     >
                       {getInitials(user?.name || user?.fullName)}
@@ -230,7 +248,11 @@ const Navbar = () => {
                         ) : (
                           <span
                             className="h-full w-full flex items-center justify-center text-white text-sm font-semibold"
-                            style={{ backgroundColor: avatarColor(user?.name || user?.fullName || "User") }}
+                            style={{
+                              backgroundColor: avatarColor(
+                                user?.name || user?.fullName || "User"
+                              ),
+                            }}
                           >
                             {getInitials(user?.name || user?.fullName)}
                           </span>
@@ -288,7 +310,11 @@ const Navbar = () => {
               className="md:hidden flex items-center justify-center w-10 h-10 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors duration-200 cursor-pointer"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>

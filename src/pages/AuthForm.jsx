@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { Link } from "react-router-dom";
+
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
@@ -158,8 +159,6 @@ const AuthForm = () => {
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.12)",
           }}
         >
-          {/* Placeholder for Logo */}
-          <div className="h-12 bg-gray-300 rounded mb-4 mx-auto w-24" />
 
           <h2
             className="font-semibold text-gray-900"

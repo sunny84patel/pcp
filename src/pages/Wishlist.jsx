@@ -24,6 +24,7 @@ const ITEMS = [
     offers: 3,
     offerChips: [offericon],
   },
+  
   {
     id: 2,
     badge: { text: "Exclusive", bg: "#E9E4FF", fg: "#3E2F92" },

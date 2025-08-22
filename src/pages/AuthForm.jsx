@@ -185,7 +185,7 @@ const AuthForm = () => {
             className="font-semibold text-gray-900"
             style={{ fontSize: "28px", marginBottom: "8px" }}
           >
-            Login or Sign Up
+            Login
           </h2>
           <p className="text-sm text-gray-500">
             Please fill in the details below.

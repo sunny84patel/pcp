@@ -14,6 +14,7 @@ const FilterSidebar = ({
   onStoreChange,
   onCategorySelect,
   onSubCategorySelect,
+  searchQuery,
 }) => {
   const [showCategories, setShowCategories] = useState(true);
   const [showSubCategories, setShowSubCategories] = useState(true);
@@ -36,7 +37,7 @@ const FilterSidebar = ({
             Home
           </span>
           <span className="text-gray-400 cursor-pointer">/</span>
-          <span className="text-xs text-gray-500 cursor-pointer">Tools & Equipments</span>
+          <span className="text-xs text-gray-500 cursor-pointer">{searchQuery}</span>
         </div>
         <h2 className="text-lg font-bold">Filters</h2>
       </div>

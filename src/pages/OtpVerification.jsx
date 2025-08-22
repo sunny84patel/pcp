@@ -180,6 +180,17 @@ const OtpVerification = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "Enter" &&
+      otpDigits.join("").length === 4 &&
+      !isLoading &&
+      !isRedirecting
+    ) {
+      handleSubmit();
+    }
+  };
+
   const showToast = (message, type) => {
     setToast({ show: true, message, type });
   };
@@ -284,6 +295,7 @@ const OtpVerification = () => {
                 ref={ref}
                 value={otpDigits[index]}
                 onChange={(e) => handleInputChange(e, index)}
+                onKeyDown={handleKeyDown}
                 disabled={isLoading || isRedirecting}
                 style={{ width: "44px", height: "48px" }}
                 className={`text-xl text-center border rounded-md focus:outline-none focus:ring-2 transition-all duration-200 ${

@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { Link } from "react-router-dom";
+import { setUser } from "../Redux/Reducers/OtpSlice";
+
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
@@ -108,17 +110,38 @@ const AuthForm = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      console.log("✅ User logged in:", user);
+      // Get Firebase ID token
+      const token = await user.getIdToken();
 
-      // Optional: Send user info to your backend here
+      // Format user data for Redux
+      const userData = {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL,
+      };
 
-      // 👉 Redirect to home
+      // Save in localStorage
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", token);
+
+      // Save in Redux using setUser
+      dispatch(
+        setUser({
+          user: userData,
+          token: token,
+        })
+      );
+
+      console.log("✅ Google Login Success:", userData);
+
       navigate("/");
     } catch (error) {
-      console.error("❌ Login failed:", error);
+      console.error("❌ Google Login Failed:", error);
       showToast("Login failed. Please try again.", "error");
     }
   };
+
   const handleStatusChange = (currentStatus) => {
     if (currentStatus === "succeeded" || currentStatus === "failed") {
       const elapsed = Date.now() - loadingStartTime;
@@ -158,14 +181,11 @@ const AuthForm = () => {
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.12)",
           }}
         >
-          {/* Placeholder for Logo */}
-          <div className="h-12 bg-gray-300 rounded mb-4 mx-auto w-24" />
-
           <h2
             className="font-semibold text-gray-900"
             style={{ fontSize: "28px", marginBottom: "8px" }}
           >
-            Login or Sign Up
+            Login
           </h2>
           <p className="text-sm text-gray-500">
             Please fill in the details below.

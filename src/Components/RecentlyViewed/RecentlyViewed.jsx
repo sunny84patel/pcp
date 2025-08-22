@@ -1,20 +1,21 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ArrowRight
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { fetchProductsByIds } from "../../Redux/Reducers/RecentSlice";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lowes from "../../assets/images/lowes.png";
 import homedepot from "../../assets/images/homedepot.png";
 import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 const RecentlyViewed = () => {
   const dispatch = useDispatch();
-  const { items: products, loading, error } = useSelector(
-    (state) => state.recent
-  );
+  const {
+    items: products,
+    loading,
+    error,
+  } = useSelector((state) => state.recent);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(4.5);
@@ -25,22 +26,30 @@ const RecentlyViewed = () => {
     try {
       if (typeof window !== "undefined" && window.localStorage) {
         // Try both keys for backward compatibility
-        const recentlyViewed = JSON.parse(localStorage.getItem("recentlyViewed") || "[]");
-        const viewedProducts = JSON.parse(localStorage.getItem("viewedProducts") || "[]");
-        
+        const recentlyViewed = JSON.parse(
+          localStorage.getItem("recentlyViewed") || "[]"
+        );
+        const viewedProducts = JSON.parse(
+          localStorage.getItem("viewedProducts") || "[]"
+        );
+
         // Use whichever has more data or the more recent one
         const combined = [...recentlyViewed, ...viewedProducts];
         const uniqueProducts = combined.reduce((acc, product) => {
-          if (product && product.productId && !acc.find(p => p.productId === product.productId)) {
+          if (
+            product &&
+            product.productId &&
+            !acc.find((p) => p.productId === product.productId)
+          ) {
             acc.push(product);
           }
           return acc;
         }, []);
-        
+
         console.log("Loaded from localStorage:", uniqueProducts);
         setLocalProducts(uniqueProducts);
-        
-        return uniqueProducts.map(p => p.productId).filter(Boolean);
+
+        return uniqueProducts.map((p) => p.productId).filter(Boolean);
       }
       return [];
     } catch (error) {
@@ -83,24 +92,24 @@ const RecentlyViewed = () => {
             name: p.name,
             rating: p.rating,
             images: p.images,
-            stores: {}
+            stores: {},
           };
         }
         map[p.productId].stores[p.storeId.toLowerCase()] = {
           price: p.price,
           listPrice: p.listPrice,
-          storeUrl: p.storeUrl
+          storeUrl: p.storeUrl,
         };
       });
       return Object.values(map);
     } else if (localProducts.length > 0) {
       // Fallback to localStorage data
-      return localProducts.map(product => ({
+      return localProducts.map((product) => ({
         productId: product.productId,
         name: product.name,
         rating: product.rating,
         images: product.images || [],
-        stores: {} // No store data available from localStorage
+        stores: {}, // No store data available from localStorage
       }));
     }
     return [];
@@ -135,7 +144,7 @@ const RecentlyViewed = () => {
       productsCount: products?.length || 0,
       displayProductsCount: displayProducts.length,
       loading,
-      error
+      error,
     });
   }, [storedViewed, localProducts, products, displayProducts, loading, error]);
 
@@ -150,20 +159,22 @@ const RecentlyViewed = () => {
       </div>
 
       {loading ? (
-        <p className="text-center text-gray-500">Loading products...</p>
+        <p className="text-center text-gray-500">
+          <ClipLoader color="#5F43B2" size={50} />
+        </p>
       ) : error ? (
         <p className="text-center text-red-500">Error: {error}</p>
       ) : displayProducts.length === 0 ? (
         <div className="text-center text-gray-500">
           <p>No recently viewed products</p>
-          {/* Debug info in development */}
-          {process.env.NODE_ENV === 'development' && (
+          {/* Debug info in development
+          {process.env.NODE_ENV === "development" && (
             <div className="text-xs mt-2">
               <p>localStorage items: {storedViewed.length}</p>
               <p>Local products: {localProducts.length}</p>
               <p>API products: {products?.length || 0}</p>
             </div>
-          )}
+          )} */}
         </div>
       ) : (
         <div className="relative">
@@ -199,7 +210,7 @@ const RecentlyViewed = () => {
                   const hasLowes = !!product.stores?.["lowe's"];
                   const hasHomeDepot = !!product.stores?.["homedepot"];
                   const hasStoreData = hasLowes || hasHomeDepot;
-                  
+
                   return (
                     <div
                       key={product.productId}
@@ -213,7 +224,10 @@ const RecentlyViewed = () => {
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                           <div className="relative aspect-square">
                             <img
-                              src={product.images?.[0] || "/placeholder-product.jpg"}
+                              src={
+                                product.images?.[0] ||
+                                "/placeholder-product.jpg"
+                              }
                               alt={product.name}
                               className="object-contain w-full h-full"
                             />
@@ -231,10 +245,18 @@ const RecentlyViewed = () => {
                                   {/* Left: Store Logos */}
                                   <div className="space-y-2">
                                     {hasLowes && (
-                                      <img src={lowes} alt="Lowes" className="h-5 w-auto" />
+                                      <img
+                                        src={lowes}
+                                        alt="Lowes"
+                                        className="h-5 w-auto"
+                                      />
                                     )}
                                     {hasHomeDepot && (
-                                      <img src={homedepot} alt="Home Depot" className="h-5 w-auto" />
+                                      <img
+                                        src={homedepot}
+                                        alt="Home Depot"
+                                        className="h-5 w-auto"
+                                      />
                                     )}
                                   </div>
 
@@ -246,11 +268,13 @@ const RecentlyViewed = () => {
                                           ${product.stores["lowe's"].price}
                                         </div>
                                         {product.stores["lowe's"].listPrice &&
-                                          product.stores["lowe's"].listPrice > product.stores["lowe's"].price && (
+                                          product.stores["lowe's"].listPrice >
+                                            product.stores["lowe's"].price && (
                                             <div className="text-xs text-green-600 font-medium">
                                               Save $
                                               {(
-                                                product.stores["lowe's"].listPrice -
+                                                product.stores["lowe's"]
+                                                  .listPrice -
                                                 product.stores["lowe's"].price
                                               ).toFixed(2)}
                                             </div>
@@ -263,13 +287,19 @@ const RecentlyViewed = () => {
                                         <div className="text-lg font-bold text-gray-800">
                                           ${product.stores["homedepot"].price}
                                         </div>
-                                        {product.stores["homedepot"].listPrice &&
-                                          product.stores["homedepot"].listPrice > product.stores["homedepot"].price && (
+                                        {product.stores["homedepot"]
+                                          .listPrice &&
+                                          product.stores["homedepot"]
+                                            .listPrice >
+                                            product.stores["homedepot"]
+                                              .price && (
                                             <div className="text-xs text-green-600 font-medium">
                                               Save $
                                               {(
-                                                product.stores["homedepot"].listPrice -
-                                                product.stores["homedepot"].price
+                                                product.stores["homedepot"]
+                                                  .listPrice -
+                                                product.stores["homedepot"]
+                                                  .price
                                               ).toFixed(2)}
                                             </div>
                                           )}

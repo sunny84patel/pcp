@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import lowes from "../../assets/images/lowes.png";
 import homedepot from "../../assets/images/homedepot.png";
+import { useNavigate } from "react-router-dom";
 
 const FilterSidebar = ({
   stores,
@@ -13,9 +14,11 @@ const FilterSidebar = ({
   onStoreChange,
   onCategorySelect,
   onSubCategorySelect,
+  searchQuery,
 }) => {
   const [showCategories, setShowCategories] = useState(true);
   const [showSubCategories, setShowSubCategories] = useState(true);
+  const navigate = useNavigate();
 
   return (
     <div className="w-[250px] p-4 bg-white text-sm">
@@ -23,11 +26,18 @@ const FilterSidebar = ({
       <div className="pt-4 pb-2">
         <div className="flex items-center text-sm text-gray-700 space-x-2 mb-3">
           <ArrowLeft className="w-4 h-4 cursor-pointer text-black" />
-          <span className="text-black font-medium">Back</span>
+          <span
+            onClick={() => navigate(-1)} // navigate back
+            className="text-black font-medium cursor-pointer"
+          >
+            Back
+          </span>
           <span className="text-gray-400">|</span>
-          <span className="text-xs text-gray-500">Home</span>
-          <span className="text-gray-400">/</span>
-          <span className="text-xs text-gray-500">Tools & Equipments</span>
+          <span onClick={() => navigate("/")} className="text-xs text-gray-500 cursor-pointer">
+            Home
+          </span>
+          <span className="text-gray-400 cursor-pointer">/</span>
+          <span className="text-xs text-gray-500 cursor-pointer">{searchQuery}</span>
         </div>
         <h2 className="text-lg font-bold">Filters</h2>
       </div>
@@ -48,17 +58,13 @@ const FilterSidebar = ({
             <label
               key={idx}
               className={`flex items-center mb-2 gap-2 cursor-pointer p-2 rounded ${
-                isSelected
-                  ? "bg-white border border-[#5F43B2]"
-                  : "bg-white"
+                isSelected ? "bg-white border border-[#5F43B2]" : "bg-white"
               }`}
             >
               <input
                 type="checkbox"
                 checked={isSelected}
-                onChange={() =>
-                  onStoreChange(isSelected ? "" : store)
-                }
+                onChange={() => onStoreChange(isSelected ? "" : store)}
               />
               {store?.toLowerCase().replace(/[’']/g, "'") === "lowe's" && (
                 <img src={lowes} alt="Lowe's" className="h-5 w-auto" />

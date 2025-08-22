@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useDispatch, useSelector } from "react-redux";
 import { verifyOTP } from "../Redux/Reducers/OtpSlice";
-import { logout as loginLogout } from "../Redux/Reducers/LoginSlice"; // Import login logout
 import { useNavigate } from "react-router-dom";
 
 // Enhanced Toast Component with better animations
@@ -16,22 +15,22 @@ const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
     // Trigger animation after component mounts
     setIsVisible(true);
-    
+
     const timer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(onClose, 300); // Wait for fade-out animation
     }, 3000);
-    
+
     return () => clearTimeout(timer);
   }, [onClose]);
 
   return (
     <div
       className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ${
-        isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+        isVisible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
       } ${
-        type === "success" 
-          ? "bg-gradient-to-r from-green-500 to-green-600 text-white" 
+        type === "success"
+          ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
           : "bg-gradient-to-r from-red-500 to-red-600 text-white"
       }`}
     >
@@ -90,7 +89,11 @@ const Loader = () => {
 const SuccessLoader = () => {
   return (
     <div className="flex items-center justify-center">
-      <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+      <svg
+        className="w-5 h-5 text-green-500 mr-2"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
         <path
           fillRule="evenodd"
           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -154,20 +157,19 @@ const OtpVerification = () => {
         console.log("✅ OTP verification successful");
         console.log("🧑 User data:", resultAction.payload.user);
         console.log("🔑 Token:", resultAction.payload.token);
-        
+
         // ✅ Store token in localStorage for persistence
         localStorage.setItem("token", resultAction.payload.token);
-        
+
         // ✅ Update login slice with user data
         dispatch({
-          type: 'login/setUserData',
+          type: "login/setUserData",
           payload: {
             user: resultAction.payload.user,
             token: resultAction.payload.token,
-            isLoggedIn: true
-          }
+            isLoggedIn: true,
+          },
         });
-        
       } else {
         console.warn("❌ OTP verification failed:", resultAction.payload);
       }
@@ -175,6 +177,17 @@ const OtpVerification = () => {
       console.error("❗ Error during OTP verification:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "Enter" &&
+      otpDigits.join("").length === 4 &&
+      !isLoading &&
+      !isRedirecting
+    ) {
+      handleSubmit();
     }
   };
 
@@ -189,17 +202,17 @@ const OtpVerification = () => {
   const handleSuccessfulRedirect = () => {
     // Show success toast
     showToast("OTP verified successfully!", "success");
-    
+
     // Start redirect process after a brief delay
     setTimeout(() => {
       setIsRedirecting(true);
-      
+
       // Show redirecting toast
       setTimeout(() => {
         hideToast();
         showToast("Redirecting to home...", "success");
       }, 500);
-      
+
       // Navigate to home page after showing redirect message
       setTimeout(() => {
         navigate("/", { replace: true });
@@ -248,17 +261,18 @@ const OtpVerification = () => {
       <div className="min-h-screen flex items-center justify-center bg-[#E3E5FC66]">
         <div
           className={`bg-white rounded-2xl px-8 pb-8 pt-4 w-full max-w-md text-center space-y-6 transition-all duration-300 ${
-            isRedirecting ? 'scale-95 opacity-80' : 'scale-100 opacity-100'
+            isRedirecting ? "scale-95 opacity-80" : "scale-100 opacity-100"
           }`}
           style={{
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.12)",
           }}
         >
-          <div className="top-6 left-6 text-sm text-black cursor-pointer flex items-center gap-1 mb-1 font-semibold">
+          <div
+            onClick={() => navigate(-1)} // navigate back
+            className="top-6 left-6 text-sm text-black cursor-pointer flex items-center gap-1 mb-1 font-semibold"
+          >
             <span className="text-xl">←</span> Back
           </div>
-
-          <div className="h-12 bg-gray-300 rounded mx-auto w-24" />
 
           <h2
             className="font-semibold text-gray-900"
@@ -281,12 +295,13 @@ const OtpVerification = () => {
                 ref={ref}
                 value={otpDigits[index]}
                 onChange={(e) => handleInputChange(e, index)}
+                onKeyDown={handleKeyDown}
                 disabled={isLoading || isRedirecting}
                 style={{ width: "44px", height: "48px" }}
                 className={`text-xl text-center border rounded-md focus:outline-none focus:ring-2 transition-all duration-200 ${
-                  isRedirecting 
-                    ? 'border-green-300 bg-green-50' 
-                    : 'border-gray-300 focus:ring-purple-500'
+                  isRedirecting
+                    ? "border-green-300 bg-green-50"
+                    : "border-gray-300 focus:ring-purple-500"
                 }`}
               />
             ))}
@@ -294,11 +309,13 @@ const OtpVerification = () => {
 
           <button
             onClick={handleSubmit}
-            disabled={isLoading || isRedirecting || otpDigits.join("").length !== 4}
+            disabled={
+              isLoading || isRedirecting || otpDigits.join("").length !== 4
+            }
             className={`w-full py-2 text-white rounded-full transition-all duration-200 ${
-              isRedirecting 
-                ? 'bg-green-500 hover:bg-green-600' 
-                : 'bg-[#5F43B2] hover:bg-[#4F3392]'
+              isRedirecting
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-[#5F43B2] hover:bg-[#4F3392]"
             } disabled:bg-gray-400 disabled:cursor-not-allowed`}
           >
             {isLoading ? (

@@ -130,6 +130,7 @@ const CategoryPage = () => {
           categories={categories}
           subCategories={subCategories}
           selectedStore={selectedStore}
+          searchQuery={searchQuery}
           selectedCategory={selectedCategory}
           selectedSubCategory={selectedSubCategory}
           onStoreChange={(store) => {

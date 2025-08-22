@@ -9,17 +9,14 @@ import {
   StarHalf,
   Star as StarEmpty,
 } from "lucide-react";
-import {
-  faStar as fullStar,
-  faStarHalfAlt as halfStar,
-} from "@fortawesome/free-solid-svg-icons";
-import { faStar as emptyStar } from "@fortawesome/free-regular-svg-icons";
+
 import { fetchPriceDroppedProducts } from "../../Redux/Reducers/PriceDroppedSlice";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lowes from "../../assets/images/lowes.png";
 import homedepot from "../../assets/images/homedepot.png";
 import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 const PriceDropped = () => {
   const dispatch = useDispatch();
@@ -79,7 +76,9 @@ const PriceDropped = () => {
 
       {/* Loading/Error */}
       {loading ? (
-        <p className="text-center text-gray-500">Loading products...</p>
+        <p className="text-center text-gray-500">
+          <ClipLoader color="#5F43B2" size={50} />
+        </p>
       ) : error ? (
         <p className="text-center text-red-500">Error: {error}</p>
       ) : (
@@ -89,10 +88,11 @@ const PriceDropped = () => {
             <button
               onClick={prevSlide}
               disabled={currentSlide === 0}
-              className={`absolute left-12 z-10 w-10 h-8 rounded-full transition-all ${currentSlide === 0
-                ? "text-gray-400 cursor-not-allowed"
-                : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
-                }`}
+              className={`absolute left-12 z-10 w-10 h-8 rounded-full transition-all ${
+                currentSlide === 0
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
+              }`}
               style={{
                 border: "2px solid #5F43B2",
               }}
@@ -105,8 +105,9 @@ const PriceDropped = () => {
               <div
                 className="flex transition-transform duration-300 ease-in-out"
                 style={{
-                  transform: `translateX(-${currentSlide * (100 / itemsPerView)
-                    }%)`,
+                  transform: `translateX(-${
+                    currentSlide * (100 / itemsPerView)
+                  }%)`,
                   width: `${(products.length / itemsPerView) * 100}%`,
                 }}
               >
@@ -188,16 +189,20 @@ const PriceDropped = () => {
                                   </div>
 
                                   {/* Optional: Discount info */}
-                                  {product.listPrice && product.listPrice > product.price && (
-                                    <div className="mt-1 flex items-center justify-between">
-                                      <span className="text-xs text-gray-500 line-through">
-                                        ${product.listPrice}
-                                      </span>
-                                      <span className="text-xs text-green-600 font-medium ml-2">
-                                        Save ${Number(product.listPrice - product.price).toFixed(2)}
-                                      </span>
-                                    </div>
-                                  )}
+                                  {product.listPrice &&
+                                    product.listPrice > product.price && (
+                                      <div className="mt-1 flex items-center justify-between">
+                                        <span className="text-xs text-gray-500 line-through">
+                                          ${product.listPrice}
+                                        </span>
+                                        <span className="text-xs text-green-600 font-medium ml-2">
+                                          Save $
+                                          {Number(
+                                            product.listPrice - product.price
+                                          ).toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
                                 </div>
                               </div>
                             </div>
@@ -214,10 +219,11 @@ const PriceDropped = () => {
             <button
               onClick={nextSlide}
               disabled={currentSlide >= maxSlide}
-              className={`absolute right-10 z-10 w-10 h-8 rounded-full transition-all ${currentSlide >= maxSlide
-                ? "text-gray-400 cursor-not-allowed"
-                : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
-                }`}
+              className={`absolute right-10 z-10 w-10 h-8 rounded-full transition-all ${
+                currentSlide >= maxSlide
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
+              }`}
               style={{
                 border: "2px solid #5F43B2",
               }}

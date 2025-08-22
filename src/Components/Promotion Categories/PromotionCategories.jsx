@@ -56,7 +56,10 @@ const PromotionCategories = () => {
           </div>
 
           {/* Call to Action Button */}
-          <button className="bg-white text-black px-5 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all inline-flex items-center w-fit cursor-pointer">
+          <button
+            onClick={() => navigate("/compare")}
+            className="bg-white text-black px-5 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition-all inline-flex items-center w-fit cursor-pointer"
+          >
             Compare Products
             <ArrowRight className="ml-2 h-6 w-4" />
           </button>

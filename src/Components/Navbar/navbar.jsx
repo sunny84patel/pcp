@@ -222,7 +222,7 @@ const Navbar = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-white hover:bg-opacity-20 cursor-pointer"
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200  cursor-pointer"
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
               >
@@ -251,20 +251,20 @@ const Navbar = () => {
               )}
             </div>
 
-            <button className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-white hover:bg-opacity-20 text-white cursor-pointer">
+            <button className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200  text-white cursor-pointer">
               <Flame className="h-4 w-4" />
               <span>Hot Deals</span>
             </button>
 
             <button
-              onClick={() => navigate("/compare")}
-              className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-white hover:bg-opacity-20 text-white cursor-pointer"
+              // onClick={() => navigate("/compare")}
+              className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200  text-white cursor-pointer"
             >
               <GitCompare className="h-4 w-4" />
               <span>Compare Product</span>
             </button>
 
-            <button className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-white hover:bg-opacity-20 text-white cursor-pointer">
+            <button className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200  text-white cursor-pointer">
               <AlarmClockCheck className="h-4 w-4" />
               <span>Price Alert</span>
             </button>
@@ -274,8 +274,8 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center relative">
               <button
-                onClick={() => navigate("/wishlist")}
-                className="flex items-center justify-center w-10 h-10 text-white hover:bg-white hover:bg-opacity-20 rounded-full transition-colors duration-200 cursor-pointer"
+                // onClick={() => navigate("/wishlist")}
+                className="flex items-center justify-center w-10 h-10 text-white  rounded-full transition-colors duration-200 cursor-pointer"
                 title="Wishlist"
               >
                 <Heart className="h-5 w-5" />
@@ -284,7 +284,7 @@ const Navbar = () => {
 
             <div className="hidden md:flex items-center relative">
               <button
-                className="flex items-center justify-center w-10 h-10 text-white hover:bg-white hover:bg-opacity-20 rounded-full relative cursor-pointer transition-colors duration-200"
+                className="flex items-center justify-center w-10 h-10 text-white  rounded-full relative cursor-pointer transition-colors duration-200"
                 title="Notifications"
               >
                 <Bell className="h-5 w-5" />
@@ -377,7 +377,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Toggle */}
             <button
-              className="md:hidden flex items-center justify-center w-10 h-10 text-white hover:bg-white hover:bg-opacity-20 rounded-md transition-colors duration-200 cursor-pointer"
+              className="md:hidden flex items-center justify-center w-10 h-10 text-white  rounded-md transition-colors duration-200 cursor-pointer"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
               aria-label="Toggle mobile menu"
@@ -418,7 +418,7 @@ const Navbar = () => {
                 <button
                   onClick={() => {
                     setIsMenuOpen(false);
-                    navigate("/compare");
+                    // navigate("/compare");
                   }}
                   className="flex items-center text-gray-700 hover:text-gray-900 hover:bg-gray-100 px-4 py-3 text-sm font-medium transition-colors duration-200 cursor-pointer"
                 >
@@ -434,7 +434,7 @@ const Navbar = () => {
                 <button
                   onClick={() => {
                     setIsMenuOpen(false);
-                    navigate("/wishlist");
+                    // navigate("/wishlist");
                   }}
                   className="flex items-center text-gray-700 hover:bg-gray-100 px-4 py-3 text-sm font-medium transition-colors duration-200 cursor-pointer"
                 >

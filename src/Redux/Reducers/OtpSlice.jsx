@@ -1,16 +1,59 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import API from '../../api';
-// const API = axios.create({ baseURL: 'https://pcp-szng.vercel.app/api' });
+
+// Helper function to normalize phone numbers (same as backend)
+const normalizePhoneNumber = (phone) => {
+  if (!phone) return phone;
+  
+  // Remove all non-digit characters
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // If it starts with country code, return with +
+  if (cleaned.startsWith('91') && cleaned.length === 12) {
+    return `+${cleaned}`;
+  }
+  
+  // If it's 10 digits, assume India and add +91
+  if (cleaned.length === 10) {
+    return `+91${cleaned}`;
+  }
+  
+  // If it already has +, return as is
+  if (phone.startsWith('+')) {
+    return phone;
+  }
+  
+  return `+91${cleaned}`; // Default to India
+};
 
 // Async thunk for OTP verification
 export const verifyOTP = createAsyncThunk(
   'otp/verify',
-  async ({ otp }, thunkAPI) => {
+  async ({ otp, identifier }, thunkAPI) => {
     try {
-      const res = await API.post('/verify-otp', { otp });
+      console.log('🔐 Frontend sending OTP verification:', { otp, identifier });
+      
+      // Normalize identifier if it's a phone number
+      let normalizedIdentifier = identifier;
+      
+      // Check if it's not an email (simple email check)
+      if (!identifier.includes('@')) {
+        normalizedIdentifier = normalizePhoneNumber(identifier);
+        console.log('📱 Normalized identifier:', normalizedIdentifier);
+      }
+      
+      // ✅ send both otp & normalized identifier to backend
+      const res = await API.post('/verify-otp', { 
+        otp, 
+        identifier: normalizedIdentifier 
+      });
+      
+      console.log('✅ Backend response:', res.data);
       return res.data; // Expecting { token, user }
+      
     } catch (err) {
+      console.error('❌ OTP verification error:', err.response?.data || err.message);
       return thunkAPI.rejectWithValue(
         err.response?.data?.msg || 'OTP verification failed'
       );
@@ -37,6 +80,8 @@ const otpSlice = createSlice({
       state.isAuthenticated = false;
       state.status = 'idle';
       state.error = null;
+      // Also clear localStorage
+      localStorage.removeItem('token');
     },
     setUser: (state, action) => {
       state.user = action.payload.user;
@@ -45,6 +90,7 @@ const otpSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+      state.status = 'idle';
     }
   },
   extraReducers: (builder) => {
@@ -54,7 +100,7 @@ const otpSlice = createSlice({
         state.error = null;
       })
       .addCase(verifyOTP.fulfilled, (state, action) => {
-        console.log('✅ OTP Verification Success:', action.payload);
+        console.log('✅ Redux: OTP Verification Success:', action.payload);
         state.status = 'succeeded';
         state.token = action.payload.token;
         state.user = action.payload.user;
@@ -62,7 +108,7 @@ const otpSlice = createSlice({
         state.error = null;
       })
       .addCase(verifyOTP.rejected, (state, action) => {
-        console.log('❌ OTP Verification Failed:', action.payload);
+        console.log('❌ Redux: OTP Verification Failed:', action.payload);
         state.status = 'failed';
         state.error = action.payload;
         state.token = null;

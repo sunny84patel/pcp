@@ -992,7 +992,6 @@
 //     res.status(500).json({ error: 'Internal server error' });
 //   }
 // };
-
 import { Product, Inventory, Image } from '../models/Product.js';
 import fetch from 'node-fetch'; // Assuming node-fetch is installed for API calls
 
@@ -1037,76 +1036,117 @@ const normalizeProductTitle = (title) => {
 };
 
 // =====================================================
-// THIRD-PARTY API INTEGRATION
+// HELPER: FETCH WITH TIMEOUT
+// =====================================================
+const fetchWithTimeout = async (url, options = {}, timeout = 8000) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(id);
+  }
+};
+
+// =====================================================
+// THIRD-PARTY API INTEGRATION (with retry + timeout)
 // =====================================================
 
 /**
- * Searches the specified store using Unwrangle API.
+ * Searches the specified store using Unwrangle API (with retries + timeout).
  * @param {string} platform - 'homedepot_search' or 'lowes_search'
  * @param {string} searchTerm - Normalized search term
  * @param {number} page - Page number (default 1)
+ * @param {number} retries - Number of retry attempts (default 2)
  * @returns {Promise<array>} Array of product results from API
  */
-const searchStoreApi = async (platform, searchTerm, page = 1) => {
-  const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(searchTerm)}&page=${page}&api_key=${API_KEY}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`API request failed with status ${response.status}`);
+const searchStoreApi = async (platform, searchTerm, page = 1, retries = 2) => {
+  const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(
+    searchTerm
+  )}&page=${page}&api_key=${API_KEY}`;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetchWithTimeout(url, {}, 8000);
+
+      if (!response.ok) throw new Error(`Status ${response.status}`);
+      const data = await response.json();
+      if (!data.success || !data.results) return [];
+
+      return data.results;
+    } catch (err) {
+      console.error(
+        `API attempt ${attempt + 1} failed for "${searchTerm}" (${platform}):`,
+        err.message
+      );
+      if (attempt === retries) {
+        console.warn(`Giving up on "${searchTerm}" after ${retries + 1} attempts`);
+        return [];
+      }
+    }
   }
-  const data = await response.json();
-  if (!data.success || !data.results) {
-    throw new Error('API response unsuccessful or no results');
-  }
-  return data.results;
 };
 
 /**
  * Finds the first matching product in the other store using direct API search.
+ * Falls back to brand + modelNo if full title search fails.
  * @param {object} baseProduct - Base product document from DB
  * @param {string} baseStoreId - 'homedepot' or 'lowes'
  * @returns {Promise<object|null>} First search result adapted as match, or null if none
  */
 const findFirstMatchingProduct = async (baseProduct, baseStoreId) => {
-  const otherPlatform = baseStoreId === 'homedepot' ? 'lowes_search' : 'homedepot_search';
+  const otherPlatform =
+    baseStoreId === 'homedepot' ? 'lowes_search' : 'homedepot_search';
   const otherStoreId = baseStoreId === 'homedepot' ? 'lowes' : 'homedepot';
   const searchTerm = normalizeProductTitle(baseProduct.name);
 
-  let candidates = [];
-  try {
-    candidates = await searchStoreApi(otherPlatform, searchTerm, 1);
-  } catch (err) {
-    console.error(`API search error for "${searchTerm}": ${err.message}`);
+  // ---------- Primary search (full title) ----------
+  let candidates = await searchStoreApi(otherPlatform, searchTerm, 1);
+
+  // ---------- Secondary fallback (brand + modelNo) ----------
+  if ((!candidates || candidates.length === 0) && (baseProduct.brand || baseProduct.modelNo)) {
+    const fallbackTerm = `${baseProduct.brand || ''} ${baseProduct.modelNo || ''}`.trim();
+    if (fallbackTerm) {
+      console.log(`Fallback search with brand+model: "${fallbackTerm}"`);
+      candidates = await searchStoreApi(otherPlatform, fallbackTerm, 1);
+    }
+  }
+
+  if (!candidates || candidates.length === 0) {
+    console.log(`No search results for "${searchTerm}" or fallback in ${otherPlatform}`);
     return null;
   }
 
-  if (candidates.length === 0) {
-    console.log(`No search results for "${searchTerm}" in ${otherPlatform}`);
-    return null;
-  }
-
-  // Take the first result
   const firstCandidate = candidates[0];
 
-  // Adapt API response to match structure (assuming common fields; adjust if needed)
   return {
     product: {
       productId: firstCandidate.id || firstCandidate.product_id,
       name: firstCandidate.name || firstCandidate.title,
       modelNo: firstCandidate.model_no || firstCandidate.model,
-      brand: firstCandidate.brand
+      brand: firstCandidate.brand,
     },
     inventory: {
       storeId: otherStoreId,
       price: firstCandidate.price || firstCandidate.current_price,
-      listPrice: firstCandidate.list_price || firstCandidate.original_price || firstCandidate.price,
+      listPrice:
+        firstCandidate.list_price ||
+        firstCandidate.original_price ||
+        firstCandidate.price,
       rating: firstCandidate.rating || 0,
-      totalReviews: firstCandidate.total_reviews || firstCandidate.review_count || 0,
-      inventoryQuantity: firstCandidate.inventory_quantity || (firstCandidate.in_stock ? 1 : 0),
-      url: firstCandidate.url || firstCandidate.product_url
+      totalReviews:
+        firstCandidate.total_reviews ||
+        firstCandidate.review_count ||
+        0,
+      inventoryQuantity:
+        firstCandidate.inventory_quantity || (firstCandidate.in_stock ? 1 : 0),
+      url: firstCandidate.url || firstCandidate.product_url,
     },
-    matchScore: 100, // Since direct first result, assume high match
+    matchScore: 100,
     isExactMatch: true,
-    matchType: 'direct_api_search'
+    matchType: candidates === searchTerm ? 'direct_api_search' : 'fallback_brand_model',
   };
 };
 

@@ -4,6 +4,7 @@ import twilio from "twilio";
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import { sendEmailOTP } from '../utils/emailSender.js';
+import { setEmailOTP, verifyEmailOTP } from '../utils/emailotp.js';
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -13,28 +14,30 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const verifySid = process.env.TWILIO_VERIFY_SID;
 
 const client = twilio(accountSid, authToken);
-const generateOTP = () => Math.floor(1000 + Math.random() * 9000).toString();
+// 🔧 Generate 6-digit OTP
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
 
 // 🔧 Helper function to normalize phone numbers
 const normalizePhoneNumber = (phone) => {
   // Remove all non-digit characters
   const cleaned = phone.replace(/\D/g, '');
-  
+
   // If it starts with country code, return with +
   if (cleaned.startsWith('91') && cleaned.length === 12) {
     return `+${cleaned}`;
   }
-  
+
   // If it's 10 digits, assume India and add +91
   if (cleaned.length === 10) {
     return `+91${cleaned}`;
   }
-  
+
   // If it already has +, return as is
   if (phone.startsWith('+')) {
     return phone;
   }
-  
+
   return `+91${cleaned}`; // Default to India
 };
 
@@ -51,16 +54,16 @@ export const signup = async (req, res) => {
   const cleanedMobile = mobile.replace(/\D/g, '');
 
   // Check for existing user with any mobile format
-  const existing = await User.findOne({ 
+  const existing = await User.findOne({
     $or: [
-      { email }, 
-      { mobile: normalizedMobile }, 
+      { email },
+      { mobile: normalizedMobile },
       { mobile },
       { mobile: cleanedMobile },
       { mobile: { $regex: cleanedMobile, $options: 'i' } }
-    ] 
+    ]
   });
-  
+
   if (existing) return res.status(400).json({ msg: 'User already exists.' });
 
   const newUser = new User({
@@ -76,9 +79,9 @@ export const signup = async (req, res) => {
 
   console.log('✅ New user created with mobile:', normalizedMobile);
 
-  res.status(201).json({ 
-    msg: `Account created as '${newUser.role}'. Please login to continue.`, 
-    user: newUser 
+  res.status(201).json({
+    msg: `Account created as '${newUser.role}'. Please login to continue.`,
+    user: newUser
   });
 };
 
@@ -90,20 +93,14 @@ export const login = async (req, res) => {
 
   try {
     let user;
-    
+
     // 📧 Email flow
     if (validator.isEmail(identifier)) {
       user = await User.findOne({ email: identifier });
       if (!user) return res.status(404).json({ msg: 'User not found.' });
 
-      const otp = generateOTP();
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
-      await OTP.findOneAndUpdate(
-        { identifier },
-        { otp, expiresAt },
-        { upsert: true, new: true }
-      );
+      const otp = generateOTP(); // now 6-digit
+      setEmailOTP(identifier, otp);  // store in memory
 
       await sendEmailOTP(identifier, otp);
       return res.status(200).json({ msg: 'OTP sent to registered email.' });
@@ -112,26 +109,26 @@ export const login = async (req, res) => {
     // 📱 Mobile flow
     if (validator.isMobilePhone(identifier.replace(/\D/g, ''), 'any', { strictMode: false })) {
       const normalizedIdentifier = normalizePhoneNumber(identifier);
-      
+
       // Find user with normalized mobile number
-      user = await User.findOne({ 
+      user = await User.findOne({
         $or: [
           { mobile: normalizedIdentifier },
           { mobile: identifier },
           { mobile: identifier.replace(/\D/g, '') }
         ]
       });
-      
+
       if (!user) return res.status(404).json({ msg: 'User not found.' });
 
       console.log('📱 Sending SMS OTP to:', normalizedIdentifier);
-      
+
       await client.verify.v2.services(verifySid).verifications.create({
         to: normalizedIdentifier,
         channel: 'sms',
       });
 
-      return res.status(200).json({ 
+      return res.status(200).json({
         msg: 'OTP sent to registered mobile number.',
         normalizedIdentifier // Send back for verification
       });
@@ -141,9 +138,9 @@ export const login = async (req, res) => {
 
   } catch (error) {
     console.error('❌ OTP Sending Failed:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       msg: 'Failed to send OTP. Please try again later.',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -152,9 +149,9 @@ export const login = async (req, res) => {
 export const verifyOTP = async (req, res) => {
   try {
     const { otp, identifier } = req.body;
-    
+
     console.log('🔍 Verifying OTP:', { otp, identifier });
-    
+
     if (!otp) return res.status(400).json({ msg: "OTP is required." });
     if (!identifier) return res.status(400).json({ msg: "Identifier is required." });
 
@@ -162,31 +159,19 @@ export const verifyOTP = async (req, res) => {
 
     // 📧 Email flow → DB OTP check
     if (validator.isEmail(identifier)) {
-      const record = await OTP.findOne({ identifier });
-      if (!record) {
-        return res.status(400).json({ msg: "No OTP found. Please request again." });
-      }
-      
-      if (record.expiresAt < new Date()) {
-        await OTP.deleteOne({ identifier }); // Clean up expired OTP
-        return res.status(400).json({ msg: "OTP expired. Please request a new one." });
-      }
-      
-      if (record.otp !== otp) {
-        return res.status(400).json({ msg: "Invalid OTP." });
+      const result = verifyEmailOTP(identifier, otp);
+      if (!result.success) {
+        return res.status(400).json({ msg: result.msg });
       }
 
       user = await User.findOne({ email: identifier });
-      
-      // Clean up successful OTP
-      await OTP.deleteOne({ identifier });
-    } 
+    }
     // 📱 Phone flow → Twilio Verify
     else {
       const normalizedIdentifier = normalizePhoneNumber(identifier);
-      
+
       console.log('📱 Verifying with Twilio:', normalizedIdentifier);
-      
+
       // First, let's find the user with ALL possible mobile formats
       const cleanedIdentifier = identifier.replace(/\D/g, '');
       const possibleFormats = [
@@ -198,8 +183,8 @@ export const verifyOTP = async (req, res) => {
       ];
 
       console.log('🔍 Searching user with mobile formats:', possibleFormats);
-      
-      user = await User.findOne({ 
+
+      user = await User.findOne({
         mobile: { $in: possibleFormats }
       });
 
@@ -215,7 +200,7 @@ export const verifyOTP = async (req, res) => {
         // Let's also check what users exist for debugging
         const allUsers = await User.find({}, { mobile: 1, email: 1, fullName: 1 });
         console.log('📋 All users in database:', allUsers);
-        return res.status(404).json({ 
+        return res.status(404).json({
           msg: "User not found. Please ensure you're using the same mobile number used during signup.",
           searchedFormats: possibleFormats
         });
@@ -234,17 +219,17 @@ export const verifyOTP = async (req, res) => {
         console.log("🔍 Twilio verificationCheck:", verificationCheck);
 
         if (verificationCheck.status !== "approved") {
-          return res.status(400).json({ 
+          return res.status(400).json({
             msg: "Invalid or expired OTP.",
-            twilioStatus: verificationCheck.status 
+            twilioStatus: verificationCheck.status
           });
         }
-        
+
       } catch (twilioError) {
         console.error('❌ Twilio verification error:', twilioError);
-        return res.status(400).json({ 
+        return res.status(400).json({
           msg: "Invalid or expired OTP.",
-          error: twilioError.message 
+          error: twilioError.message
         });
       }
     }
@@ -270,8 +255,8 @@ export const verifyOTP = async (req, res) => {
 
     console.log('✅ OTP verification successful for:', user.email || user.mobile);
 
-    res.status(200).json({ 
-      token, 
+    res.status(200).json({
+      token,
       user: {
         _id: user._id,
         fullName: user.fullName,
@@ -284,9 +269,9 @@ export const verifyOTP = async (req, res) => {
 
   } catch (err) {
     console.error("❌ OTP verification error:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       msg: "Server error verifying OTP.",
-      error: err.message 
+      error: err.message
     });
   }
 };

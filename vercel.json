@@ -4,12 +4,17 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
+      "config": { "distDir": "dist" }
     }
   ],
   "routes": [
+  
     { "src": "/api/(.*)", "dest": "https://pcp-szng.vercel.app/api/$1" },
+
+  
     { "handle": "filesystem" },
+
+    
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

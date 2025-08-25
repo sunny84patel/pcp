@@ -32,7 +32,7 @@ const similarProductsSlice = createSlice({
       })
       .addCase(fetchSimilarProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.items = action.payload.results;
       })
       .addCase(fetchSimilarProducts.rejected, (state, action) => {
         state.loading = false;

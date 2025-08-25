@@ -26,28 +26,41 @@ const SimilarProducts = () => {
     }
   }, [dispatch, id]);
 
-  // Group products by productId and store name
+  // Enhanced mapping with correct storeId handling from your API structure
   const groupedProducts = useMemo(() => {
     const map = {};
     products.forEach((p) => {
       if (!map[p.productId]) {
         map[p.productId] = {
           productId: p.productId,
-          title: p.title,
-          rating: p.rating,
-          thumbnail: p.thumbnail,
+          title: p.name || p.title || 'Product Name',
+          rating: p.rating || 0,
+          thumbnail: p.stores?.[0]?.images?.[0] || p.image || null,
           stores: {},
+          brand: p.brand || '',
+          category: p.category || '',
+          minPrice: p.minPrice || 0,
+          totalReviews: p.totalReviews || 0,
         };
       }
 
-      const storeKey = p.store?.toLowerCase().trim(); // normalize
-      if (storeKey) {
-        map[p.productId].stores[storeKey] = {
-          price: p.price,
-          listPrice: p.listPrice,
-          storeUrl: p.storeUrl,
-        };
-      }
+      // Handle the stores array from your API response
+      p.stores?.forEach((storeData) => {
+        const storeKey = storeData.storeId?.toLowerCase().trim();
+        if (storeKey) {
+          map[p.productId].stores[storeKey] = {
+            storeId: storeData.storeId,
+            price: storeData.price,
+            listPrice: storeData.listPrice || storeData.price,
+            storeUrl: storeData.url,
+            image: storeData.images?.[0] || null,
+            currency: storeData.currency || 'USD',
+            inventoryQuantity: storeData.inventoryQuantity || 0,
+            rating: storeData.rating || 0,
+            totalReviews: storeData.totalReviews || 0,
+          };
+        }
+      });
     });
     return Object.values(map);
   }, [products]);
@@ -65,23 +78,81 @@ const SimilarProducts = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxSlide = Math.max(0, groupedProducts.length - itemsPerView);
+  const maxSlide = Math.max(0, groupedProducts.length - Math.floor(itemsPerView));
   const nextSlide = () =>
     setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));
   const prevSlide = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
 
-  const renderStars = (rating) => (
-    <div className="flex items-center space-x-1">
-      <svg
-        className="w-4 h-4 fill-yellow-400 text-yellow-400"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-      >
-        <path d="M10 15l-5.878 3.09 1.122-6.545L0.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
-      </svg>
-      <span className="text-sm text-gray-600 ml-1">{rating}/5</span>
-    </div>
-  );
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(
+          <svg
+            key={i}
+            className="w-4 h-4 fill-yellow-400 text-yellow-400"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path d="M10 15l-5.878 3.09 1.122-6.545L0.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
+          </svg>
+        );
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(
+          <svg
+            key={i}
+            className="w-4 h-4 text-yellow-400"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <defs>
+              <linearGradient id={`half-${i}`}>
+                <stop offset="50%" stopColor="currentColor" />
+                <stop offset="50%" stopColor="transparent" />
+              </linearGradient>
+            </defs>
+            <path
+              fill={`url(#half-${i})`}
+              d="M10 15l-5.878 3.09 1.122-6.545L0.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"
+            />
+          </svg>
+        );
+      } else {
+        stars.push(
+          <svg
+            key={i}
+            className="w-4 h-4 fill-gray-300 text-gray-300"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path d="M10 15l-5.878 3.09 1.122-6.545L0.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
+          </svg>
+        );
+      }
+    }
+    
+    return (
+      <div className="flex items-center space-x-1">
+        <div className="flex">{stars}</div>
+        <span className="text-sm text-gray-600 ml-1">
+          {rating > 0 ? `(${rating.toFixed(1)})` : '(0.0)'}
+        </span>
+      </div>
+    );
+  };
+
+  const formatPrice = (price, currency = 'USD') => {
+    if (!price) return 'N/A';
+    return currency === 'USD' ? `$${price}` : `${price} ${currency}`;
+  };
+
+  const getBestPrice = (stores) => {
+    const prices = Object.values(stores).map(store => parseFloat(store.price)).filter(price => !isNaN(price));
+    return prices.length > 0 ? Math.min(...prices) : null;
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 pt-16 bg-white">
@@ -108,18 +179,18 @@ const SimilarProducts = () => {
             <button
               onClick={prevSlide}
               disabled={currentSlide === 0}
-              className={`absolute left-12 z-10 w-10 h-8 rounded-full transition-all ${
+              className={`absolute left-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                 currentSlide === 0
-                  ? "text-gray-400 cursor-not-allowed"
+                  ? "text-gray-400 cursor-not-allowed bg-gray-100"
                   : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
               }`}
               style={{ border: "2px solid #5F43B2" }}
             >
-              <FontAwesomeIcon icon={faArrowLeft} />
+              <FontAwesomeIcon icon={faArrowLeft} className="text-sm" />
             </button>
 
             {/* Carousel */}
-            <div className="overflow-hidden w-full mx-8">
+            <div className="overflow-hidden w-full mx-16">
               <div
                 className="flex transition-transform duration-300 ease-in-out"
                 style={{
@@ -130,8 +201,11 @@ const SimilarProducts = () => {
                 }}
               >
                 {groupedProducts.map((product) => {
+                  // Check for stores using exact storeId values from API
                   const hasLowes = !!product.stores["lowe's"];
-                  const hasHomeDepot = !!product.stores["home depot"];
+                  const hasHomeDepot = !!product.stores["homedepot"];
+                  const bestPrice = getBestPrice(product.stores);
+                  
                   return (
                     <div
                       key={product.productId}
@@ -140,91 +214,139 @@ const SimilarProducts = () => {
                     >
                       <Link
                         to={`/product/${product.productId}`}
-                        className="px-2"
-                        style={{ width: `${100 / groupedProducts.length}%` }}
+                        className="block"
                       >
-                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
-                          <div className="relative aspect-square">
+                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl h-full">
+                          {/* Product Image */}
+                          <div className="relative aspect-square bg-gray-50">
                             <img
                               src={
-                                product.thumbnail || "/placeholder-product.jpg"
+                                product.thumbnail ||
+                                "/placeholder-product.jpg"
                               }
                               alt={product.title}
-                              className="object-contain w-full h-full"
+                              className="object-contain w-full h-full p-2"
+                              onError={(e) => {
+                                e.target.src = "/placeholder-product.jpg";
+                              }}
                             />
+                            {/* {bestPrice && (
+                              <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
+                                Best: {formatPrice(bestPrice)}
+                              </div>
+                            )}
+                            {product.brand && (
+                              <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-md text-xs">
+                                {product.brand}
+                              </div>
+                            )} */}
                           </div>
 
                           <div className="p-4">
-                            <h3 className="text-sm font-medium text-gray-800 mb-2 line-clamp-2">
+                            {/* Product Title */}
+                            <h3 className="text-sm font-medium text-gray-800 mb-2 line-clamp-2 h-10">
                               {product.title}
                             </h3>
-                            {renderStars(product.rating || 0)}
+                            
+                            {/* Rating */}
+                            <div className="mb-3">
+                              {renderStars(product.rating || 0)}
+                              {product.totalReviews > 0 && (
+                                <span className="text-xs text-gray-500 ml-1">
+                                  ({product.totalReviews} reviews)
+                                </span>
+                              )}
+                            </div>
 
-                            <div className="mt-2">
-                              <div className="flex items-start justify-between">
-                                {/* Store Logos */}
-                                <div className="space-y-2">
-                                  {hasLowes && (
+                            {/* Store Information */}
+                            <div className="space-y-3">
+                              {hasLowes && (
+                                <div className="flex items-center justify-between p-2 bg-blue-50 rounded-md">
+                                  <div className="flex items-center space-x-2">
                                     <img
                                       src={lowes}
-                                      alt="Lowes"
-                                      className="h-5 w-auto"
+                                      alt="Lowe's"
+                                      className="h-6 w-auto"
                                     />
-                                  )}
-                                  {hasHomeDepot && (
+                                    <div>
+                                      <div className="text-lg font-bold text-gray-800">
+                                        {formatPrice(product.stores["lowe's"].price, product.stores["lowe's"].currency)}
+                                      </div>
+                                      {product.stores["lowe's"].listPrice && 
+                                       product.stores["lowe's"].listPrice !== product.stores["lowe's"].price && (
+                                        <div className="text-xs text-gray-500 line-through">
+                                          {formatPrice(product.stores["lowe's"].listPrice, product.stores["lowe's"].currency)}
+                                        </div>
+                                      )}
+                                      {product.stores["lowe's"].inventoryQuantity > 0 && (
+                                        <div className="text-xs text-green-600">
+                                          {product.stores["lowe's"].inventoryQuantity} in stock
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {/* <a
+                                    href={product.stores["lowe's"].storeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-blue-600 hover:text-blue-800 underline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    View Store
+                                  </a> */}
+                                </div>
+                              )}
+
+                              {hasHomeDepot && (
+                                <div className="flex items-center justify-between p-2 bg-orange-50 rounded-md">
+                                  <div className="flex items-center space-x-2">
                                     <img
                                       src={homedepot}
                                       alt="Home Depot"
-                                      className="h-5 w-auto"
+                                      className="h-6 w-auto"
                                     />
-                                  )}
-                                </div>
-
-                                {/* Prices */}
-                                <div className="text-right space-y-2">
-                                  {hasLowes && (
                                     <div>
                                       <div className="text-lg font-bold text-gray-800">
-                                        ${product.stores["lowe's"].price}
+                                        {formatPrice(product.stores["homedepot"].price, product.stores["homedepot"].currency)}
                                       </div>
-                                      {product.stores["lowe's"].listPrice >
-                                        product.stores["lowe's"].price && (
-                                        <div className="text-xs text-green-600 font-medium">
-                                          Save $
-                                          {(
-                                            product.stores["lowe's"].listPrice -
-                                            product.stores["lowe's"].price
-                                          ).toFixed(2)}
+                                      {product.stores["homedepot"].listPrice && 
+                                       product.stores["homedepot"].listPrice !== product.stores["homedepot"].price && (
+                                        <div className="text-xs text-gray-500 line-through">
+                                          {formatPrice(product.stores["homedepot"].listPrice, product.stores["homedepot"].currency)}
+                                        </div>
+                                      )}
+                                      {product.stores["homedepot"].inventoryQuantity > 0 && (
+                                        <div className="text-xs text-green-600">
+                                          {product.stores["homedepot"].inventoryQuantity} in stock
                                         </div>
                                       )}
                                     </div>
-                                  )}
-
-                                  {hasHomeDepot && (
-                                    <div>
-                                      <div className="text-lg font-bold text-gray-800">
-                                        ${product.stores["home depot"].price}
-                                      </div>
-                                      {product.stores["home depot"].listPrice >
-                                        product.stores["home depot"].price && (
-                                        <div className="text-xs text-green-600 font-medium">
-                                          Save $
-                                          {(
-                                            product.stores["home depot"]
-                                              .listPrice -
-                                            product.stores["home depot"].price
-                                          ).toFixed(2)}
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
+                                  </div>
+                                  {/* <a
+                                    href={product.stores["homedepot"].storeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-orange-600 hover:text-orange-800 underline"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    View Store
+                                  </a> */}
                                 </div>
-                              </div>
+                              )}
 
-                              {/* Available in both */}
+                              {/* Available in both stores indicator */}
                               {hasLowes && hasHomeDepot && (
-                                <div className="text-xs text-green-600 font-semibold mt-2">
-                                  Available in both stores
+                                <div className="text-center">
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Available in both stores
+                                  </span>
+                                </div>
+                              )}
+                              
+                              {/* No stores available */}
+                              {!hasLowes && !hasHomeDepot && (
+                                <div className="text-center text-gray-500 text-sm">
+                                  Store information not available
                                 </div>
                               )}
                             </div>
@@ -241,14 +363,14 @@ const SimilarProducts = () => {
             <button
               onClick={nextSlide}
               disabled={currentSlide >= maxSlide}
-              className={`absolute right-10 z-10 w-10 h-8 rounded-full transition-all ${
+              className={`absolute right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                 currentSlide >= maxSlide
-                  ? "text-gray-400 cursor-not-allowed"
+                  ? "text-gray-400 cursor-not-allowed bg-gray-100"
                   : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
               }`}
               style={{ border: "2px solid #5F43B2" }}
             >
-              <FontAwesomeIcon icon={faArrowRight} />
+              <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
             </button>
           </div>
         </div>

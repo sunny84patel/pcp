@@ -18,6 +18,8 @@ import { ClipLoader } from "react-spinners";
 const RecentlyViewed = React.lazy(() => import("../Components/RecentlyViewed/RecentlyViewed"));
 const SimilarProducts = React.lazy(() => import("../Components/Similar Products/SimilarProducts"));
 const Footer = React.lazy(() => import("../Components/Footer/Footer"));
+// const ProductDetails = React.lazy(() => import("./ProductDetail")); // Assuming extracted to separate file for code splitting
+// const RelatedSearches = React.lazy(() => import("./RelatedSearches")); // Assuming extracted to separate file for code splitting
 
 // Memoized subcomponents
 const ProductImage = memo(({ product }) => (
@@ -34,8 +36,7 @@ const ProductImage = memo(({ product }) => (
       src={product.images?.[0] || "/placeholder.jpg"}
       alt={product.title}
       className="object-contain w-full h-auto"
-      loading="lazy"
-      decoding="async"
+      decoding="async" // Keep async decoding but load eagerly for main image
     />
   </div>
 ));
@@ -118,7 +119,7 @@ const ProductDetailsPage = () => {
 
   const sortOptions = useMemo(() => ["Lowest Price", "Highest Price"], []);
   const [selectedOption, setSelectedOption] = useState(sortOptions[0]);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
@@ -348,10 +349,20 @@ const ProductDetailsPage = () => {
         </div>
       </div>
 
-      {/* Product Details */}
-      <ProductDetails product={product} />
+      {/* Lazy load sections with optimized fallbacks and separate Suspense for progressive loading */}
+      {/* <Suspense 
+        fallback={
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="animate-pulse space-y-6 py-6">
+              <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-32 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        }
+      >
+        <ProductDetails product={product} />
+      </Suspense> */}
 
-      {/* Lazy load sections with optimized fallbacks */}
       <Suspense 
         fallback={
           <div className="max-w-7xl mx-auto px-4">
@@ -367,79 +378,51 @@ const ProductDetailsPage = () => {
         }
       >
         <SimilarProducts />
+      </Suspense>
+
+      {/* <Suspense 
+        fallback={
+          <div className="w-full max-w-7xl mx-auto p-4 mt-10">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+              <div className="flex flex-wrap gap-4">
+                {[...Array(9)].map((_, i) => (
+                  <div key={i} className="h-8 bg-gray-200 rounded-full w-24"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        }
+      >
         <RelatedSearches />
+      </Suspense> */}
+
+      <Suspense 
+        fallback={
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="animate-pulse space-y-6 py-6">
+              <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-48 bg-gray-200 rounded"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        }
+      >
         <RecentlyViewed />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-32 bg-gray-200 animate-pulse"></div>}>
         <Footer />
       </Suspense>
     </>
   );
 };
 
-// Extracted and memoized ProductDetails component
-const ProductDetails = memo(({ product }) => (
-  <div className="max-w-7xl mx-auto px-4 mt-10 bg-white p-6">
-    <h3 className="text-2xl font-bold mb-4">Product Details</h3>
-    <p className="text-gray-600 text-[16px] mb-4">
-      Compare prices for <span className="font-semibold">{product.title}</span> across multiple
-      stores. Find the best deals, check availability, and view specifications before you buy.
-    </p>
-
-    {product.model && (
-      <p className="text-gray-700 mb-4">
-        <span className="font-medium">Model:</span> {product.model}
-      </p>
-    )}
-
-    {product.specifications && Object.keys(product.specifications).length > 0 && (
-      <div className="overflow-hidden border rounded-lg divide-y divide-gray-200 mb-4">
-        {Object.entries(product.specifications).map(([key, value]) => (
-          <div key={key} className="grid grid-cols-3 text-sm border-b last:border-none">
-            <div className="px-4 py-3 font-medium text-gray-700 bg-gray-100 border-r border-gray-200">
-              {key}
-            </div>
-            <div className="col-span-2 px-4 py-3 text-gray-800">{value}</div>
-          </div>
-        ))}
-      </div>
-    )}
-
-    <ul className="list-disc list-inside text-gray-700">
-      <li>Compare prices from {product.retailers?.length || 0} stores in real time.</li>
-      <li>Check stock availability and nearby store locations.</li>
-      <li>View ratings and reviews to make informed decisions.</li>
-      <li>Click "Buy Now" to purchase directly from the retailer.</li>
-    </ul>
-  </div>
-));
-
-// Extracted and memoized RelatedSearches component
-const RelatedSearches = memo(() => {
-  const searchTerms = useMemo(() => 
-    ["Tools", "Bathroom", "Furniture", "Dining", "Outdoor", "Ceiling", "Electrical", "Plumbing", "Hardware"],
-    []
-  );
-
-  return (
-    <div className="w-full max-w-7xl mx-auto p-4 mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Related Searches</h2>
-      <div className="flex flex-wrap gap-4">
-        {searchTerms.map((term) => (
-          <button
-            key={term}
-            className="px-4 py-2 border border-black rounded-full text-sm text-black hover:bg-gray-100 transition-colors cursor-pointer"
-          >
-            {term}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-});
-
 // Add display names for better debugging
 ProductImage.displayName = 'ProductImage';
 RetailerCard.displayName = 'RetailerCard';
-ProductDetails.displayName = 'ProductDetails';
-RelatedSearches.displayName = 'RelatedSearches';
 
 export default ProductDetailsPage;

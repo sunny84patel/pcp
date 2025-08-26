@@ -46,7 +46,7 @@ const PopularProducts = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxSlide = Math.max(0, products.length - itemsPerView);
+  const maxSlide = Math.max(0, products.length / itemsPerView);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));

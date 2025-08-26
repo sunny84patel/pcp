@@ -40,6 +40,7 @@ const CategoryPage = () => {
   const queryParams = useQuery();
   const initialQuery = queryParams.get("query") || "";
   const { results, status, error } = useSelector((state) => state.search);
+  console.log("Search Results:", results);
 
   // Selected filters
   const [selectedStore, setSelectedStore] = useState("");
@@ -75,6 +76,17 @@ const CategoryPage = () => {
 
   const products = results?.results || [];
   const hasNextPage = results?.pagination?.hasNextPage || false;
+  
+  // Fix for total products count - use multiple fallback options
+  const totalProducts = results?.totalResults || 
+                       results?.total || 
+                       results?.pagination?.totalResults || 
+                       results?.pagination?.total ||
+                       products.length || 0;
+
+  // Calculate showing range
+  const showingStart = products.length > 0 ? (currentPage - 1) * productsPerPage + 1 : 0;
+  const showingEnd = (currentPage - 1) * productsPerPage + products.length;
 
   const handleClearAll = () => {
     setSortBy("");
@@ -168,9 +180,9 @@ const CategoryPage = () => {
             }}
             onClearAll={handleClearAll}
             sortValues={{ sortBy, sortOrder }}
-            totalProducts={results?.totalResults || 0}
-            showingStart={(currentPage - 1) * productsPerPage + 1}
-            showingEnd={(currentPage - 1) * productsPerPage + products.length}
+            totalProducts={totalProducts}
+            showingStart={showingStart}
+            showingEnd={showingEnd}
           />
 
           {status === "loading" && (

@@ -1,31 +1,3 @@
-// import Product from '../models/Product.js';
-// import ProductStoreData from '../models/ProductStoreData.js';
-// import { injectAffiliateUrl } from '../utils/affiliateUtil.js';
-
-// export const searchProducts = async (req, res) => {
-//   const query = req.query.q || '';
-//   try {
-//     const products = await Product.find({ searchText: new RegExp(query, 'i') });
-
-//     const fullResults = await Promise.all(products.map(async (product) => {
-//       const stores = await ProductStoreData.find({ productId: product.productId });
-//       const enrichedStores = stores.map(store => ({
-//         ...store.toObject(),
-//         url: injectAffiliateUrl(store)
-//       }));
-//       return {
-//         ...product.toObject(),
-//         stores: enrichedStores
-//       };
-//     }));
-
-//     res.json(fullResults);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Failed to fetch products' });
-//   }
-// };
-
-
 // controllers/productController.js
 import { Product, Inventory, Image } from '../models/Product.js';
 
@@ -41,10 +13,6 @@ export const searchProducts = async (req, res) => {
       sortOrder = 'asc'
     } = req.query;
 
-    console.log('🔍 Incoming search:', {
-      query, stores, page, limit, inStockOnly, sortBy, sortOrder
-    });
-
     if (!query) {
       return res.status(400).json({ error: 'Query parameter is required' });
     }
@@ -56,133 +24,108 @@ export const searchProducts = async (req, res) => {
       'home depot': 'homedepot'
     };
 
-    const escapedQuery = query
-      .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean)
-      .join('.*');
-
-    const flexibleRegex = new RegExp(escapedQuery, 'i');
-
-    let storeIds = stores
+    const storeIds = stores
       ? stores.split(',').map(s => storeMap[s.trim().toLowerCase()] || s.trim().toLowerCase())
       : null;
 
     const isNumericQuery = /^\d+$/.test(query.trim());
 
-    const inventoryQuery = {};
-    if (storeIds?.length) {
-      inventoryQuery.storeId = { $in: storeIds };
+    // Step 1: Search products using $text index OR numeric / modelNo query
+    const productFilter = {
+      $or: [
+        { $text: { $search: query } }, // uses text index
+        { modelNo: { $regex: query, $options: 'i' } },
+        ...(isNumericQuery ? [{ productId: query.trim() }] : [])
+      ]
+    };
+
+    const matchedProducts = await Product.find(productFilter)
+      .lean()
+      .select('productId name modelNo brand category');
+
+    const productIds = matchedProducts.map(p => p.productId);
+    if (!productIds.length) {
+      return res.status(200).json({
+        results: [],
+        totalResults: 0,
+        pagination: { 
+          currentPage: Number(page), 
+          hasNextPage: false,
+          totalResults: 0,
+          totalPages: 0
+        },
+        searchMethod: 'text-index',
+        searchedStores: storeIds || ['all stores']
+      });
     }
-    if (inStockOnly === 'true' || inStockOnly === true) {
-      inventoryQuery.inventoryQuantity = { $gt: 0 };
-    }
+
+    // Step 2: Query Inventory using indexed fields and $in
+    const inventoryFilter = {
+      productId: { $in: productIds },
+      ...(storeIds ? { storeId: { $in: storeIds } } : {}),
+      ...(inStockOnly === 'true' || inStockOnly === true ? { inventoryQuantity: { $gt: 0 } } : {})
+    };
+
+    // Get total count for pagination (before skip/limit)
+    const totalInventoryCount = await Inventory.countDocuments(inventoryFilter);
 
     const skip = (Number(page) - 1) * Number(limit);
+    const inventoryDocs = await Inventory.find(inventoryFilter)
+      .sort(getSortOption(sortBy, sortOrder))
+      .skip(skip)
+      .limit(Number(limit) + 1)
+      .lean();
 
-    // Base aggregation
-    const pipeline = [
-      { $match: inventoryQuery },
-      {
-        $lookup: {
-          from: 'products',
-          localField: 'productId',
-          foreignField: 'productId',
-          as: 'product'
-        }
-      },
-      { $unwind: { path: '$product', preserveNullAndEmptyArrays: true } },
-      {
-        $match: {
-          $or: [
-            { 'product.name': { $regex: flexibleRegex } },
-            { 'product.modelNo': { $regex: query, $options: 'i' } },
-            ...(isNumericQuery ? [{ productId: query.trim() }] : [])
-          ]
-        }
-      },
-      {
-        $group: {
-          _id: '$productId',
-          productId: { $first: '$productId' },
-          name: { $first: '$product.name' },
-          modelNo: { $first: '$product.modelNo' },
-          brand: { $first: '$product.brand' },
-          category: { $first: '$product.category' },
-          stores: {
-            $push: {
-              storeId: '$storeId',
-              price: '$price',
-              currency: '$currency',
-              inventoryQuantity: '$inventoryQuantity',
-              rating: '$rating',
-              totalReviews: '$totalReviews',
-              url: '$url'
-            }
-          },
-          minPrice: { $min: '$price' },
-          maxRating: { $max: '$rating' },
-          totalReviews: { $sum: '$totalReviews' }
-        }
-      }
-    ];
+    const hasNextPage = inventoryDocs.length > limit;
+    const limitedInventory = hasNextPage ? inventoryDocs.slice(0, limit) : inventoryDocs;
 
-    // Sorting logic
-    const sortStage = {};
-    const order = sortOrder === 'desc' ? -1 : 1;
-    if (sortBy === 'price') {
-      sortStage.minPrice = order;
-    } else if (sortBy === 'reviews') {
-      sortStage.totalReviews = order;
-    } else if (sortBy === 'popularity') {
-      sortStage.maxRating = order;
-    } else {
-      sortStage.name = order;
-    }
-
-    pipeline.push({ $sort: sortStage });
-    pipeline.push({ $skip: skip });
-    pipeline.push({ $limit: Number(limit) + 1 });
-
-    const matchingProducts = await Inventory.aggregate(pipeline);
-
-    const hasNextPage = matchingProducts.length > limit;
-    const limitedProducts = hasNextPage
-      ? matchingProducts.slice(0, limit)
-      : matchingProducts;
-
-    const productIds = limitedProducts.map(p => p.productId);
+    // Step 3: Fetch all images for these products
     const images = await Image.find({ productId: { $in: productIds } }).lean();
 
-    const results = limitedProducts.map(product => {
-      const productImages = images
-        .filter(img => img.productId === product.productId)
-        .map(img => img.url);
+    // Step 4: Merge Product + Inventory + Images
+    const productMap = Object.fromEntries(matchedProducts.map(p => [p.productId, p]));
 
-      return {
-        productId: product.productId,
-        name: product.name || 'Unknown Product',
-        modelNo: product.modelNo || '',
-        brand: product.brand || '',
-        category: product.category || '',
-        minPrice: product.minPrice || 0,
-        rating: product.maxRating || 0,
-        totalReviews: product.totalReviews || 0,
-        stores: product.stores.map(store => ({
-          ...store,
-          images: productImages
-        }))
-      };
+    const resultMap = {};
+    limitedInventory.forEach(inv => {
+      const prod = productMap[inv.productId] || {};
+      const imgUrls = images.filter(img => img.productId === inv.productId).map(i => i.url);
+
+      if (!resultMap[inv.productId]) {
+        resultMap[inv.productId] = {
+          productId: inv.productId,
+          name: prod.name || 'Unknown Product',
+          modelNo: prod.modelNo || '',
+          brand: prod.brand || '',
+          category: prod.category || '',
+          minPrice: inv.price || 0,
+          rating: inv.rating || 0,
+          totalReviews: inv.totalReviews || 0,
+          stores: []
+        };
+      }
+
+      resultMap[inv.productId].stores.push({
+        ...inv,
+        images: imgUrls
+      });
     });
 
+    // Calculate total pages
+    const totalPages = Math.ceil(totalInventoryCount / Number(limit));
+    const totalUniqueProducts = Object.keys(resultMap).length;
+
     res.status(200).json({
-      results,
-      pagination: {
-        currentPage: Number(page),
-        hasNextPage
+      results: Object.values(resultMap),
+      totalResults: totalInventoryCount, // Total inventory items across all pages
+      totalProducts: totalUniqueProducts, // Total unique products on current page
+      pagination: { 
+        currentPage: Number(page), 
+        hasNextPage,
+        totalResults: totalInventoryCount,
+        totalPages,
+        limit: Number(limit)
       },
-      searchMethod: 'store-specific',
+      searchMethod: 'text-index',
       searchedStores: storeIds || ['all stores']
     });
 
@@ -192,3 +135,11 @@ export const searchProducts = async (req, res) => {
   }
 };
 
+// Helper for sorting
+const getSortOption = (sortBy, sortOrder) => {
+  const order = sortOrder === 'desc' ? -1 : 1;
+  if (sortBy === 'price') return { price: order };
+  if (sortBy === 'reviews') return { totalReviews: order };
+  if (sortBy === 'popularity') return { rating: order };
+  return { name: order };
+};

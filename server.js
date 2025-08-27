@@ -24,10 +24,7 @@ async function connectDB() {
   try {
     const mongoUri = process.env.MONGO_URI;
 
-    const conn = await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(mongoUri);
 
     isConnected = conn.connections[0].readyState === 1;
     console.log(`✅ MongoDB Connected [${isProd ? 'Production' : 'Development'}]`);

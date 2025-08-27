@@ -42,35 +42,51 @@ const ProductImage = memo(({ product }) => (
 
 const RetailerCard = memo(({ offer, renderStars }) => (
   <div className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700">
-    <div className="flex justify-between items-center">
-      <div className="flex items-center space-x-2">
+    <div className="flex justify-between items-start">
+      {/* LEFT: Store + Title */}
+      <div className="flex items-start space-x-2 flex-1">
         <img
           src={offer.store === "Lowe's" ? lowes : homedepot}
           alt={offer.store}
-          className="h-5 w-auto"
+          className="h-5 w-auto mt-1"
           loading="lazy"
           decoding="async"
         />
         <span className="font-semibold text-gray-800">{offer.productTitle}</span>
-        <span className="text-xl font-bold">${offer.price}</span>
-        {offer.listPrice && (
-          <span className="text-sm line-through text-gray-400">${offer.listPrice}</span>
-        )}
-        {offer.savings > 0 && (
-          <span className="text-green-600 text-xs font-medium ml-2">
-            Save ${offer.savings}
-          </span>
+      </div>
+
+      {/* RIGHT: Price + Savings + Offers */}
+      <div className="flex flex-col items-end">
+        <div className="flex items-baseline space-x-2">
+          <span className="text-xl font-bold">${offer.price}</span>
+
+          {offer.listPrice && offer.listPrice > offer.price && (
+            <>
+              <span className="text-sm line-through text-gray-400">
+                ${offer.listPrice}
+              </span>
+              <span className="text-green-600 text-xs font-medium">
+                Save ${(offer.listPrice - offer.price).toFixed(2)}
+              </span>
+            </>
+          )}
+        </div>
+
+        {offer.offers > 0 && (
+          <div className="flex items-center gap-1 mt-1 text-xs text-purple-700">
+            {offer.offers} Offers <ChevronDown className="h-4 w-4" />
+            <img
+              src={offericon}
+              alt="Offer icon"
+              className="h-4"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         )}
       </div>
-      {offer.offers > 0 && (
-        <div className="flex flex-col items-end text-xs text-purple-700">
-          <span className="flex items-center gap-1">
-            {offer.offers} Offers <ChevronDown className="h-4 w-4" />
-          </span>
-          <img src={offericon} alt="Offer icon" className="mt-1 h-4" loading="lazy" decoding="async" />
-        </div>
-      )}
     </div>
+
 
     <div className="text-sm text-gray-700 space-y-1">
       <span className="flex items-center">
@@ -118,11 +134,11 @@ const ProductDetailsPage = () => {
 
   const sortOptions = useMemo(() => ["Lowest Price", "Highest Price"], []);
   const [selectedOption, setSelectedOption] = useState(sortOptions[0]);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
-
+  const fetchedRef = useRef(null);
   // Debounced localStorage save to reduce blocking operations
   const saveToLocalStorage = useCallback((productData) => {
     // Use requestIdleCallback for non-critical localStorage operations
@@ -170,10 +186,12 @@ const ProductDetailsPage = () => {
     }
   }, []);
 
-  // Fetch product with error boundary
+
+
   useEffect(() => {
-    if (id) {
+    if (id && fetchedRef.current !== id) {
       dispatch(fetchProductDetail(id));
+      fetchedRef.current = id;
     }
   }, [id, dispatch]);
 
@@ -187,7 +205,7 @@ const ProductDetailsPage = () => {
   // Optimized sorting with early return
   const sortedRetailers = useMemo(() => {
     if (!product?.retailers?.length) return [];
-    
+
     if (selectedOption === "Lowest Price") {
       return [...product.retailers].sort((a, b) => a.price - b.price);
     }
@@ -270,7 +288,7 @@ const ProductDetailsPage = () => {
 
               <span
                 className="cursor-pointer hover:underline font-normal"
-                // onClick={() => navigate("/tools-equipment")}
+              // onClick={() => navigate("/tools-equipment")}
               >
                 Tools & Equipments
               </span>
@@ -278,7 +296,7 @@ const ProductDetailsPage = () => {
 
               <span
                 className="cursor-pointer hover:underline font-normal text-[#070707]"
-                // onClick={() => navigate("/drills")}
+              // onClick={() => navigate("/drills")}
               >
                 Drills
               </span>
@@ -296,8 +314,8 @@ const ProductDetailsPage = () => {
           </button>
           <label className="flex font-bold items-center gap-2 cursor-pointer hover:text-black">
             Add to Compare
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               className="form-checkbox accent-purple-600 cursor-pointer"
               aria-label="Add to comparison list"
             />
@@ -352,7 +370,7 @@ const ProductDetailsPage = () => {
       <ProductDetails product={product} />
 
       {/* Lazy load sections with optimized fallbacks */}
-      <Suspense 
+      <Suspense
         fallback={
           <div className="max-w-7xl mx-auto px-4">
             <div className="animate-pulse space-y-6 py-6">
@@ -414,7 +432,7 @@ const ProductDetails = memo(({ product }) => (
 
 // Extracted and memoized RelatedSearches component
 const RelatedSearches = memo(() => {
-  const searchTerms = useMemo(() => 
+  const searchTerms = useMemo(() =>
     ["Tools", "Bathroom", "Furniture", "Dining", "Outdoor", "Ceiling", "Electrical", "Plumbing", "Hardware"],
     []
   );

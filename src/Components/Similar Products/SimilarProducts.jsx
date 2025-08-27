@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSimilarProducts } from "../../Redux/Reducers/SimilarProductSlice";
 import { ArrowRight } from "lucide-react";
@@ -19,12 +19,14 @@ const SimilarProducts = () => {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(4.5);
+  const fetchedRef = useRef(null);
 
   useEffect(() => {
-    if (id) {
+    if (id && fetchedRef.current !== id) {
       dispatch(fetchSimilarProducts(id));
+      fetchedRef.current = id;
     }
-  }, [dispatch, id]);
+  }, [id, dispatch]);
 
   // Enhanced mapping with correct storeId handling from your API structure
   const groupedProducts = useMemo(() => {
@@ -87,7 +89,7 @@ const SimilarProducts = () => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
-    
+
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
@@ -133,7 +135,7 @@ const SimilarProducts = () => {
         );
       }
     }
-    
+
     return (
       <div className="flex items-center space-x-1">
         <div className="flex">{stars}</div>
@@ -179,11 +181,10 @@ const SimilarProducts = () => {
             <button
               onClick={prevSlide}
               disabled={currentSlide === 0}
-              className={`absolute left-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                currentSlide === 0
+              className={`absolute left-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${currentSlide === 0
                   ? "text-gray-400 cursor-not-allowed bg-gray-100"
                   : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
-              }`}
+                }`}
               style={{ border: "2px solid #5F43B2" }}
             >
               <FontAwesomeIcon icon={faArrowLeft} className="text-sm" />
@@ -194,9 +195,8 @@ const SimilarProducts = () => {
               <div
                 className="flex transition-transform duration-300 ease-in-out"
                 style={{
-                  transform: `translateX(-${
-                    currentSlide * (100 / itemsPerView)
-                  }%)`,
+                  transform: `translateX(-${currentSlide * (100 / itemsPerView)
+                    }%)`,
                   width: `${(groupedProducts.length / itemsPerView) * 100}%`,
                 }}
               >
@@ -205,7 +205,7 @@ const SimilarProducts = () => {
                   const hasLowes = !!product.stores["lowe's"];
                   const hasHomeDepot = !!product.stores["homedepot"];
                   const bestPrice = getBestPrice(product.stores);
-                  
+
                   return (
                     <div
                       key={product.productId}
@@ -247,7 +247,7 @@ const SimilarProducts = () => {
                             <h3 className="text-sm font-medium text-gray-800 mb-2 line-clamp-2 h-10">
                               {product.title}
                             </h3>
-                            
+
                             {/* Rating */}
                             <div className="mb-3">
                               {renderStars(product.rating || 0)}
@@ -272,12 +272,12 @@ const SimilarProducts = () => {
                                       <div className="text-lg font-bold text-gray-800">
                                         {formatPrice(product.stores["lowe's"].price, product.stores["lowe's"].currency)}
                                       </div>
-                                      {product.stores["lowe's"].listPrice && 
-                                       product.stores["lowe's"].listPrice !== product.stores["lowe's"].price && (
-                                        <div className="text-xs text-gray-500 line-through">
-                                          {formatPrice(product.stores["lowe's"].listPrice, product.stores["lowe's"].currency)}
-                                        </div>
-                                      )}
+                                      {product.stores["lowe's"].listPrice &&
+                                        product.stores["lowe's"].listPrice !== product.stores["lowe's"].price && (
+                                          <div className="text-xs text-gray-500 line-through">
+                                            {formatPrice(product.stores["lowe's"].listPrice, product.stores["lowe's"].currency)}
+                                          </div>
+                                        )}
                                       {product.stores["lowe's"].inventoryQuantity > 0 && (
                                         <div className="text-xs text-green-600">
                                           {product.stores["lowe's"].inventoryQuantity} in stock
@@ -309,12 +309,12 @@ const SimilarProducts = () => {
                                       <div className="text-lg font-bold text-gray-800">
                                         {formatPrice(product.stores["homedepot"].price, product.stores["homedepot"].currency)}
                                       </div>
-                                      {product.stores["homedepot"].listPrice && 
-                                       product.stores["homedepot"].listPrice !== product.stores["homedepot"].price && (
-                                        <div className="text-xs text-gray-500 line-through">
-                                          {formatPrice(product.stores["homedepot"].listPrice, product.stores["homedepot"].currency)}
-                                        </div>
-                                      )}
+                                      {product.stores["homedepot"].listPrice &&
+                                        product.stores["homedepot"].listPrice !== product.stores["homedepot"].price && (
+                                          <div className="text-xs text-gray-500 line-through">
+                                            {formatPrice(product.stores["homedepot"].listPrice, product.stores["homedepot"].currency)}
+                                          </div>
+                                        )}
                                       {product.stores["homedepot"].inventoryQuantity > 0 && (
                                         <div className="text-xs text-green-600">
                                           {product.stores["homedepot"].inventoryQuantity} in stock
@@ -342,7 +342,7 @@ const SimilarProducts = () => {
                                   </span>
                                 </div>
                               )}
-                              
+
                               {/* No stores available */}
                               {!hasLowes && !hasHomeDepot && (
                                 <div className="text-center text-gray-500 text-sm">
@@ -363,11 +363,10 @@ const SimilarProducts = () => {
             <button
               onClick={nextSlide}
               disabled={currentSlide >= maxSlide}
-              className={`absolute right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                currentSlide >= maxSlide
+              className={`absolute right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all ${currentSlide >= maxSlide
                   ? "text-gray-400 cursor-not-allowed bg-gray-100"
                   : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
-              }`}
+                }`}
               style={{ border: "2px solid #5F43B2" }}
             >
               <FontAwesomeIcon icon={faArrowRight} className="text-sm" />

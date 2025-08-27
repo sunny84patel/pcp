@@ -80,7 +80,7 @@ const SimilarProducts = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const maxSlide = Math.max(0, groupedProducts.length - Math.floor(itemsPerView));
+  const maxSlide = Math.max(0, groupedProducts.length / itemsPerView);
   const nextSlide = () =>
     setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));
   const prevSlide = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
@@ -151,10 +151,10 @@ const SimilarProducts = () => {
     return currency === 'USD' ? `$${price}` : `${price} ${currency}`;
   };
 
-  const getBestPrice = (stores) => {
-    const prices = Object.values(stores).map(store => parseFloat(store.price)).filter(price => !isNaN(price));
-    return prices.length > 0 ? Math.min(...prices) : null;
-  };
+  // const getBestPrice = (stores) => {
+  //   const prices = Object.values(stores).map(store => parseFloat(store.price)).filter(price => !isNaN(price));
+  //   return prices.length > 0 ? Math.min(...prices) : null;
+  // };
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 pt-16 bg-white">

@@ -117,7 +117,7 @@ const RecentlyViewed = () => {
 
   console.log("Display products:", displayProducts);
 
-  const maxSlide = Math.max(0, displayProducts.length - itemsPerView);
+  const maxSlide = Math.max(0, displayProducts.length / itemsPerView);
 
   const nextSlide = () =>
     setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));

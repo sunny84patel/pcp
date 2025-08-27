@@ -204,7 +204,7 @@ const SimilarProducts = () => {
                   // Check for stores using exact storeId values from API
                   const hasLowes = !!product.stores["lowe's"];
                   const hasHomeDepot = !!product.stores["homedepot"];
-                  const bestPrice = getBestPrice(product.stores);
+                  // const bestPrice = getBestPrice(product.stores);
 
                   return (
                     <div

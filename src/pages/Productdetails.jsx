@@ -1,4 +1,12 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback, Suspense, memo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+  Suspense,
+  memo,
+} from "react";
 import Navbar from "../Components/Navbar/navbar";
 import { AlarmClock, ChevronDown, Heart, Share2, Star } from "lucide-react";
 import lowes from "../assets/images/lowes.png";
@@ -15,8 +23,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
 
 // Lazy loaded sections with better loading states
-const RecentlyViewed = React.lazy(() => import("../Components/RecentlyViewed/RecentlyViewed"));
-const SimilarProducts = React.lazy(() => import("../Components/Similar Products/SimilarProducts"));
+const RecentlyViewed = React.lazy(() =>
+  import("../Components/RecentlyViewed/RecentlyViewed")
+);
+const SimilarProducts = React.lazy(() =>
+  import("../Components/Similar Products/SimilarProducts")
+);
 const Footer = React.lazy(() => import("../Components/Footer/Footer"));
 
 // Memoized subcomponents
@@ -40,91 +52,134 @@ const ProductImage = memo(({ product }) => (
   </div>
 ));
 
-const RetailerCard = memo(({ offer, renderStars }) => (
-  <div className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700">
-    <div className="flex justify-between items-start">
-      {/* LEFT: Store + Title */}
-      <div className="flex items-start space-x-2 flex-1">
-        <img
-          src={offer.store === "Lowe's" ? lowes : homedepot}
-          alt={offer.store}
-          className="h-5 w-auto mt-1"
-          loading="lazy"
-          decoding="async"
-        />
-        <span className="font-semibold text-gray-800">{offer.productTitle}</span>
-      </div>
+const RetailerCard = memo(({ offer, renderStars }) => {
+  // ✅ pull nearest store info from Redux
+  const { store, loading, error } = useSelector((state) => state.nearestStore);
 
-      {/* RIGHT: Price + Savings + Offers */}
-      <div className="flex flex-col items-end">
-        <div className="flex items-baseline space-x-2">
-          <span className="text-xl font-bold">${offer.price}</span>
+  // ✅ debug logs
+  console.log("RetailerCard mounted for:", offer.store);
+  console.log("Nearest store from Redux:", store);
 
-          {offer.listPrice && offer.listPrice > offer.price && (
-            <>
-              <span className="text-sm line-through text-gray-400">
-                ${offer.listPrice}
-              </span>
-              <span className="text-green-600 text-xs font-medium">
-                Save ${(offer.listPrice - offer.price).toFixed(2)}
-              </span>
-            </>
-          )}
+  return (
+    <div className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700">
+      <div className="flex justify-between items-start">
+        {/* LEFT: Store + Title */}
+        <div className="flex items-start space-x-2 flex-1">
+          <img
+            src={offer.store === "Lowe's" ? lowes : homedepot}
+            alt={offer.store}
+            className="h-5 w-auto mt-1"
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="font-semibold text-gray-800">
+            {offer.productTitle}
+          </span>
         </div>
 
-        {offer.offers > 0 && (
-          <div className="flex items-center gap-1 mt-1 text-xs text-purple-700">
-            {offer.offers} Offers <ChevronDown className="h-4 w-4" />
+        {/* RIGHT: Price + Savings + Offers */}
+        <div className="flex flex-col items-end">
+          <div className="flex items-baseline space-x-2">
+            <span className="text-xl font-bold">${offer.price}</span>
+
+            {offer.listPrice && offer.listPrice > offer.price && (
+              <>
+                <span className="text-sm line-through text-gray-400">
+                  ${offer.listPrice}
+                </span>
+                <span className="text-green-600 text-xs font-medium">
+                  Save ${(offer.listPrice - offer.price).toFixed(2)}
+                </span>
+              </>
+            )}
+          </div>
+
+          {offer.offers > 0 && (
+            <div className="flex items-center gap-1 mt-1 text-xs text-purple-700">
+              {offer.offers} Offers <ChevronDown className="h-4 w-4" />
+              <img
+                src={offericon}
+                alt="Offer icon"
+                className="h-4"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Reviews + Store Info */}
+      <div className="text-sm text-gray-700 space-y-1">
+        <span className="flex items-center">
+          {renderStars(offer.reviewScore)}
+          <span className="ml-4 text-[14px] font-normal text-gray-500">
+            {offer.reviewCount || 0} Reviews
+          </span>
+        </span>
+
+        <div className="pt-4 pb-4">
+          {/* ✅ Show nearest store dynamically */}
+          {store ? (
+            <div className="mb-0 flex flex-col gap-1">
+              <p className="flex items-center gap-2">
+                <img
+                  src={location}
+                  alt="Location"
+                  className="w-4 h-4"
+                  loading="lazy"
+                  decoding="async"
+                />
+                Nearby store:{" "}
+                <span className="text-blue-600 underline">{store.address}</span>
+                <span className="ml-2 text-gray-500">
+                  ({store.distance ? `${store.distance}` : "N/A"})
+                </span>
+                <span className="ml-2 text-green-700 flex items-center">
+                  <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />
+                  {offer.stockStatus}
+                </span>
+              </p>
+
+              <p className="text-gray-600 text-xs ml-6">
+                Store ID:{" "}
+                <span className="font-semibold">{store.store_id}</span>
+              </p>
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm">Detecting nearest store...</p>
+          )}
+
+          {/* Delivery */}
+          <p className="flex items-center gap-2 mt-2 mb-0">
             <img
-              src={offericon}
-              alt="Offer icon"
-              className="h-4"
+              src={truck}
+              alt="truck"
+              className="w-4 h-4"
               loading="lazy"
               decoding="async"
             />
-          </div>
-        )}
+            {offer.delivery}
+            <button className="w-5 h-5 rounded-full bg-[#E3E5FC] text-gray-700 text-xs flex items-center justify-center hover:bg-gray-300">
+              <img
+                src={informationCircle}
+                alt="Info"
+                className="w-3 h-3 object-contain"
+              />
+            </button>
+          </p>
+        </div>
       </div>
+
+      <button
+        onClick={() => window.open(offer.url, "_blank")}
+        className="w-full bg-purple-700 text-white py-2 rounded-full font-semibold hover:bg-purple-800 transition-colors cursor-pointer"
+      >
+        Buy Now
+      </button>
     </div>
-
-
-    <div className="text-sm text-gray-700 space-y-1">
-      <span className="flex items-center">
-        {renderStars(offer.reviewScore)}
-        <span className="ml-4 text-[14px] font-normal text-gray-500">
-          {offer.reviewCount || 0} Reviews
-        </span>
-      </span>
-
-      <div className="pt-4 pb-4">
-        <p className="mb-0 flex items-center gap-2">
-          <img src={location} alt="Location" className="w-4 h-4" loading="lazy" decoding="async" />
-          Nearby store:{" "}
-          <span className="text-blue-600 underline">{offer.storeLocation}</span>{" "}
-          ({offer.distance})
-          <span className="ml-2 text-green-700 flex items-center">
-            <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />
-            {offer.stockStatus}
-          </span>
-        </p>
-        <p className="flex items-center gap-2 mt-2 mb-0">
-          <img src={truck} alt="truck" className="w-4 h-4" loading="lazy" decoding="async" />
-          {offer.delivery}
-          <button className="w-5 h-5 rounded-full bg-[#E3E5FC] text-gray-700 text-xs flex items-center justify-center hover:bg-gray-300">
-            <img src={informationCircle} alt="Info" className="w-3 h-3 object-contain" />
-          </button>
-        </p>
-      </div>
-    </div>
-
-    <button
-      onClick={() => window.open(offer.url, "_blank")}
-      className="w-full bg-purple-700 text-white py-2 rounded-full font-semibold hover:bg-purple-800 transition-colors cursor-pointer"
-    >
-      Buy Now
-    </button>
-  </div>
-));
+  );
+});
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -145,7 +200,9 @@ const ProductDetailsPage = () => {
     if (window.requestIdleCallback) {
       window.requestIdleCallback(() => {
         try {
-          const viewed = JSON.parse(localStorage.getItem("viewedProducts") || "[]");
+          const viewed = JSON.parse(
+            localStorage.getItem("viewedProducts") || "[]"
+          );
           if (!viewed.some((p) => p.productId === productData.productId)) {
             const productToStore = {
               productId: productData.productId,
@@ -166,7 +223,9 @@ const ProductDetailsPage = () => {
       // Fallback for browsers without requestIdleCallback
       setTimeout(() => {
         try {
-          const viewed = JSON.parse(localStorage.getItem("viewedProducts") || "[]");
+          const viewed = JSON.parse(
+            localStorage.getItem("viewedProducts") || "[]"
+          );
           if (!viewed.some((p) => p.productId === productData.productId)) {
             const productToStore = {
               productId: productData.productId,
@@ -185,8 +244,6 @@ const ProductDetailsPage = () => {
       }, 0);
     }
   }, []);
-
-
 
   useEffect(() => {
     if (id && fetchedRef.current !== id) {
@@ -236,7 +293,8 @@ const ProductDetailsPage = () => {
   useEffect(() => {
     if (isDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isDropdownOpen, handleClickOutside]);
 
@@ -288,7 +346,7 @@ const ProductDetailsPage = () => {
 
               <span
                 className="cursor-pointer hover:underline font-normal"
-              // onClick={() => navigate("/tools-equipment")}
+                // onClick={() => navigate("/tools-equipment")}
               >
                 Tools & Equipments
               </span>
@@ -296,7 +354,7 @@ const ProductDetailsPage = () => {
 
               <span
                 className="cursor-pointer hover:underline font-normal text-[#070707]"
-              // onClick={() => navigate("/drills")}
+                // onClick={() => navigate("/drills")}
               >
                 Drills
               </span>
@@ -305,7 +363,9 @@ const ProductDetailsPage = () => {
           <h1 className="font-bold text-gray-800 leading-snug text-2xl md:text-3xl">
             {product.title}
           </h1>
-          {product.model && <p className="text-sm text-gray-600">Model {product.model}</p>}
+          {product.model && (
+            <p className="text-sm text-gray-600">Model {product.model}</p>
+          )}
         </div>
 
         <div className="flex items-center gap-6 text-sm text-gray-700 whitespace-nowrap mt-4 md:mt-0">
@@ -338,7 +398,9 @@ const ProductDetailsPage = () => {
             >
               <span>{selectedOption}</span>
               <ChevronDown
-                className={`h-4 w-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                className={`h-4 w-4 transition-transform ${
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -361,7 +423,11 @@ const ProductDetailsPage = () => {
           </div>
 
           {sortedRetailers.map((offer, idx) => (
-            <RetailerCard key={`${offer.store}-${idx}`} offer={offer} renderStars={renderStars} />
+            <RetailerCard
+              key={`${offer.store}-${idx}`}
+              offer={offer}
+              renderStars={renderStars}
+            />
           ))}
         </div>
       </div>
@@ -398,8 +464,9 @@ const ProductDetails = memo(({ product }) => (
   <div className="max-w-7xl mx-auto px-4 mt-10 bg-white p-6">
     <h3 className="text-2xl font-bold mb-4">Product Details</h3>
     <p className="text-gray-600 text-[16px] mb-4">
-      Compare prices for <span className="font-semibold">{product.title}</span> across multiple
-      stores. Find the best deals, check availability, and view specifications before you buy.
+      Compare prices for <span className="font-semibold">{product.title}</span>{" "}
+      across multiple stores. Find the best deals, check availability, and view
+      specifications before you buy.
     </p>
 
     {product.model && (
@@ -408,21 +475,28 @@ const ProductDetails = memo(({ product }) => (
       </p>
     )}
 
-    {product.specifications && Object.keys(product.specifications).length > 0 && (
-      <div className="overflow-hidden border rounded-lg divide-y divide-gray-200 mb-4">
-        {Object.entries(product.specifications).map(([key, value]) => (
-          <div key={key} className="grid grid-cols-3 text-sm border-b last:border-none">
-            <div className="px-4 py-3 font-medium text-gray-700 bg-gray-100 border-r border-gray-200">
-              {key}
+    {product.specifications &&
+      Object.keys(product.specifications).length > 0 && (
+        <div className="overflow-hidden border rounded-lg divide-y divide-gray-200 mb-4">
+          {Object.entries(product.specifications).map(([key, value]) => (
+            <div
+              key={key}
+              className="grid grid-cols-3 text-sm border-b last:border-none"
+            >
+              <div className="px-4 py-3 font-medium text-gray-700 bg-gray-100 border-r border-gray-200">
+                {key}
+              </div>
+              <div className="col-span-2 px-4 py-3 text-gray-800">{value}</div>
             </div>
-            <div className="col-span-2 px-4 py-3 text-gray-800">{value}</div>
-          </div>
-        ))}
-      </div>
-    )}
+          ))}
+        </div>
+      )}
 
     <ul className="list-disc list-inside text-gray-700">
-      <li>Compare prices from {product.retailers?.length || 0} stores in real time.</li>
+      <li>
+        Compare prices from {product.retailers?.length || 0} stores in real
+        time.
+      </li>
       <li>Check stock availability and nearby store locations.</li>
       <li>View ratings and reviews to make informed decisions.</li>
       <li>Click "Buy Now" to purchase directly from the retailer.</li>
@@ -432,14 +506,26 @@ const ProductDetails = memo(({ product }) => (
 
 // Extracted and memoized RelatedSearches component
 const RelatedSearches = memo(() => {
-  const searchTerms = useMemo(() =>
-    ["Tools", "Bathroom", "Furniture", "Dining", "Outdoor", "Ceiling", "Electrical", "Plumbing", "Hardware"],
+  const searchTerms = useMemo(
+    () => [
+      "Tools",
+      "Bathroom",
+      "Furniture",
+      "Dining",
+      "Outdoor",
+      "Ceiling",
+      "Electrical",
+      "Plumbing",
+      "Hardware",
+    ],
     []
   );
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Related Searches</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        Related Searches
+      </h2>
       <div className="flex flex-wrap gap-4">
         {searchTerms.map((term) => (
           <button
@@ -455,9 +541,9 @@ const RelatedSearches = memo(() => {
 });
 
 // Add display names for better debugging
-ProductImage.displayName = 'ProductImage';
-RetailerCard.displayName = 'RetailerCard';
-ProductDetails.displayName = 'ProductDetails';
-RelatedSearches.displayName = 'RelatedSearches';
+ProductImage.displayName = "ProductImage";
+RetailerCard.displayName = "RetailerCard";
+ProductDetails.displayName = "ProductDetails";
+RelatedSearches.displayName = "RelatedSearches";
 
 export default ProductDetailsPage;

@@ -14,7 +14,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout as loginLogout } from "../../Redux/Reducers/LoginSlice";
-import { logout as otpLogout, resetOTPState } from "../../Redux/Reducers/OtpSlice";
+import {
+  logout as otpLogout,
+  resetOTPState,
+} from "../../Redux/Reducers/OtpSlice";
 import location2 from "../../assets/images/location2.png";
 import italic from "../../assets/images/ITALIC.png";
 
@@ -48,10 +51,10 @@ const avatarColor = (name = "") => {
 const getHighResImage = (imageUrl) => {
   if (!imageUrl) return null;
   // Replace s96-c with s200-c for higher resolution
-  return imageUrl.replace(/=s\d+-c$/, '=s200-c');
+  return imageUrl.replace(/=s\d+-c$/, "=s200-c");
 };
 
-const Navbar = () => {
+const Navbar = ({ postalCode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -63,6 +66,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { store, loading, error } = useSelector((state) => state.nearestStore);
 
   // ✅ Read from OTP slice where the actual user data is stored
   const { user, isAuthenticated } = useSelector((state) => state.otp);
@@ -99,43 +103,42 @@ const Navbar = () => {
   const handleImageLoad = () => {
     setImageLoading(false);
     setImageError(false);
-    console.log('Profile image loaded successfully');
+    console.log("Profile image loaded successfully");
   };
 
   const handleImageError = (e) => {
-    console.error('Profile image failed to load:', e.target.src);
+    console.error("Profile image failed to load:", e.target.src);
     setImageError(true);
     setImageLoading(false);
   };
 
   const handleLogout = async () => {
     try {
-      console.log('Logout initiated...');
-      
+      console.log("Logout initiated...");
+
       // Clear localStorage
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("authToken"); // In case you use this key too
-      
+
       // Reset Redux states
       dispatch(loginLogout());
       dispatch(otpLogout());
       dispatch(resetOTPState());
-      
+
       // Close dropdown
       setIsProfileOpen(false);
-      
+
       // Reset component states
       setImageError(false);
       setImageLoading(true);
-      
-      console.log('Logout completed, navigating to login...');
-      
+
+      console.log("Logout completed, navigating to login...");
+
       // Navigate to login page
       navigate("/login", { replace: true });
-      
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       // Still navigate to login even if there's an error
       navigate("/login", { replace: true });
     }
@@ -154,13 +157,19 @@ const Navbar = () => {
   ];
 
   // Profile Avatar Component
-  const ProfileAvatar = ({ size = "w-10 h-10", textSize = "font-semibold", showBorder = true }) => {
+  const ProfileAvatar = ({
+    size = "w-10 h-10",
+    textSize = "font-semibold",
+    showBorder = true,
+  }) => {
     const highResImage = getHighResImage(user?.image);
     const borderClass = showBorder ? "border-2 border-white" : "";
-    
+
     if (user?.image && !imageError) {
       return (
-        <div className={`${size} rounded-full overflow-hidden ${borderClass} flex items-center justify-center relative bg-gray-200`}>
+        <div
+          className={`${size} rounded-full overflow-hidden ${borderClass} flex items-center justify-center relative bg-gray-200`}
+        >
           {imageLoading && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center z-10">
               <div className="text-xs text-gray-500">Loading...</div>
@@ -169,7 +178,9 @@ const Navbar = () => {
           <img
             src={highResImage || user.image}
             alt={user?.name || "Profile"}
-            className={`w-full h-full object-cover ${imageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            className={`w-full h-full object-cover ${
+              imageLoading ? "opacity-0" : "opacity-100"
+            } transition-opacity duration-300`}
             onLoad={handleImageLoad}
             onError={handleImageError}
             crossOrigin="anonymous"
@@ -213,7 +224,9 @@ const Navbar = () => {
           {/* Location */}
           <div className="hidden md:flex items-center space-x-2 text-white">
             <img src={location2} alt="Location Icon" className="w-4 h-4" />
-            <span className="text-sm font-medium">14304</span>
+            <span className="text-sm font-medium">
+              {loading ? "Detecting..." : store?.zip || "No Zip Available"}
+            </span>
           </div>
 
           {/* Main Navigation */}
@@ -301,7 +314,7 @@ const Navbar = () => {
                   className="select-none cursor-pointer hover:scale-105 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 rounded-full"
                   aria-haspopup="menu"
                   aria-expanded={isProfileOpen}
-                  title={`Profile: ${user?.name || user?.fullName || 'User'}`}
+                  title={`Profile: ${user?.name || user?.fullName || "User"}`}
                 >
                   <ProfileAvatar />
                 </button>
@@ -323,7 +336,10 @@ const Navbar = () => {
                         </span>
                       </div>
                       <div className="ml-3">
-                        <ProfileAvatar size="h-12 w-12" textSize="text-sm font-semibold" />
+                        <ProfileAvatar
+                          size="h-12 w-12"
+                          textSize="text-sm font-semibold"
+                        />
                       </div>
                     </div>
 

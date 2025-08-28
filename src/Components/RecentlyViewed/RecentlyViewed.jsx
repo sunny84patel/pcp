@@ -248,14 +248,14 @@ const RecentlyViewed = () => {
                                       <img
                                         src={lowes}
                                         alt="Lowes"
-                                        className="h-5 w-auto"
+                                        className="h-10 w-auto"
                                       />
                                     )}
                                     {hasHomeDepot && (
                                       <img
                                         src={homedepot}
                                         alt="Home Depot"
-                                        className="h-5 w-auto"
+                                        className="h-10 w-auto"
                                       />
                                     )}
                                   </div>

@@ -163,13 +163,13 @@ const PopularProducts = () => {
                                     <img
                                       src={lowes}
                                       alt=""
-                                      className="h-5 w-auto"
+                                      className="h-10 w-auto"
                                     />
                                   ) : (
                                     <img
                                       src={homedepot}
                                       alt=""
-                                      className="h-5 w-auto"
+                                      className="h-10 w-auto"
                                     />
                                   )}
                                 </div>

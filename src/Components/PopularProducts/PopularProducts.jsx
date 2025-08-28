@@ -49,7 +49,7 @@ const PopularProducts = () => {
   const maxSlide = Math.max(0, products.length / itemsPerView);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));
+    setCurrentSlide((prev) => Math.min(prev + 1, maxSlide + 1));
   };
 
   const prevSlide = () => {

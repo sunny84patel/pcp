@@ -120,7 +120,7 @@ const RecentlyViewed = () => {
   const maxSlide = Math.max(0, displayProducts.length / itemsPerView);
 
   const nextSlide = () =>
-    setCurrentSlide((prev) => Math.min(prev + 1, maxSlide));
+    setCurrentSlide((prev) => Math.min(prev + 1, maxSlide + 1));
   const prevSlide = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
 
   const renderStars = (rating) => (

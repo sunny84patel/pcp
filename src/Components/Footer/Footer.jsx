@@ -72,7 +72,12 @@ export default function Footer() {
           height: "400px",
         }}
       >
-        <div className="max-w-6xl mx-auto px-6">
+        <div
+          className="max-w-6xl mx-auto px-6"
+          style={{
+            backgroundColor: "#443778",
+          }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             {/* First Column - Brand */}
             <div className="space-y-2">

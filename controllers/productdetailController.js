@@ -67,6 +67,13 @@ const makeSingleApiCall = async (platform, searchTerm, requestId) => {
   }
 };
 
+const getDeliveryDateString = (daysToAdd = 2) => {
+  const today = new Date();
+  today.setDate(today.getDate() + daysToAdd);
+
+  const options = { weekday: "long", day: "numeric", month: "long" };
+  return today.toLocaleDateString("en-US", options);
+};
 /**
  * Creates the BEST single search term from product info
  * @param {object} baseProduct - Product from database
@@ -237,7 +244,7 @@ export const getProductDetails = async (req, res) => {
       url: baseInventory.url || "",
       storeLocation: "Niagara Falls #1287",
       distance: "0.1 mi",
-      delivery: "Delivery in 2-3 Days, Friday, 27 June",
+     delivery: `Delivery in 2-3 Days, ${getDeliveryDateString(2)}`,
       matchScore: 100,
       productId: baseProduct.productId,
       isBaseProduct: true
@@ -282,7 +289,7 @@ export const getProductDetails = async (req, res) => {
         url: matchResult.inventory.url || "",
         storeLocation: "Niagara Falls #1287",
         distance: "0.1 mi",
-        delivery: "Delivery in 2-3 Days, Friday, 27 June",
+        delivery: `Delivery in 2-3 Days, ${getDeliveryDateString(2)}`,
         matchScore: matchResult.matchScore || 0,
         productId: matchResult.product.productId,
         isBaseProduct: false,

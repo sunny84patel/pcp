@@ -14,6 +14,7 @@ import signupReducer from '../Reducers/SignupSlice';
 import loginReducer from '../Reducers/LoginSlice';
 import otpReducer from '../Reducers/OtpSlice';
 import nearestStoreReducer from "../Reducers/NearestStoreSlice";
+import nearestLowesStoreReducer from "../Reducers/lowesstore";
 
 // Persist configuration
 const persistConfig = {
@@ -34,7 +35,8 @@ const rootReducer = combineReducers({
   login: loginReducer,
   otp: otpReducer,
   search: searchReducer,
-  nearestStore: nearestStoreReducer
+  nearestStore: nearestStoreReducer,
+  nearestLowesStore: nearestLowesStoreReducer
 });
 
 // Create persisted reducer

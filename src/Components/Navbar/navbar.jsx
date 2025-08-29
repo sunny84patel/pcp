@@ -225,7 +225,7 @@ const Navbar = ({ postalCode }) => {
           <div className="hidden md:flex items-center space-x-2 text-white">
             <img src={location2} alt="Location Icon" className="w-4 h-4" />
             <span className="text-sm font-medium">
-              {loading ? "Detecting..." : store?.zip || "No Zip Available"}
+              {loading ? "Detecting..." : store?.postal_code || "No Zip Available"}
             </span>
           </div>
 

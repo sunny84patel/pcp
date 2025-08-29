@@ -21,6 +21,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
+import { fetchNearestLowesStore } from "../Redux/Reducers/lowesstore";
+import { fetchNearestStore } from "../Redux/Reducers/NearestStoreSlice";
 
 // Lazy loaded sections with better loading states
 const RecentlyViewed = React.lazy(() =>
@@ -53,12 +55,53 @@ const ProductImage = memo(({ product }) => (
 ));
 
 const RetailerCard = memo(({ offer, renderStars }) => {
-  // ✅ pull nearest store info from Redux
-  const { store, loading, error } = useSelector((state) => state.nearestStore);
+  const dispatch = useDispatch();
+  
+  // Get both store data from Redux
+  const { store: homeDepotStore, loading: homeDepotLoading, error: homeDepotError } = useSelector((state) => state.nearestStore);
+  const { store: lowesStore, loading: lowesLoading, error: lowesError } = useSelector((state) => state.nearestLowesStore);
 
-  // ✅ debug logs
+  // Debug logs
   console.log("RetailerCard mounted for:", offer.store);
-  console.log("Nearest store from Redux:", store);
+  console.log("Home Depot store from Redux:", homeDepotStore);
+  console.log("Nearest Lowe's store from Redux:", lowesStore);
+
+  // Dispatch appropriate thunk based on store type
+  useEffect(() => {
+    if (offer.store === "Lowe's") {
+      dispatch(fetchNearestLowesStore());
+    } else if (offer.store === "Home Depot") {
+      dispatch(fetchNearestStore()); // Your existing Home Depot thunk
+    }
+  }, [dispatch, offer.store]);
+
+  // Determine which store data to use based on the offer
+  const getCurrentStoreData = () => {
+    if (offer.store === "Lowe's") {
+      return {
+        storeData: lowesStore,
+        loading: lowesLoading,
+        error: lowesError,
+        // Map Lowe's data structure to match your display format
+        displayStore: lowesStore ? {
+          address: `${lowesStore.street_address}, ${lowesStore.city}, ${lowesStore.zip_state} ${lowesStore.zipcode}`,
+          store_id: lowesStore.store_no,
+          distance: lowesStore.distance || lowesStore.calculatedDistance?.toFixed(1),
+          name: lowesStore.store_name
+        } : null
+      };
+    } else {
+      // Home Depot (existing structure)
+      return {
+        storeData: homeDepotStore,
+        loading: homeDepotLoading,
+        error: homeDepotError,
+        displayStore: homeDepotStore
+      };
+    }
+  };
+
+  const { storeData, loading, error, displayStore } = getCurrentStoreData();
 
   return (
     <div className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700">
@@ -119,8 +162,16 @@ const RetailerCard = memo(({ offer, renderStars }) => {
         </span>
 
         <div className="pt-4 pb-4">
-          {/* ✅ Show nearest store dynamically */}
-          {store ? (
+          {/* Store-specific data display */}
+          {loading ? (
+            <p className="text-gray-400 text-sm">
+              Detecting nearest {offer.store} store...
+            </p>
+          ) : error ? (
+            <p className="text-red-500 text-sm">
+              Error finding {offer.store} store: {error}
+            </p>
+          ) : displayStore ? (
             <div className="mb-0 flex flex-col gap-1">
               <p className="flex items-center gap-2">
                 <img
@@ -130,10 +181,12 @@ const RetailerCard = memo(({ offer, renderStars }) => {
                   loading="lazy"
                   decoding="async"
                 />
-                Nearby store:{" "}
-                <span className="text-blue-600 underline">{store.address}</span>
+                Nearby {offer.store} store:{" "}
+                <span className="text-blue-600 underline">
+                  {displayStore.address}
+                </span>
                 <span className="ml-2 text-gray-500">
-                  ({store.distance ? `${store.distance}` : "N/A"})
+                  ({displayStore.distance ? `${displayStore.distance} miles` : "N/A"})
                 </span>
                 <span className="ml-2 text-green-700 flex items-center">
                   <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />
@@ -143,11 +196,17 @@ const RetailerCard = memo(({ offer, renderStars }) => {
 
               <p className="text-gray-600 text-xs ml-6">
                 Store ID:{" "}
-                <span className="font-semibold">{store.store_id}</span>
+                <span className="font-semibold">{displayStore.store_id}</span>
+                {/* Show store name for Lowe's */}
+                {offer.store === "Lowe's" && displayStore.name && (
+                  <span className="ml-2">({displayStore.name})</span>
+                )}
               </p>
             </div>
           ) : (
-            <p className="text-gray-400 text-sm">Detecting nearest store...</p>
+            <p className="text-gray-400 text-sm">
+              No {offer.store} store found in your area
+            </p>
           )}
 
           {/* Delivery */}
@@ -180,7 +239,6 @@ const RetailerCard = memo(({ offer, renderStars }) => {
     </div>
   );
 });
-
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -193,6 +251,7 @@ const ProductDetailsPage = () => {
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
+  
   const fetchedRef = useRef(null);
   // Debounced localStorage save to reduce blocking operations
   const saveToLocalStorage = useCallback((productData) => {

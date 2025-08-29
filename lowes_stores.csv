@@ -1,0 +1,1751 @@
+zipcode,street_address,city,store_name,store_no,zip_state,distance
+33033,1850 N.E. 8TH Street,Homestead,Homestead Lowe's,2707,FL,999.7
+33162,850 NE 167TH ST,N. Miami Beach,North Miami Beach Lowe's,3413,FL,1000.3
+33165,8859 SW 24th Street,Miami,Lowe's Outlet Westchester,3569,FL,1002.6
+33186,9191 Sw 137TH Avenue,Miami,Kendall Lowe's,2904,FL,1004.6
+33012,1650 West 37TH Street,Hialeah,Hialeah Lowe's,2254,FL,1004.9
+33015,17460 Nw 57TH Avenue,Hialeah,N.W. Miami-dade Lowe's,1841,FL,1006.5
+33024,130 North University Drive,Pembroke Pines,Pembroke Pines Lowe's,1681,FL,1006.8
+33311,1001 West Oakland Park Blvd,Oakland Park,Oakland Park Lowe's,754,FL,1007.3
+33062,1851 N. Federal Highway,Pompano Beach,Pompano Beach Lowe's,1792,FL,1007.6
+33351,8050 West Oakland Park BLVD.,Sunrise,Sunrise Lowe's,1113,FL,1012.6
+1129,1600 BOSTON RD,Springfield,E. Springfield Lowe's,660,MA,8.2
+1035,282 Russell Street,Hadley,Hadley Lowe's,1916,MA,18.4
+6002,325 COTTAGE GROVE ROAD,Bloomfield,Bloomfield Lowe's,1665,CT,19.7
+6042,31 BUCKLAND HILLS DRIVE,Manchester,Manchester Lowe's,763,CT,20.1
+1082,348 Palmer Road,Ware,Ware Lowe's,2386,MA,20.9
+6111,3270 BERLIN TURNPIKE,Newington,Newington Lowe's,623,CT,30.2
+6790,420 WINSTED ROAD,Torrington,Torrington Lowe's,2395,CT,30.7
+6062,246 NEW BRITAIN AVENUE,Plainville,Plainville Lowe's,650,CT,30.8
+6416,90 Berlin Road,Cromwell,Cromwell Lowe's,2383,CT,33.9
+6489,500 Executive Boulevard,Southington,Southington Lowe's,2910,CT,36
+12534,490 Fairview Avenue,Hudson,Greenport Lowe's,2927,NY,39.4
+1605,533 LINCOLN STREET,Worcester,Worcester Lowe's,1206,MA,32.7
+1453,198 New Lancaster Road,Leominster,Leominster Lowe's,1858,MA,37.7
+1581,260-266 TURNPIKE RD,Westborough,Westborough Lowe's,1831,MA,39.3
+6241,1150 Killingly Commons Drive,Dayville,Killingly Lowe's,2396,CT,41.3
+1749,6 Highland Common East,Hudson,Hudson Lowe's,2375,MA,42.4
+12077,271 Route 9 West,Glenmont,Glenmont Lowe's,1784,NY,50.7
+12110,790 Loudon Road,Latham,Latham Lowe's,1177,NY,51.1
+12205,1482 Central Avenue,Colonie,Colonie Lowe's,1973,NY,53.3
+1757,40 Fortune Boulevard,Milford,Milford Lowe's,1889,MA,35.9
+1701,350 Cochituate Road,Framingham,Framingham Lowe's,2384,MA,41
+3031,"124 ROUTE 101A, UNIT 15",Amherst,Amherst Lowe's,2526,NH,38.1
+6351,155 River Road,Lisbon,Lisbon Lowe's,2938,CT,39.5
+12065,476 Route 146,Halfmoon,Halfmoon Lowe's,1740,NY,49.4
+2896,19 DOWLING VILLAGE BLVD,North Smithfield,North Smithfield Lowe's,2723,RI,37
+12414,60 Catskill Commons,Catskill,Catskill Lowe's,2483,NY,36.3
+12304,422 Balltown Road,Schenectady,Niskayuna Lowe's,1612,NY,39.5
+12302,93 Freemans Bridge Road,Glenville,Glenville Lowe's,2701,NY,44
+12401,901 Frank Sottile BLVD.,Kingston,Ulster Lowe's,524,NY,34
+12528,650 Route 299,Highland,Lloyd Lowe's,2326,NY,42.5
+12601,1941 South Road,Poughkeepsie,Poughkeepsie Lowe's,541,NY,43
+12866,10 LOWE'S Drive,Saratoga Springs,Saratoga Springs Lowe's,560,NY,46
+3060,143 Daniel Webster Highway,Nashua,S. Nashua Lowe's,2391,NH,56.2
+3110,222 SOUTH RIVER ROAD,Bedford,Bedford Lowe's,1907,NH,57.9
+12804,251 Quaker RD.,Queensbury,Glens Falls Lowe's,641,NY,48.4
+1851,50 Lowes Way,Lowell,Lowell Lowe's,2657,MA,29.9
+3079,541 South Broadway,Salem,Salem Lowe's,2382,NH,31.8
+1801,15 Commerce Way,Woburn,Woburn Lowe's,1198,MA,17.6
+2155,630 Fellsway,Medford,Lowe's Outlet Medford,3575,MA,21.8
+2760,1360 S. Washington Street,North Attleboro,North Attleboro Lowe's,1014,MA,11.5
+2904,1703 MINERAL SPRINGS AVENUE,North Providence,North Providence Lowe's,2863,RI,11.6
+2762,201 Washington Street,Plainville,Plainville Lowe's,2393,MA,11.9
+2920,247 GARFIELD AVENUE,Cranston,Cranston Lowe's,1505,RI,16.1
+2771,1000 Fall River Avenue,Seekonk,Seekonk Lowe's,1932,MA,18.7
+2886,555 GREENWICH AVENUE,Warwick,N. Warwick Lowe's,2397,RI,21
+2026,306 Providence Highway,Dedham,Dedham Lowe's,1914,MA,25.5
+2322,75 STOCKWELL DRIVE,Avon,Lowe's Outlet Avon,3574,MA,20.4
+1906,1500 Broadway,Saugus,Saugus Lowe's,2372,MA,16.7
+1923,153 ANDOVER STREET,Danvers,Danvers Lowe's,1094,MA,16.5
+2301,135 WEST GATE DRIVE,Brockton,Brockton Lowe's,1174,MA,19.5
+3874,417 Lafayette Road,Seabrook,Seabrook Lowe's,1979,NH,20.8
+3042,36 Fresh River Road,Epping,Epping Lowe's,2551,NH,17.3
+3840,1440 Greenland Road,Greenland,Greenland Lowe's,1879,NH,22.7
+2191,729 BRIDGE STREET,Weymouth,Weymouth Lowe's,1618,MA,19.3
+2351,400 Bedford Street,Abington,Abington Lowe's,2785,MA,24.1
+2359,108 OLD CHURCH STREET,Pembroke,Pembroke Lowe's,1758,MA,23.2
+2379,724 West Center Street,West Bridgewater,West Bridgewater Lowe's,2752,MA,17.4
+2364,32 William C. Gould Way,Kingston,Kingston Lowe's,1663,MA,19.1
+2767,850 Route 44,Raynham,Raynham Lowe's,1857,MA,20
+2571,"2421 Cranberry HWY, STE. 100",Wareham,Wareham Lowe's,2376,MA,21.8
+2747,55 Faunce Corner Mall Rd,N. Dartmouth,N. Dartmouth Lowe's,1832,MA,12.2
+2886,510 QUAKER LANE,Warwick,Warwick Lowe's,1197,RI,54.6
+6385,167 WATERFORD PARKWAY NORTH,Waterford,Waterford Lowe's,2263,CT,27.6
+3301,90 Fort Eddy Road,Concord,Concord Lowe's,2617,NH,18.3
+3839,"160 Washington ST, Suite 800",Rochester,Rochester Lowe's,2449,NH,21.2
+3276,48 LOWES DRIVE,Tilton,Tilton Lowe's,2610,NH,30.3
+3249,1407 Lakeshore Road,Gilford,Gilford Lowe's,2322,NH,43.6
+4073,1900 Main Street,Sanford,Sanford Lowe's,2388,ME,31.2
+3818,32 Mountain Valley Boulevard,North Conway,N. Conway Lowe's,2374,NH,53.6
+3561,1037 Meadow Street,Littleton,Littleton Lowe's,2321,NH,28.2
+4062,64 Manchester Drive,Windham,N. Windham Lowe's,2629,ME,53.1
+4102,1058 BRIGHTON AVENUE,Portland,Portland Lowe's,1946,ME,61.8
+4074,1000 GALLERY BOULEVARD,Scarborough,Scarborough Lowe's,2407,ME,62.3
+5452,10 SUSIE WILSON RD,Essex Junction,Essex Lowe's,2693,VT,71.4
+5403,189 Hannaford Drive,South Burlington,South Burlington Lowe's,1913,VT,72.6
+4210,650 Turner Street,Auburn,Auburn Lowe's,2514,ME,71.5
+4330,53 Crossing Way,Augusta,Augusta Lowe's,2265,ME,69
+4011,250 BATH ROAD,Brunswick,Brunswick Lowe's,2536,ME,74.5
+12901,39 Centre Drive,Plattsburgh,Plattsburgh Lowe's,1195,NY,99.1
+4861,164 New County Road,Thomaston,Thomaston Lowe's,2496,ME,48.9
+4412,15 Arista Drive,Brewer,Brewer Lowe's,2291,ME,72.9
+4401,70 Springer Drive,Bangor,Bangor Lowe's,1940,ME,73
+4769,135 Maysville Street,Presque Isle,Presque Isle Lowe's,2209,ME,81
+12010,4825 State Highway 30,Amsterdam,Amsterdam Lowe's,1880,NY,52.4
+13676,61 Country Lane,Potsdam,Potsdam Lowe's,2250,NY,88.7
+13669,2001 Ford Street Extension,Ogdensburg,Ogdensburg Lowe's,2401,NY,107.4
+6450,1201 EAST MAIN ST,Meriden,Lowe's Outlet Meriden,3567,CT,17.9
+6492,1094 North Colony Road,Wallingford,Wallingford Lowe's,2288,CT,19.2
+6513,115 FOXON BLVD.,New Haven,New Haven Lowe's,593,CT,30.9
+6810,67 Eagle Road,Danbury,Danbury Lowe's,2544,CT,39.2
+11901,1461 Old Country Road,Riverhead,Riverhead - South Lowe's,2921,NY,35.4
+6460,311 Old Gate Lane,Milford,Milford Lowe's,2658,CT,38.9
+6418,496 New Haven Avenue,Derby,Derby Lowe's,2327,CT,8.7
+6850,100 Connecticut Ave,Norwalk,Norwalk Lowe's,3248,CT,24.5
+10598,3200 CROMPOND ROAD,Yorktown,Yorktown Lowe's,3360,NY,26.2
+11790,2150 Nesconset Highway,Stony Brook,Stony Brook Lowe's,2233,NY,23.4
+11763,2796 Route 112,Medford,Medford Lowe's,1189,NY,27.1
+11725,100 Long Island Expressway,Commack,Commack Lowe's,3159,NY,26.5
+11772,825 Montauk Highway,East Patchogue,Patchogue Lowe's,2731,NY,30.6
+11706,800 Sunrise Highway,Bay Shore,Bay Shore Lowe's,1709,NY,29.8
+12550,1239 Route 300,Newburgh,Newburgh Lowe's,1584,NY,33.2
+10710,100 RIDGE HILL BLVD,Yonkers,Yonkers Lowe's,3305,NY,13
+10962,206 Route 303,Orangeburg,Orangeburg Lowe's,1192,NY,16.9
+11530,700 Dibblee Drive,Garden City,Garden City Lowe's,1624,NY,20
+11801,920 South Broadway,Hicksville,Hicksville Lowe's,2612,NY,20.4
+10954,100 Overlook Boulevard,Nanuet,Clarkstown Lowe's,2249,NY,21.6
+11735,90 Price Parkway,Farmingdale,Farmingdale Lowe's,1917,NY,22.3
+7652,2000 Bergen Town Center,Paramus,Paramus Lowe's,2431,NJ,23.7
+7047,7801 TONNELLE AVENUE,North Bergen,North Bergen Lowe's,1106,NJ,24.2
+7950,230 East Hanover Ave,Morris Plains,Hanover Lowe's,1921,NJ,7
+7405,1210 ROUTE 23 NORTH,Butler,Butler Lowe's,1957,NJ,7
+7504,265 Mclean Boulevard,Paterson,Paterson Lowe's,2328,NJ,14.2
+7836,20 International Drive South,Flanders,MT. Olive Lowe's,1512,NJ,15.6
+7083,1721 MORRIS AVENUE,Union,Union Lowe's,1939,NJ,16.5
+7073,150 ROUTE 17 NORTH,East Rutherford,E. Rutherford Lowe's,1942,NJ,17.2
+7304,727 ROUTE 440,Jersey City,Jersey City Lowe's,1937,NJ,20.5
+7860,39 Hampton House Road,Newton,Hampton Township Lowe's,1976,NJ,21.1
+7002,400 Bayonne Crossing Way,Bayonne,Bayonne Lowe's,2676,NJ,16.9
+10303,2171 Forest Avenue,Staten Island,N.W. Staten Island Lowe's,1583,NY,17.3
+11215,118 2ND Avenue,Brooklyn,Brooklyn Lowe's,1674,NY,13.4
+10309,2790 Arthur Kill Road,Staten Island,S. Staten Island Lowe's,1597,NY,8.7
+7095,51 Woodbridge Center Drive,Woodbridge,Woodbridge Lowe's,1658,NJ,11.1
+11234,5602 Avenue U,Brooklyn,Brooklyn - Kings Plaza Lowe's,2284,NY,11.4
+8854,1345 CENTENNIAL AVE.,Piscataway,Piscataway Lowe's,692,NJ,11.2
+7733,2194 State Route 35,Holmdel,Holmdel Lowe's,1035,NJ,11.7
+8816,339 STATE HIGHWAY ROUTE 18,East Brunswick,E. Brunswick Lowe's,1862,NJ,12.7
+7751,57 HIGHWAY 9 S,Morganville,Marlboro Lowe's,1567,NJ,15.7
+8844,315 Route 206 Suite 600,Hillsborough,Hillsborough Lowe's,1656,NJ,15.4
+8822,150 ROUTE 31,Flemington,Flemington - Raritan Lowe's,2552,NJ,19.9
+7840,217 Mountain Avenue,Hackettstown,Hackettstown Lowe's,1938,NJ,19.9
+18336,115 Wenlock Road,Matamoras,Matamoras Lowe's,1952,PA,15.7
+10918,3924 Summerville Way,Chester,Chester Lowe's,2685,NY,20.4
+10941,700 NORTH GALLERIA DRIVE,Middletown,Middletown Lowe's,540,NY,23.5
+7724,118 Highway 35,Eatontown,Eatontown Lowe's,1548,NJ,4.8
+7731,4975 Us Highway 9,Howell,Howell Lowe's,1676,NJ,17.7
+8723,520 Route 70,Brick,Brick Township Lowe's,1535,NJ,13.7
+8753,1375 Hooper Avenue,Toms River,Toms River Lowe's,1608,NJ,18.2
+8759,1053 Highway 70,Manchester,Manchester Township Lowe's,2428,NJ,20.7
+8691,1000 Marketplace Boulevard,Hamilton,Hamilton Lowe's,1046,NJ,19.9
+8540,3504 BRUNSWICK PIKE,Princeton,W. Windsor Lowe's,1185,NJ,22.1
+11422,253-01 Rockaway Blvd,Rosedale,Rosedale Lowe's,2664,NY,21
+18321,5027 Windsor Drive,Bartonsville,Stroudsburg Lowe's,2252,PA,31.9
+18344,3207 Route 940,Mount Pocono,MT. Pocono Lowe's,1934,PA,32.7
+8865,1325 U.S. Route 22,Phillipsburg,Phillipsburg Lowe's,1590,NJ,10.9
+18045,4443 Birkland Place,Easton,Easton Lowe's,1759,PA,16.2
+18018,1235 Martin Court,Bethlehem,Bethlehem Lowe's,1867,PA,21.7
+18052,2650 Macarthur Road,Whitehall,Whitehall Township Lowe's,2763,PA,25.4
+8052,2834 Route 73 North,Maple Shade,Maple Shade Lowe's,1637,NJ,2.8
+8045,122 West Oak Avenue,Lawnside,Lawnside Lowe's,1149,NJ,4.8
+8043,144 Route 73,Voorhees,Voorhees Lowe's,2389,NJ,5.1
+8075,1331 FAIRVIEW BOULEVARD,Delran,Delran Lowe's,1670,NJ,8.2
+8096,1480 Clements Bridge Road,Deptford,Deptford Lowe's,1542,NJ,9
+19137,3800 Aramingo Avenue,Philadelphia,Philadelphia - Aramingo Aven Lowe's,2732,PA,9.6
+19148,2106 S CHRISTOPHER COLUMBUS BLVD,Philadelphia,S. Philadelphia Lowe's,1849,PA,9.7
+8048,"1520 ROUTE 38, BUILDING 10",Lumberton,MT. Holly Lowe's,1575,NJ,9.9
+8081,485 CROSS KEYS ROAD,Sicklerville,Gloucester Township Lowe's,2630,NJ,10.7
+8012,100 WATSON DRIVE,Turnersville,Turnersville Lowe's,751,NJ,12.2
+8080,611 Woodbury Glassboro Road,Sewell,Mantua Township Lowe's,2402,NJ,4.4
+19131,1500 North 50TH Street,Philadelphia,W. Philadelphia Lowe's,2378,PA,15.2
+8050,"297 Route 72 WEST, Suite 30",Manahawkin,Manahawkin Lowe's,2260,NJ,9.4
+8234,6048 Black Horse Pike,Egg Harbor Township,Egg Harbor Township Lowe's,1034,NJ,21.6
+8332,113 Bluebird Lane,Millville,Millville Lowe's,1816,NJ,43.9
+19114,9701 East Roosevelt BLVD.,Philadelphia,N.E. Philadelphia Lowe's,1848,PA,9.6
+19047,1400 East Lincoln Highway,Langhorne,Middletown Township Lowe's,1572,PA,6.9
+19053,3421 Horizon Boulevard,Trevose,Bensalem Lowe's,1980,PA,7.2
+19090,4055 Welsh Road,Willow Grove,Upper Moreland Lowe's,1837,PA,16
+19720,2225 Hessler Boulevard,New Castle,Wilmington Lowe's,2429,DE,15.2
+19701,1030 EAST SONGSMITH DRIVE,Bear,Bear Lowe's,3168,DE,16.8
+19709,500 West Main Street,Middletown,Middletown Lowe's,1571,DE,21
+19711,2000 Ogletown Road,Newark,Newark Lowe's,2258,DE,21
+19803,3100 Brandywine Pkwy 1ST Floor,Wilmington,N. Wilmington Lowe's,622,DE,21.2
+19015,5005 EDGMONT AVE,Brookhaven,Brookhaven Lowe's,3277,PA,22.2
+19083,116 West Township Line RD.,Havertown,Havertown Lowe's,3169,PA,9.8
+19311,561 Hepburn Road,Avondale,Avondale Lowe's,2405,PA,19.6
+19901,1450 N. Dupont Highway,Dover,Dover Lowe's,587,DE,22.3
+21901,425 Mauldin Avenue,North East,North East Lowe's,2848,MD,27
+8242,3171 Route 9 South,Rio Grande,Cape May Lowe's,1861,NJ,34.8
+19958,20364 Plantations Road,Lewes,Sussex County Lowe's,658,DE,20.1
+19934,516 Walmart Drive,Camden,Camden Lowe's,2537,DE,33.1
+19966,26688 Centerview Drive,Millsboro,Millsboro Lowe's,2795,DE,33.6
+19973,22880 Sussex Highway,Seaford,Seaford Lowe's,2248,DE,41.1
+21801,2606 NORTH SALISBURY BLVD.,Salisbury,Salisbury Lowe's,424,MD,51.6
+18976,425 EASTON ROAD,Warrington,Warrington Lowe's,735,PA,14.3
+19446,630 Cowpath Road,Lansdale,Montgomeryville Lowe's,1669,PA,18.2
+18951,1001 S. West End BLVD.,Quakertown,Quakertown Lowe's,1667,PA,19.2
+19440,160 Forty Foot Road,Hatfield,Hatfield Township Lowe's,2706,PA,22.8
+13350,182 Lowes Boulevard,Herkimer,Herkimer Lowe's,2400,NY,39.9
+13502,710 Horatio Street,Utica,Utica Lowe's,523,NY,37.2
+13413,4699 Middle Settlement Road,New Hartford,New Hartford Lowe's,2726,NY,42.2
+13820,5283 State Highway 23,Oneonta,Oneonta Lowe's,1967,NY,35.6
+13815,5411 State Highway 12,Norwich,Norwich Lowe's,2399,NY,44.8
+13440,1230 Erie BLVD. West,Rome,Rome Lowe's,1865,NY,56.7
+13901,1318 Upper Front Street,Binghamton,Binghamton Lowe's,1502,NY,52.5
+13421,1200 LOWE'S Drive,Oneida,Oneida Lowe's,2289,NY,53.1
+18519,901 VIEWMONT DR.,Dickson City,Scranton Lowe's,242,PA,44.7
+13850,225 Sycamore RD.,Vestal,Vestal Lowe's,202,NY,53.8
+18702,501 ARENA HUB PLAZA,Wilkes Barre,Wilkes-barre Lowe's,652,PA,51.6
+18704,50 West Side Mall,Edwardsville,Edwardsville Lowe's,2412,PA,49.8
+13601,"20828 New York STATE, Rte 3",Watertown,Watertown Lowe's,1022,NY,130.1
+13031,5377 W Genesee Street,Camillus,Camillus Lowe's,2538,NY,0.6
+13224,131 Simon Drive,Syracuse,Syracuse Lowe's,2380,NY,8.3
+13090,3856 State Route 31,Liverpool,Clay Lowe's,2379,NY,9.5
+13039,5701 East Circle Drive,Cicero,Cicero Lowe's,2541,NY,10.2
+13021,299 Grant Avenue Rd,Auburn,Auburn Lowe's,561,NY,15.5
+13126,445 State Route 104,Oswego,Oswego Lowe's,1908,NY,30.8
+13045,872 Route 13,Cortland,Cortlandville Lowe's,1953,NY,32.8
+14456,3030 Sessler Drive,Geneva,Waterloo Lowe's,2759,NY,36.5
+14424,4200 Recreation Drive,Canandaigua,Canandaigua Lowe's,1817,NY,32
+14850,130 Fairgrounds Memorial Pkwy,Ithaca,Ithaca Lowe's,1864,NY,34.8
+14502,1605 Macedon Parkway,Macedon,Macedon Lowe's,2668,NY,40.8
+14903,"913 County RD, Rt 64",Elmira,Big Flats Lowe's,530,NY,37.7
+18840,2151 Elmira Street,Sayre,Sayre Lowe's,2385,PA,37.9
+14580,900 Five Mile Line Road,Webster,Webster Lowe's,1581,NY,39.2
+16933,2165 South Main Street,Mansfield,Mansfield Lowe's,2893,PA,37.4
+17754,701 N LOYALSOCK AVE,Montoursville,Montoursville Lowe's,356,PA,59.6
+14221,8150 Transit Road,Williamsville,E. Amherst Lowe's,1881,NY,23.2
+14228,1659 Niagara Falls Blvd,Amherst,W. Amherst Lowe's,1883,NY,23.9
+14127,3195 Southwestern Blvd,Orchard Park,Orchard Park Lowe's,1882,NY,36.7
+14420,300 Owens Road,Brockport,Brockport Lowe's,2434,NY,37.6
+14075,4950 Southwestern BLVD.,Hamburg,Hamburg Lowe's,2704,NY,40.6
+14626,3150 West Ridge Road,Rochester,Greece Lowe's,1655,NY,47.7
+14623,2350 Marketplace Drive,Rochester,Henrietta Lowe's,645,NY,54.1
+14141,440 South Cascade Drive,Springville,Springville Lowe's,2453,NY,57.2
+16365,2625 Market Street,Warren,Warren Lowe's,2614,PA,63.5
+14843,949 State Route 36,Hornell,Hornell Lowe's,2444,NY,67.9
+16509,1930 KEYSTONE DR. UNIT 2,Erie,Erie Lowe's,226,PA,65.8
+16506,2305 Asbury Road,Erie,W. Erie Lowe's,1654,PA,69.3
+44004,2416 Dillon Drive,Ashtabula,Ashtabula Lowe's,1519,OH,84.3
+15801,100 COMMONS DRIVE,Du Bois,Du Bois Lowe's,1010,PA,72.2
+16830,100 Lowes Boulevard,Clearfield,Clearfield Lowe's,2613,PA,73.3
+17751,284 Hogan Boulevard,Mill Hall,Lock Haven Lowe's,2229,PA,68.7
+16148,3000 GLIMCHER BLVD.,Hermitage,Hermitage Lowe's,139,PA,68.2
+44484,940 NILES CORTLAND RD SE,Warren,Trumbull County Lowe's,244,OH,77.4
+16101,2640 WEST STATE STREET,New Castle,Union Township Lowe's,1130,PA,79.8
+15275,400 Davis BLVD.,Pittsburgh,Robinson Township Lowe's,1200,PA,13.4
+15301,STRABANE SQ 355 WASHINGTON RD,Washington,Washington Lowe's,671,PA,13.6
+43952,4115 MALL DRIVE,Steubenville,Steubenville Lowe's,44,OH,15.3
+15106,2100 Washington Pike,Carnegie,Scott Township Lowe's,2417,PA,15.5
+15102,5775 Baptist Road,Bethel Park,Bethel Park Lowe's,2247,PA,19.4
+15122,1025 MOUNTAIN VIEW DRIVE,West Mifflin,West Mifflin Lowe's,3314,PA,22.9
+15061,115 WAGNER RD.,Monaca,Monaca Lowe's,500,PA,23.8
+15237,9051 St Simon Way,Pittsburgh,Mccandless Township Lowe's,3051,PA,24.5
+15120,690 E WATERFRONT DR,Munhall,Homestead Lowe's,780,PA,25.8
+26003,2801 Chapline Street,Wheeling,Wheeling Lowe's,2625,WV,27.1
+15044,700 Grandview Crossing Road,Gibsonia,Richland Township Lowe's,2411,PA,3.2
+15084,1005 Village Center Drive,Tarentum,N.E. Pittsburgh Lowe's,2219,PA,6
+16066,1717 Route 228,Cranberry Township,Cranberry Township Lowe's,653,PA,11.2
+15146,4200 William Penn Highway,Monroeville,Monroeville Lowe's,1660,PA,14.8
+16001,500 MORAINE POINT PLAZA,Butler,Butler Lowe's,165,PA,17
+15601,"HEMPFIELD SQUARE, RT. 30 W.",Greensburg,Greensburg Lowe's,180,PA,22.4
+15012,203 SARAH WAY,Belle Vernon,Belle Vernon Lowe's,120,PA,0.6
+15401,79 MATTHEW DRIVE,Uniontown,Uniontown Lowe's,187,PA,16.7
+15650,200 Colony Lane,Latrobe,Latrobe Lowe's,1687,PA,27.3
+44514,1100 DORAL DR.,Youngstown,Boardman Lowe's,188,OH,25.1
+26508,901 Venture Drive,Morgantown,Morgantown Lowe's,567,WV,8.9
+26501,9595 Mall Road,Morgantown,S. Morgantown Lowe's,1671,WV,9.4
+26301,494 Emily Drive,Clarksburg,Clarksburg Lowe's,1641,WV,37.7
+21550,7000 Lowes Drive,Oakland,Oakland Lowe's,2800,MD,38.9
+43950,50421 VALLEY PLAZA DR,Saint Clairsville,ST. Clairsville Lowe's,110,OH,40.6
+15501,1730 North Center Avenue,Somerset,Somerset Lowe's,1944,PA,25.6
+21502,1211 NATIONAL HWY.,Lavale,Allegany Lowe's,468,MD,30.1
+15904,630 SOLOMON RUN RD.,Johnstown,Johnstown Lowe's,175,PA,47.9
+15701,475 BEN FRANKLIN RD. SOUTH,Indiana,Indiana Lowe's,197,PA,35.3
+16602,1707 MCMAHON RD.,Altoona,Altoona Lowe's,446,PA,44.6
+21740,1500 WESEL BLVD.,Hagerstown,Hagerstown Lowe's,471,MD,47.6
+17202,1600 LINCOLN WAY E,Chambersburg,Chambersburg Lowe's,706,PA,47.7
+25401,14725 APPLE HARVEST DRIVE,Martinsburg,Martinsburg Lowe's,627,WV,48.3
+21742,12809 SHANK FARM WAY,Hagerstown,N. Hagerstown Lowe's,2357,MD,49.3
+17268,12925 Washington Township Blvd,Waynesboro,Waynesboro Lowe's,2228,PA,39.4
+17044,10472 Us Highway 522 South,Lewistown,Lewistown Lowe's,2216,PA,50
+16803,104 Valley Vista Drive,State College,State College Lowe's,2355,PA,56.6
+22602,261 MARKET ST,Winchester,N. Winchester Lowe's,2724,VA,53.6
+22601,2200 S. PLEASANT VALLEY RD,Winchester,Winchester Lowe's,656,VA,54.5
+17870,1389 NORTH SUSQUEHANNA TRAIL,Selinsgrove,Sunbury Lowe's,644,PA,73.5
+44601,2595 WEST STATE ST,Alliance,Alliance Lowe's,297,OH,46
+44241,1210 State Route 303,Streetsboro,Streetsboro Lowe's,1606,OH,48.1
+44060,9600 Mentor Avenue,Mentor,Mentor Lowe's,1621,OH,53.2
+44240,218 Nicholas Way,Kent,Brimfield Township Lowe's,2500,OH,46.8
+44094,36300 Euclid Avenue,Willoughby,Willoughby Lowe's,1642,OH,54.5
+44146,24500 MILES ROAD,Bedford Heights,Bedford Heights Lowe's,1023,OH,68.3
+17013,850 East High Street,Carlisle,Carlisle Lowe's,1710,PA,45.6
+17050,5500 CARLISLE PIKE,Mechanicsburg,Mechanicsburg Lowe's,2223,PA,57.1
+17815,50 Lunger Drive,Bloomsburg,Bloomsburg Lowe's,1868,PA,57.7
+17109,4000 UNION DEPOSIT RD.,Harrisburg,Harrisburg Lowe's,522,PA,54.2
+17078,70 North Londonderry Square,Palmyra,Palmyra Lowe's,2584,PA,40.8
+17042,1755 QUENTIN ROAD,Lebanon,Lebanon Lowe's,22,PA,8.7
+17603,25 Rohrerstown Road,Lancaster,W. Lancaster Lowe's,1127,PA,20.1
+17402,2449 E. MARKET ST,York,York Lowe's,415,PA,21.3
+17601,1845 Hempstead Road,Lancaster,E. Lancaster Lowe's,2687,PA,23.2
+17404,1175 Carlisle Road,York,W. York Lowe's,2409,PA,23.6
+19608,2625 Shillington Road,Sinking Spring,S. Reading Lowe's,1717,PA,31.1
+17331,310 EISENHOWER DR.,Hanover,Hanover Lowe's,628,PA,24
+17901,PA RT 61 AND ANN STREET,Pottsville,Pottsville Lowe's,553,PA,33.5
+19526,20 Wilderness Trail,Hamburg,Hamburg Lowe's,2894,PA,42.4
+19605,500 MADISON AVENUE,Reading,Reading Lowe's,279,PA,27
+19606,4535 Perkiomen Avenue,Reading,Exeter Township Lowe's,2819,PA,31.5
+19520,340 Crossing Boulevard,Elverson,Morgantown Lowe's,2476,PA,22.6
+21701,7850 Wormans Mill Road,Frederick,N. Frederick Lowe's,2826,MD,19.6
+21704,5611 BUCKEYSTOWN PIKE,Frederick,Frederick Lowe's,516,MD,23.6
+21157,777 MARKET STREET,Westminster,Westminster Lowe's,568,MD,28.8
+21009,414 Constant Friendship Blvd,Abingdon,S. Bel Air Lowe's,2589,MD,30.8
+21093,19 TEXAS STATION COURT,Timonium,Timonium Lowe's,720,MD,35.9
+21234,1400 TAYLOR AVENUE,Parkville,Towson Lowe's,2995,MD,24.8
+21236,5300 CAMPBELL BLVD.,Baltimore,White Marsh Lowe's,691,MD,25
+21117,10280 MILL RUN CIRCLE,Owings Mills,Owings Mills Lowe's,3388,MD,28.8
+21228,5900 BALTIMORE NATIONAL PIKE,Baltimore,Catonsville Lowe's,624,MD,33.5
+19335,1250 Cornerstone Boulevard,Downingtown,East Caln Township Lowe's,1729,PA,21.4
+19465,1136 Town Square Road,Pottstown,Pottstown Lowe's,1886,PA,21.9
+18202,200 WEIS LANE,West Hazleton,Hazleton Lowe's,292,PA,55.5
+18235,1204 Blakeslee Blvd DR. East,Lehighton,Lehighton Lowe's,2566,PA,39
+19456,200-B Mill Road,Oaks,Oaks Lowe's,1047,PA,26.7
+19462,2002 Chemical Road,Plymouth Meeting,Plymouth Meeting Lowe's,757,PA,18.7
+21851,275 Newtown Boulevard,Pocomoke City,Pocomoke City Lowe's,2414,MD,41.4
+21601,501 Glebe Road,Easton,Easton Lowe's,1982,MD,57.2
+20619,45075 Worth Avenue,California,ST. Mary's County Lowe's,719,MD,52.3
+20018,2438 MARKET STREET NE,Washington,Washington Lowe's,3256,DC,3.5
+20784,7710 RIVERDALE ROAD,New Carrollton,New Carrollton Lowe's,1122,MD,8.4
+22306,6750 RICHMOND HIGHWAY,Alexandria,Alexandria Lowe's,715,VA,10.4
+20774,10440 CAMPUS WAY SOUTH,Upper Marlboro,Largo Lowe's,702,MD,10.6
+20735,8755 Branch Avenue,Clinton,Clinton Lowe's,1136,MD,12.2
+20707,14300 BALTIMORE AVENUE,Laurel,Laurel Lowe's,1188,MD,14.7
+20716,16301 HERITAGE BLVD.,Bowie,Bowie Lowe's,452,MD,16.2
+22030,4080 JERMANTOWN RD,Fairfax,Fairfax Lowe's,3274,VA,17.4
+20878,40 MARKET STREET,Gaithersburg,Gaithersburg Lowe's,223,MD,18.6
+20601,2525 CRAIN HWY,Waldorf,Charles County Lowe's,402,MD,19.9
+20151,13856 Metrotech Drive,Chantilly,Chantilly Lowe's,1538,VA,19.7
+21075,8281 GATEWAY OVERLOOK DRIVE,Elkridge,Columbia Lowe's,2244,MD,20.6
+20646,300 Rosewick Road,La Plata,La Plata Lowe's,2354,MD,20.8
+20155,13000 Gateway Center Dr,Gainesville,Gainesville Lowe's,1870,VA,9
+20109,7500 BROKEN BRANCH LANE,Manassas,N. Manassas Lowe's,397,VA,9.2
+20166,45430 Dulles Crossing Plaza,Sterling,Sterling Lowe's,1125,VA,10
+20176,1390 RUSSELL BRANCH PARKWAY SE,Leesburg,Lowe's of Leesburg,3154,VA,12
+22192,13720 Smoketown Road,Woodbridge,Dale City Lowe's,1602,VA,22.9
+22556,1330 Stafford Market Place,Stafford,Stafford Lowe's,1909,VA,32
+22701,15150 MONTANUS DRIVE,Culpeper,Culpeper Lowe's,1803,VA,13.7
+22630,80 RIVERTON COMMONS DRIVE,Front Royal,Front Royal Lowe's,2555,VA,21.7
+22664,1220 HENRY FORD DRIVE,Woodstock,Woodstock Lowe's,2637,VA,31.3
+22406,299 Banks Ford Parkway,Fredericksburg,S. Stafford Lowe's,2870,VA,34.6
+22968,385 Stoneridge Drive North,Ruckersville,Ruckersville Lowe's,2828,VA,36.4
+22401,1361 CARL D. SILVER PKWY,Fredericksburg,Fredericksburg Lowe's,476,VA,25.6
+22407,10101 Southpoint Parkway,Fredericksburg,Spotsylvania County Lowe's,2623,VA,28.3
+22560,2000 Tappahannock Blvd,Tappahannock,Tappahannock Lowe's,2624,VA,35.3
+23061,6659 George Washington MEM. HWY.,Gloucester,Gloucester Lowe's,1723,VA,53.5
+21144,415 GEORGE CLAUSS BOULEVARD,Severn,Severn Lowe's,2594,MD,16.3
+21061,6650 RITCHIE HWY. RT 2,Glen Burnie,Glen Burnie Lowe's,631,MD,19.5
+23188,801 EAST ROCHAMBEAU DR,Williamsburg,Williamsburg Lowe's,632,VA,55
+26201,40 Clarksburg Road,Buckhannon,Buckhannon Lowe's,1805,WV,53.1
+23602,300 CHATHAM DRIVE,Newport News,Newport News Lowe's,420,VA,64.2
+23111,6425 MECHANICSVILLE TURNPIKE,Mechanicsville,Mechanicsville Lowe's,2572,VA,48.6
+23231,4551 S. LABURNUM AVENUE,Henrico,E. Richmond Lowe's,2691,VA,52.9
+23227,8001 BROOK RD.,Richmond,N. Richmond Lowe's,247,VA,54.1
+23294,9490 WEST BROAD ST.,Richmond,W. Richmond Lowe's,381,VA,30.4
+23060,4401 POUNCEY TRACT ROAD,Glen Allen,Short Pump Lowe's,687,VA,30.7
+23220,1640 WEST BROAD STREET,Richmond,Central Richmond Lowe's,1037,VA,34.6
+23666,2002 Power Plant Parkway,Hampton,Hampton Lowe's,1186,VA,56.7
+23225,2501 SHELIA LANE,Richmond,S. Richmond Lowe's,676,VA,47.2
+22942,165 Camp Creek Parkway,Gordonsville,Zion Crossroads Lowe's,2862,VA,31.6
+23502,1081 NORTH MILITARY HIGHWAY,Norfolk,Norfolk Lowe's,1065,VA,58.7
+22901,400 WOODBROOK DRIVE,Charlottesville,Charlottesville Lowe's,517,VA,30.5
+22802,201 LINDA LANE,Harrisonburg,Harrisonburg Lowe's,509,VA,39.5
+22980,801 Lew Dewitt Boulevard,Waynesboro,Waynesboro Lowe's,2602,VA,44
+24401,1028D RICHMOND RD.,Staunton,Staunton Lowe's,646,VA,38.2
+24450,1255 North Lee Highway,Lexington,Lexington Lowe's,1528,VA,53.4
+24572,150 River James Shopping Ctr,Madison Heights,Madison Heights Lowe's,1839,VA,62.9
+23901,2644 Farmville Road,Farmville,Farmville Lowe's,2810,VA,53
+24502,8216 TIMBERLAKE ROAD,Lynchburg,Lynchburg Lowe's,437,VA,49.6
+24523,1820 East Lynchburg Salem Tpke,Bedford,Bedford Lowe's,2809,VA,40.3
+23832,7001 WINTERPOCK RD.,Chesterfield,W. Chesterfield Lowe's,609,VA,17.8
+23235,1512 WEST KOGER CENTER DR.,Richmond,Midlothian Lowe's,113,VA,23.9
+23831,2601 WEIR PLACE,Chester,Chester Lowe's,599,VA,31.3
+23875,2085 WATERSIDE DRIVE,Prince George,Prince George Lowe's,2918,VA,34.5
+23321,4708 PORTSMOUTH BLVD.,Chesapeake,W. Chesapeake Lowe's,709,VA,43.4
+23701,4040 Victory Blvd,Portsmouth,Portsmouth Lowe's,1593,VA,44.9
+23454,2403 Virginia Beach Blvd,Virginia Beach,E. Virginia Beach Lowe's,1546,VA,37.1
+23320,1308 BATTLEFIELD BLVD N,Chesapeake,Chesapeake Lowe's,439,VA,37.2
+23434,1216 N. MAIN STREET,Suffolk,Suffolk Lowe's,1126,VA,37.5
+23452,3565 HOLLAND ROAD,Virginia Beach,Virginia Beach Lowe's,86,VA,44.3
+27909,1605 West Ehringhaus Street,Elizabeth City,Elizabeth City Lowe's,1713,NC,36.3
+23851,1240 Armory Drive,Franklin,Franklin Lowe's,2698,VA,31.3
+27870,1600 Julian Allsbrook Highway,Roanoke Rapids,Roanoke Rapids Lowe's,1815,NC,26.2
+27886,111 River Oaks Drive,Tarboro,Tarboro Lowe's,3022,NC,52.2
+27537,166 DABNEY ROAD,Henderson,Henderson Lowe's,738,NC,49.8
+27804,700 N. Wesleyan BLVD.,Rocky Mount,Rocky Mount Lowe's,547,NC,41.9
+27587,11800 GALAXY DRIVE,Wake Forest,Wake Forest Lowe's,1798,NC,49.2
+24592,3603 OLD HALIFAX ROAD,South Boston,South Boston Lowe's,1760,VA,50.8
+27573,2044 Durham Road,Roxboro,Roxboro Lowe's,2210,NC,54.7
+27893,2501 Forest Hills Road West,Wilson,Wilson Lowe's,726,NC,56.3
+27604,4601 Capital BLVD.,Raleigh,N. Raleigh Lowe's,444,NC,57.5
+27704,117 William Penn Plaza,Durham,N. Durham Lowe's,576,NC,55.9
+27545,7316 Knightdale Blvd,Knightdale,Knightdale Lowe's,1095,NC,56.9
+27613,4831 Grove Barton Rd,Raleigh,W. Raleigh Lowe's,625,NC,60.4
+24540,280 LOWE'S DRIVE,Danville,Danville Lowe's,787,VA,57.5
+27713,4402 Fayetteville Road,Durham,S. Durham Lowe's,2778,NC,57.8
+27514,1801 Fordham Boulevard,Chapel Hill,Chapel Hill Lowe's,487,NC,53
+24012,"5040 RUTGERS ST., NW",Roanoke,Roanoke Lowe's,419,VA,3.4
+24018,4224 VALLEY AVENUE,Roanoke,S. Roanoke Lowe's,664,VA,3.6
+24012,4520 Challenger Avenue,Roanoke,E. Roanoke Lowe's,1764,VA,5.3
+24153,840 West Main Street,Salem,Salem Lowe's,2939,VA,7.2
+24151,800 Old Franklin Turnpike,Rocky Mount,Rocky Mount Lowe's,2217,VA,18.2
+24073,350 PEPPERS FERRY RD NE,Christiansburg,Christiansburg Lowe's,447,VA,27.1
+24141,6115 Lowes Drive,Radford,Pulaski County Lowe's,2458,VA,36.3
+24112,1059 COMMONWEALTH BLVD,Martinsville,Martinsville Lowe's,707,VA,40
+24901,20 GATEWAY BLVD,Lewisburg,Lewisburg Lowe's,2507,WV,41.7
+24740,1155 Oakvale Road,Princeton,Princeton Lowe's,1984,WV,36.2
+24382,185 Dominion Street,Wytheville,Wytheville Lowe's,1164,VA,42.3
+27320,5201 Us 29 Business,Reidsville,Reidsville Lowe's,1210,NC,17.1
+27027,6844 Nc Highway 135,Mayodan,Mayodan Lowe's,2996,NC,22.7
+27405,2005 East Cone Boulevard,Greensboro,N.E. Greensboro Lowe's,2771,NC,35.9
+89434,3729 Battleground Ave,Greensboro,Lowe's Outlet Greensboro,3643,NC,36.4
+27408,3001 Battleground AVE.,Greensboro,N. Greensboro Lowe's,387,NC,37.1
+27215,125 HUFFMAN MILL RD.,Burlington,Burlington Lowe's,508,NC,38.5
+24605,515 Commerce Drive,Bluefield,Bluefield Lowe's,1959,VA,34.8
+24333,8417 CARROLLTON/PIKE ROAD,Galax,Galax Lowe's,1072,VA,41.4
+27030,"692 S. Andy Griffith PKY, STE100",Mount Airy,Mount Airy Lowe's,478,NC,28.2
+27105,5901 University PKWY.,Winston Salem,N. Winston Lowe's,480,NC,31.7
+27284,145 Harmon Creek Road,Kernersville,Kernersville Lowe's,1141,NC,36.1
+28621,492 Cc Camp Rd,Elkin,Elkin Lowe's,1653,NC,33.2
+27103,935 Hanes Mall BLVD.,Winston Salem,West Winston Lowe's,436,NC,36.2
+27127,1450 Lumber Lane,Winston Salem,S. Winston-Salem Lowe's,2653,NC,38.8
+25801,1210 North Eisenhower Drive,Beckley,Beckley Lowe's,1888,WV,34.4
+25840,46 FAYETTE TOWN CENTER ROAD,Fayetteville,Fayetteville Lowe's,2205,WV,48
+24211,24500 Falcon Place Blvd,Abingdon,Abingdon Lowe's,2974,VA,2.7
+24202,401 MERCHANT TRACE,Bristol,Bristol Lowe's,3456,VA,10.7
+37620,1340 Volunteer Parkway,Bristol,S. Bristol Lowe's,2591,TN,16.4
+24637,4375 Indian Paint Road,Pounding Mill,Claypool Hill Lowe's,1838,VA,27.4
+37643,925 Patriot Drive,Elizabethton,Elizabethton Lowe's,2509,TN,28.6
+37660,2526 East Stone Drive,Kingsport,Kingsport Lowe's,718,TN,30.9
+37604,180 Market Place BLVD.,Johnson City,Johnson City Lowe's,737,TN,34.6
+28694,158 LOWE'S Drive,W. Jefferson,W. Jefferson Lowe's,2255,NC,35.6
+37660,2324 West Stone Drive,Kingsport,West Kingsport Lowe's,2773,TN,35.9
+37659,1498 East Jackson Blvd,Jonesborough,Jonesborough Lowe's,2993,TN,38.3
+24293,201 WOODLAND DRIVE S.W.,Wise,Wise County Lowe's,1678,VA,35.8
+28604,2014 Tynecastle Highway,Banner Elk,Banner Elk Lowe's,1834,NC,36.6
+41501,183 CASSADY BLVD.,Pikeville,Pikeville Lowe's,435,KY,32
+25601,"NORMAN MORGAN BLVD, U.S RT 119",Logan,Logan Lowe's,588,WV,50.9
+41701,81 Commerce Drive,Hazard,Hazard Lowe's,1819,KY,36.2
+41240,527 North Mayo Trail,Paintsville,Paintsville Lowe's,1797,KY,51
+37814,2744 West Andrew Johnson Hwy,Morristown,Morristown Lowe's,579,TN,33.7
+37745,2375 East Andrew Johnson Highway,Greeneville,Greeneville Lowe's,1202,TN,33.8
+37760,638 E Broadway Boulevard,Jefferson City,Jefferson City Lowe's,2709,TN,42
+40701,777 W CUMBERLAND GAP PKY,Corbin,Corbin Lowe's,494,KY,43.5
+37766,2444 Jacksboro Pike,La Follette,La Follette Lowe's,2823,TN,45.8
+40744,136 Keavy Road,London,London Lowe's,2666,KY,48.3
+37924,3100 S MALL RD NE,Knoxville,E. Knoxville Lowe's,1544,TN,49.1
+37821,120 Epley Road,Newport,Newport Lowe's,2609,TN,49.9
+28607,1855 Blowing Rock Road,Boone,Boone Lowe's,1522,NC,30.8
+28697,2003 W US HIGHWAY 421,Wilkesboro,Wilkesboro Lowe's,701,NC,50.9
+26651,5200 Webster Road,Summersville,Summersville Lowe's,1040,WV,56.8
+27302,200 Lowes Boulevard,Mebane,Mebane Lowe's,2517,NC,44.6
+25304,5750 Maccorkle Ave Se,Charleston,E. Charleston Lowe's,675,WV,48.5
+25309,50 RHL BOULEVARD,South Charleston,S. Charleston Lowe's,746,WV,50.4
+25313,1000 NITRO MARKETPLACE,Cross Lanes,Nitro Lowe's,616,WV,52.8
+25504,700 Mall Road,Barboursville,Barboursville Lowe's,454,WV,61.9
+26101,2 Walton Drive,Parkersburg,S. Parkersburg Lowe's,2246,WV,62.8
+45680,294 COUNTY ROAD 120 S.,South Point,Burlington Lowe's,455,OH,47.5
+41101,350 Diedrich Boulevard,Ashland,Russell Lowe's,1123,KY,57.3
+26105,1300 Grand Central AVE.,Vienna,Wood County Lowe's,473,WV,53.6
+45750,842 Pike Street,Marietta,Marietta Lowe's,1566,OH,58.2
+45694,7915 OHIO RIVER RD.,Wheelersburg,Wheelersburg Lowe's,477,OH,48.1
+45701,983 East State Street,Athens,Athens Lowe's,1866,OH,50.2
+40351,100 KROGER CENTER,Morehead,Morehead Lowe's,1808,KY,52
+43701,3755 FRAZEYSBURG RD.,Zanesville,Zanesville Lowe's,210,OH,57.1
+43130,2240 LOWES DRIVE,Lancaster,Lancaster Lowe's,527,OH,66.5
+43056,888 HEBRON ROAD,Heath,Heath Lowe's,708,OH,68.1
+27028,1427 Yadkinville Road,Mocksville,Mocksville Lowe's,2575,NC,32.4
+28625,140 North Pointe BLVD.,Statesville,Statesville Lowe's,458,NC,30.4
+27292,130 LOWE'S BLVD.,Lexington,Lexington Lowe's,490,NC,19.3
+27265,2600 North Main ST.,High Point,N. High Point Lowe's,459,NC,20.5
+28146,207 Faith Road,Salisbury,Salisbury Lowe's,495,NC,27.8
+27407,1703 South Forty DR.,Greensboro,S.W. Greensboro Lowe's,404,NC,27.9
+28166,1041 Charlotte Highway,Troutman,Troutman Lowe's,2750,NC,10
+28117,509 River Hwy,Mooresville,Mooresville Lowe's,595,NC,13.7
+28083,3025 Dale Earnhardt Blvd,Kannapolis,N. Concord Lowe's,2368,NC,18.9
+28027,940 Concord Parkway North,Concord,Concord Lowe's,697,NC,21.4
+28078,16830 Statesville RD.,Huntersville,Huntersville Lowe's,489,NC,22
+28027,8670 CONCORD MILLS BLVD,Concord,S.W. Concord Lowe's,2981,NC,24.5
+27203,1120 East Dixie Dr,Asheboro,Asheboro Lowe's,449,NC,1.5
+27406,109 West Elmsley Drive,Greensboro,S.E. Greensboro Lowe's,2222,NC,20.3
+28001,820 NC 24-27 BYPASS EAST,Albemarle,Albemarle Lowe's,1529,NC,32
+27312,121 LOWE'S Drive,Pittsboro,Pittsboro Lowe's,2448,NC,28.2
+27332,3015 S HORNER BOULEVARD,Sanford,Sanford Lowe's,3608,NC,20.7
+27502,1101 Beaver Creek Commons Dr,Apex,Apex Lowe's,1878,NC,31
+27540,2240 RALPH STEPHENS RD,Holly Springs,Holly Springs Lowe's,3316,NC,32.8
+28387,10845 Us 15-501 Hwy,Southern Pines,Southern Pines Lowe's,538,NC,33.4
+27513,1920 Nw Maynard Road,Cary,Morrisville Lowe's,1835,NC,29.2
+28379,1300-A East Broad Avenue,Rockingham,Rockingham Lowe's,1038,NC,30.2
+28352,910 US 401 BY-PASS,Laurinburg,Laurinburg Lowe's,2564,NC,44.5
+28304,7771 Good Middling Drive,Fayetteville,W. Fayetteville Lowe's,2905,NC,42.8
+28314,1929 Skibo Square,Fayetteville,Fayetteville Lowe's,388,NC,46.6
+28311,3909 Ramsey Street,Fayetteville,N. Fayetteville Lowe's,767,NC,43.4
+28348,3080 N MAIN STREET,Hope Mills,Hope Mills Lowe's,2906,NC,36.9
+27518,2000 Walnut St,Cary,Cary Lowe's,426,NC,33.4
+28110,2350 West Roosevelt Blvd,Monroe,Monroe Lowe's,680,NC,34.5
+28079,5711 West Highway 74,Indian Trail,Indian Trail Lowe's,2907,NC,37.4
+28227,8826 Albemarle Road,Charlotte,E. Charlotte Lowe's,1920,NC,39.1
+28339,524 EAST JACKSON BOULEVARD,Erwin,Erwin Lowe's,1777,NC,31.7
+27529,101 Cleveland Crossing Drive,Garner,Clayton Lowe's,677,NC,17
+27529,1575 Us Hwy 70 West,Garner,Garner Lowe's,488,NC,22.2
+27577,1230 N. Brightleaf BLVD.,Smithfield,Smithfield Lowe's,647,NC,25
+28328,911 Sunset Avenue,Clinton,Clinton Lowe's,1689,NC,29.4
+27534,1202 N Berkeley Blvd,Goldsboro,Goldsboro Lowe's,557,NC,28.4
+28504,4489 HIGHWAY 70 WEST,Kinston,Kinston Lowe's,1722,NC,17.5
+28590,800 THOMAS LANGSTON RD.,Winterville,Greenville Lowe's,598,NC,31.1
+27858,3840 EAST 10TH STREET,Greenville,E. Greenville Lowe's,2837,NC,36.5
+28562,1400 LOWE'S BOULEVARD,New Bern,New Bern Lowe's,566,NC,22
+27889,1701 CAROLINA AVENUE,Washington,Washington Lowe's,786,NC,23.9
+28557,5219 HWY. 70,Morehead City,Morehead City Lowe's,619,NC,39
+28584,401 WB MCLEAN DRIVE,Cape Carteret,Cape Carteret Lowe's,2436,NC,44.9
+28546,1255 WESTERN BLVD.,Jacksonville,Jacksonville Lowe's,556,NC,49.8
+28540,425 YOPP ROAD,Jacksonville,S. Jacksonville Lowe's,2737,NC,53.9
+27948,1500 North Croatan Highway,Kill Devil Hills,Kill Devil Hills Lowe's,3216,NC,62.8
+28150,425 Earl Road,Shelby,Shelby Lowe's,612,NC,7.7
+29341,1601 West Floyd Baker Blvd,Gaffney,Gaffney Lowe's,2358,SC,11.2
+28043,184 LOWE'S Boulevard,Forest City,Forest City Lowe's,1788,NC,14.2
+29316,170 Rainbow Lake Road,Boiling Springs,Boiling Springs Lowe's,1986,SC,22.6
+29307,2079 East Main Street,Spartanburg,E. Spartanburg Lowe's,2548,SC,23
+29301,120 E. Blackstock Road,Spartanburg,Spartanburg Lowe's,2595,SC,28.7
+28092,1603 East Main Street,Lincolnton,Lincolnton Lowe's,700,NC,29
+28056,3250 East Franklin BLVD.,Gastonia,Franklin Square Lowe's,457,NC,30.8
+29745,1010 East Liberty St,York,York Lowe's,1776,SC,31.8
+28655,1224 Burkemont Avenue,Morganton,Morganton Lowe's,1097,NC,32.1
+28213,1100 Chancellor Park DR.,Charlotte,N. Charlotte Lowe's,408,NC,30.2
+28037,7144 Highway 73,Denver,E. Lincoln County Lowe's,2636,NC,19.7
+28602,1550 21ST Street Drive S.E.,Hickory,Hickory Lowe's,1557,NC,21.7
+28601,1450 2ND Street Ne,Hickory,N. Hickory Lowe's,2370,NC,24.6
+28012,200 Caldwell Farm Road,Belmont,Belmont Lowe's,2650,NC,0.6
+28273,8192 South Tryon Street,Charlotte,S.W. Charlotte Lowe's,1060,NC,9.1
+29710,5288 Highway 557,Clover,N. York County Lowe's,2920,SC,9.1
+28203,217 Iverson Way,Charlotte,Central Charlotte Lowe's,2348,NC,10.3
+28216,10275 Perimeter Parkway,Charlotte,Charlotte - Northlake Mall Lowe's,2352,NC,12.3
+28226,10625 Mcmullen Creek Parkway,Charlotte,Pineville Lowe's,377,NC,14.8
+29708,1640 Highway 160 West,Fort Mill,Fort Mill Lowe's,2442,SC,15.3
+28105,2115 Matthews Township Parkway,Matthews,S.E. Charlotte Lowe's,1124,NC,33.8
+28277,5310 Ballantyne Commons Parkway,Charlotte,S. Charlotte Lowe's,1112,NC,37.7
+28752,480 Us 70 West,Marion,Marion Lowe's,1922,NC,27.1
+28645,1201 Hickory Blvd S.E.,Lenoir,Lenoir Lowe's,1509,NC,27.5
+28792,1415 7TH AVE. East,Hendersonville,Hendersonville Lowe's,31,NC,34.6
+29650,1370 W Wade Hampton Blvd,Greer,Greer Lowe's,667,SC,35.1
+28173,2508 Cuthbertson Road,Waxhaw,Waxhaw Lowe's,2638,NC,10
+29707,181 Fort Mill Highway,Indian Land,N. Lancaster County Lowe's,3040,SC,12.5
+29550,819 SOUTH FOURTH STREET,Hartsville,Hartsville Lowe's,2803,SC,41.8
+29730,1350 Springdale Road,Rock Hill,Rock Hill Lowe's,416,SC,16.8
+29501,2301 DAVID H. MCLEOD BLVD.,Florence,Florence Lowe's,1120,SC,43.9
+29505,1701 FREEDOM BLVD,Florence,S. Florence Lowe's,1075,SC,46.6
+28704,19 Mckenna Road,Arden,S. Asheville Lowe's,2201,NC,33.1
+28805,89 SOUTH TUNNEL ROAD,Asheville,E. Asheville Lowe's,617,NC,31.3
+28805,3 SOUTH TUNNEL ROAD,Asheville,Lowe’s Home Improvement Pop-Up Store E. Asheville,3130,NC,31.6
+28358,5060 Fayetteville RD.,Lumberton,Lumberton Lowe's,739,NC,28
+28472,100 Green Hill Drive,Whiteville,Whiteville Lowe's,2869,NC,16.7
+28470,351 Whiteville Rd Nw,Shallotte,Shallotte Lowe's,1068,NC,44.7
+29582,214 U.S. HWY. #17 North,North Myrtle Beach,North Myrtle Beach Lowe's,603,SC,49.3
+28451,3716 GATEWAY BLVD,Leland,Leland Lowe's,3478,NC,50.6
+28443,106 WILKES LN E,Hampstead,Surf City Lowe's,2256,NC,40.4
+28411,191 PORTERS NECK ROAD,Wilmington,"LOWE'S OF PORTERS NECK, NC",2982,NC,46.6
+29526,2301 E Highway 501,Conway,Conway Lowe's,1705,SC,40.4
+29577,1160 Seaboard ST.,Myrtle Beach,Myrtle Beach Lowe's,410,SC,47.1
+28403,354 South College RD.,Wilmington,University Centre Lowe's,445,NC,5
+28412,5110 S. College Road,Wilmington,S. Wilmington Lowe's,1138,NC,11.1
+28461,5084 Southport Supply Rd Se,Southport,Southport Lowe's,682,NC,26.2
+29588,8672 HIGHWAY 17 BYP S,Myrtle Beach,Surfside Lowe's,1004,SC,37.3
+28734,161 Franklin Plaza,Franklin,Franklin Lowe's,717,NC,20.2
+28779,1716 East Main Street,Sylva,Sylva Lowe's,2257,NC,24.3
+28906,198 Bulldog Drive,Murphy,Murphy Lowe's,2505,NC,29.4
+37701,1098 HUNTER'S Crossing Drive,Alcoa,Blount County Lowe's,638,TN,33.3
+37876,610 Winfield Dunn Pkwy,Sevierville,Sevierville Lowe's,693,TN,34.2
+37920,7520 Mountain Grove Drive,Knoxville,S. Knoxville Lowe's,2239,TN,37.8
+28786,100 Liner Cove Road,Waynesville,Waynesville Lowe's,470,NC,39.1
+37923,210 N. Peters RD.,Knoxville,W. Knoxville Lowe's,486,TN,44.7
+28787,24 Northridge Commons Parkway,Weaverville,Weaverville Lowe's,2634,NC,5.3
+28806,95 Smokey Park Hwy,Asheville,W. Asheville Lowe's,526,NC,5.5
+28712,119 Ecusta Road,Brevard,Brevard Lowe's,1990,NC,26.3
+29678,195 Bilo Place,Seneca,Seneca Lowe's,1635,SC,30.2
+29630,608 Issaqueena Trail,Central,Clemson Lowe's,3071,SC,34.4
+29640,6068 Calhoun MEM. HWY.,Easley,Easley Lowe's,469,SC,36
+29609,1900 Poinsett Highway,Greenville,N.W. Greenville Lowe's,1718,SC,22.1
+29607,"101 VERDAE BLVD., SUITE 200",Greenville,Lowe's Outlet Greenville,3640,SC,28.5
+29607,1131 Woodruff Road,Greenville,Greenville Lowe's,1983,SC,29.6
+30531,281 Carpenters Cove Lane,Cornelia,Cornelia Lowe's,1925,GA,40.2
+29621,3515 Clemson BLVD.,Anderson,Anderson Lowe's,728,SC,45.7
+37912,6600 Clinton HWY.,Knoxville,N. Knoxville Lowe's,637,TN,43.7
+37303,1751 Congress Pkwy S,Athens,Athens Lowe's,1196,TN,46.9
+30540,380 Highland Crossing,East Ellijay,E. Ellijay Lowe's,1793,GA,46.3
+30504,1514 SKELTON ROAD,Gainesville,Gainesville Lowe's,434,GA,52.1
+37312,229 Paul Huff Parkway N.W.,Cleveland,Cleveland Lowe's,649,TN,46.9
+30721,1212 Cleveland Highway,Dalton,Dalton Lowe's,1646,GA,56.3
+30114,2044 CUMMING HWY,Canton,Canton Lowe's,2838,GA,54.6
+29118,2896 North Road Hwy 178,Orangeburg,Orangeburg Lowe's,559,SC,17.1
+29483,1207 N. Main ST.,Summerville,Summerville Lowe's,358,SC,37.5
+29485,9600 Dorchester Road,Summerville,N.W. Charleston Lowe's,2948,SC,42.3
+29445,520 Saint James Avenue,Goose Creek,Goose Creek Lowe's,2464,SC,42.4
+29209,7420 Garners Ferry Road,Columbia,S.E. Columbia Lowe's,1064,SC,44.9
+29150,1251 Broad Street,Sumter,Sumter Lowe's,626,SC,45.5
+29406,7555 Northwood BLVD.,North Charleston,North Charleston Lowe's,497,SC,46.6
+29073,5570 Platt Springs Road,Lexington,S.E. Lexington County Lowe's,2967,SC,49.7
+29170,2829 Augusta Rd,West Columbia,West Columbia Lowe's,499,SC,49.9
+29223,7441 Two Notch Road,Columbia,N.E. Columbia Lowe's,433,SC,52.2
+29020,11 Bay Lane,Camden,Camden Lowe's,1751,SC,20.6
+29223,10106 Two Notch Road,Columbia,Richland County Lowe's,2356,SC,37.4
+29229,1051 Sams Crossing Drive,Columbia,N. Richland County Lowe's,3026,SC,39.1
+29212,390 Harbison BLVD.,Columbia,Irmo Lowe's,385,SC,33.1
+29072,5412 Sunset Blvd,Lexington,Lexington Lowe's,1066,SC,38.5
+29803,2470 Whiskey RD.,Aiken,Aiken Lowe's,639,SC,41.6
+29841,1220 Knox Avenue,North Augusta,N. Augusta Lowe's,2207,SC,55.3
+29108,2911 Main Street,Newberry,Newberry Lowe's,2520,SC,31.3
+29649,513 Bypass 72 Nw,Greenwood,Greenwood Lowe's,518,SC,16.9
+29680,3958 Grandview Drive,Simpsonville,Simpsonville Lowe's,528,SC,42
+30809,4305 Washington Road,Evans,Evans Lowe's,2366,GA,46.1
+29414,3125 Glenn Mcconnell Pkwy,Charleston,W. Ashley Lowe's,655,SC,41.1
+29412,770 Daniel Ellis DR.,Charleston,James Island Lowe's,661,SC,47.1
+29464,1104 Market Center BLVD.,Mount Pleasant,MT. Pleasant Lowe's,539,SC,47.7
+29466,3265 North Highway 17,Mount Pleasant,North Mount Pleasant Lowe's,3317,SC,48
+30906,3214 PEACH ORCHARD ROAD,Augusta,S.W. Augusta Lowe's,1116,GA,51.1
+29906,207 Robert Smalls Pkwy,Beaufort,Beaufort Lowe's,1521,SC,49.1
+31326,5150 Highway 21 S,Rincon,Rincon Lowe's,2813,GA,58.1
+30907,224 BOBBY JONES EXP.,Augusta,Augusta Lowe's,482,GA,36.3
+29910,35 Malphrus Road,Bluffton,Bluffton Lowe's,1533,SC,52
+29626,408 Highway 28 Byp,Anderson,S. Anderson Lowe's,3050,SC,42.6
+30605,3341 Lexington Road,Athens,E. Athens Lowe's,2204,GA,43.3
+30461,24065 HIGHWAY 80 EAST,Statesboro,Statesboro Lowe's,177,GA,47.5
+31322,1565 Pooler Parkway,Pooler,Pooler Lowe's,2772,GA,60
+31419,11114 ABERCORN ST.,Savannah,S. Savannah Lowe's,403,GA,41.1
+31313,735 West Oglethorpe Highway,Hinesville,Hinesville Lowe's,1856,GA,51.4
+30307,1280 Caroline Street Ne,Atlanta,Atlanta-Edgewood Lowe's,1875,GA,4.7
+30038,5375 Fairington Road,Lithonia,S. Dekalb-lithonia Lowe's,2232,GA,7.6
+30341,4950 PEACHTREE BLVD.,Chamblee,Chamblee Lowe's,1119,GA,8.2
+30047,4855 STONE MOUNTAIN HWY,Lilburn,Stone Mountain Lowe's,640,GA,10.3
+30328,5925 Roswell Road,Sandy Springs,Sandy Springs Lowe's,1807,GA,11.7
+30071,2035 Beaver Ruin Road,Norcross,Norcross Lowe's,1507,GA,12
+30260,1865 Mount Zion Road,Morrow,Lowe's Outlet Morrow,3570,GA,14.7
+30281,3505 MT. ZION RD.,Stockbridge,Stockbridge Lowe's,512,GA,15.6
+30344,3625 North Commerce Drive,East Point,Camp Creek Lowe's,1715,GA,16
+30078,1615 Scenic Hwy N,Snellville,Snellville Lowe's,1603,GA,16.4
+30004,4925 Windward Parkway,Alpharetta,N. Alpharetta Lowe's,1668,GA,1.7
+30004,10580 DUKE DR,Alpharetta,Alpharetta Lowe's,615,GA,2.8
+30024,3580 PEACHTREE PARKWAY,Suwanee,John's Creek Lowe's,710,GA,7.3
+30041,935 MARKETPLACE BLVD,Cumming,Cumming Lowe's,678,GA,12
+30024,3260 Lawrenceville Suwanee Rd,Suwanee,Suwanee Lowe's,2908,GA,14
+30189,575 MOLLY LANE,Woodstock,Woodstock Lowe's,543,GA,14
+30106,1717 EAST WEST CONNECTOR,Austell,Austell Lowe's,531,GA,8.4
+30064,2650 DALLAS HWY. S.W.,Marietta,W. Marietta Lowe's,545,GA,9.7
+30152,3250 Cobb Pkwy Nw,Kennesaw,Acworth Lowe's,1651,GA,14.9
+30519,1955 BUFORD MILL DR.,Buford,Buford Lowe's,662,GA,15.8
+30135,7001 DOUGLAS BLVD,Douglasville,Douglasville Lowe's,730,GA,17.6
+30013,1901 GEORGIA HIGHWAY 138 SE,Conyers,Conyers Lowe's,1076,GA,1.9
+30052,4022 Atlanta Highway,Loganville,Loganville Lowe's,2969,GA,14.1
+30253,101 WILLOW LANE,Mcdonough,Mcdonough Lowe's,1153,GA,18.7
+30606,1851 EPPS BRIDGE RD.,Athens,Athens Lowe's,506,GA,22.6
+30650,1821 Eatonton Highway,Madison,Madison Lowe's,1958,GA,21.3
+30120,301 MARKET PLACE BLVD,Cartersville,Cartersville Lowe's,190,GA,14.3
+30165,2338 Shorter Avenue N.W.,Rome,Rome Lowe's,1513,GA,18.4
+30117,1665 S Highway 27,Carrollton,Carrollton Lowe's,2968,GA,10.2
+30265,955 BULLSBORO DR,Newnan,Newnan Lowe's,33,GA,30.8
+36203,1836 Us Highway 78 East,Oxford,Oxford Lowe's,698,AL,31.6
+36206,4901 Mcclellan Boulevard,Anniston,N. Anniston Lowe's,2659,AL,34.7
+30214,1030 N GLYNN ST,Fayetteville,Fayetteville Lowe's,686,GA,46.7
+35968,1600 Glenn Boulevard Sw,Fort Payne,FT. Payne Lowe's,1786,AL,32.9
+35903,615 George Wallace Drive,Gadsden,Gadsden Lowe's,1640,AL,38.4
+30742,2215 BATTLEFIELD PKWY,Fort Oglethorpe,FT. Oglethorpe Lowe's,485,GA,38.4
+30223,1520 Highway 16 West,Griffin,Griffin Lowe's,1733,GA,10.3
+31210,6011 ZEBULON ROAD,Macon,N.W. Macon Lowe's,1016,GA,25.7
+31206,3190 MACON TECH DR.,Macon,Macon Lowe's,546,GA,31.8
+31093,2704 WATSON BLVD.,Warner Robins,Warner Robins Lowe's,483,GA,41.2
+31909,6750 VETERANS PKWY.,Columbus,N. Columbus Lowe's,636,GA,43.9
+36801,1701 Frederick Road,Opelika,Opelika Lowe's,736,AL,48.8
+31047,1109 Highway 96,Kathleen,S. Warner Robins Lowe's,2478,GA,43.6
+30474,3209 East First Street,Vidalia,Vidalia Lowe's,1787,GA,8.8
+31533,1340 Bowens Mill Rd Se,Douglas,Douglas Lowe's,1783,GA,49.3
+31501,2308 MEMORIAL DRIVE,Waycross,Waycross Lowe's,1617,GA,65
+31793,2000 Us Highway 82 W.,Tifton,Tifton Lowe's,1508,GA,78.5
+31525,300 GLYNN ISLES,Brunswick,Brunswick Lowe's,2643,GA,77
+31061,1731 North Columbia Street,Milledgeville,Milledgeville Lowe's,1644,GA,63
+37421,2180 Gunbarrel RD.,Chattanooga,Chattanooga Lowe's,425,TN,48.2
+37343,5428 Hwy 153,Hixson,N. Chattanooga Lowe's,749,TN,50.3
+37321,3535 Rhea County Highway,Dayton,Dayton Lowe's,2866,TN,51.3
+37347,525 Dixie Lee Center Road,Kimball,Kimball Lowe's,1910,TN,44.8
+35976,11190 Us Highway 431,Guntersville,Guntersville Lowe's,1115,AL,46.9
+37110,"1339 Smithville HIGHWAY, Ste 10",Mc Minnville,Mcminnville Lowe's,1890,TN,53.9
+35763,6584 US HIGHWAY 431 SOUTH,Owens Cross Roads,Se Huntsville Lowe's,2451,AL,54.6
+31709,1700 E. Lamar Street,Americus,Americus Lowe's,2674,GA,78
+31707,1200 NORTH WESTOVER BLVD.,Albany,Albany Lowe's,491,GA,73.7
+37388,2211 North Jackson Street,Tullahoma,Tullahoma Lowe's,727,TN,55
+31788,602 VETERAN'S Parkway N,Moultrie,Moultrie Lowe's,2621,GA,75.2
+31792,13911 U.S. Highway 19 South,Thomasville,Thomasville Lowe's,1564,GA,78
+31548,1410 EAST BOONE AVE,Kingsland,Camden County Lowe's,2489,GA,67.8
+32034,474283 East Sr 200,Fernandina Beach,Fernandina Beach Lowe's,1647,FL,52.2
+32218,13125 City Square Drive,Jacksonville,N. Jacksonville Lowe's,2472,FL,63.1
+31601,1106 North ST. Augustine Road,Valdosta,Valdosta Lowe's,1794,GA,62.6
+32225,9525 Regency Square Blvd N,Jacksonville,E. Jacksonville Lowe's,503,FL,56.5
+32225,12945 Atlantic BLVD.,Jacksonville,N.E. Jacksonville Lowe's,1699,FL,57.1
+32205,5155 Lenox Avenue,Jacksonville,W. Jacksonville Lowe's,1691,FL,59.3
+32256,8054 Philips Highway,Jacksonville,S. Central Jacksonville Lowe's,1842,FL,59.7
+32064,208 72ND Trce Ne,Live Oak,Live Oak Lowe's,2462,FL,69.2
+32073,2285 Kingsley Avenue,Orange Park,Orange Park Lowe's,1897,FL,50.5
+32223,4040 Oldfield Crossing DR.,Jacksonville,S. Jacksonville Lowe's,502,FL,43.2
+32055,3463 Nw Bascom Norris Drive,Lake City,Lake City Lowe's,179,FL,64
+32068,1700 Blanding Boulevard,Middleburg,Middleburg Lowe's,2970,FL,31.1
+32308,2121 NE CAPITAL CIRCLE,Tallahassee,N.E. Tallahassee Lowe's,417,FL,63.8
+32303,5500 COMMONWEALTH BLVD,Tallahassee,N.W. Tallahassee Lowe's,716,FL,71.3
+36301,2671 Ross Clark Circle,Dothan,Dothan Lowe's,606,AL,77.6
+32448,4860 Malloy Plaza,Marianna,Marianna Lowe's,1924,FL,75.6
+32615,15910 Nw 144 Terrace,Alachua,Alachua Lowe's,2984,FL,69.9
+36303,4801 Montgomery Highway,Dothan,N. Dothan Lowe's,2884,AL,75.5
+36092,4501 Us Highway 231,Wetumpka,Wetumpka Lowe's,2885,AL,70.1
+36117,1950 Eastern BLVD.,Montgomery,S. Montgomery Lowe's,441,AL,72.6
+36081,1421 Us Highway 231 South,Troy,Troy Lowe's,2212,AL,71
+36330,1301 Boll Weevil Circle,Enterprise,Enterprise Lowe's,281,AL,75.2
+32259,480 County Road 210 W,St. Johns,St. Johns Lowe's,3445,FL,14.3
+32086,1955 US HIGHWAY 1 SOUTH,St. Augustine,St Augustine Lowe's,3238,FL,28.2
+32177,500 North State Road 19,Palatka,Palatka Lowe's,1820,FL,8.3
+32164,315 Cypress Edge Drive,Palm Coast,Palm Coast Lowe's,2241,FL,29.4
+32608,3101 CLARK BUTLER BLVD,Gainesville,Gainesville Lowe's,3278,FL,69.4
+32609,2564 N.W. 13TH Street,Gainesville,N.E. Gainesville Lowe's,2365,FL,69.5
+34474,3535 Sw 36TH AVE.,Ocala,Ocala Lowe's,440,FL,62.3
+34470,4600 East Silver Springs Blvd,Ocala,E. Ocala Lowe's,1855,FL,63
+34476,7575 Sw 90TH Street,Ocala,S.W. Marion County Lowe's,2753,FL,64
+32174,1340 West Granada Blvd,Ormond Beach,Ormond Beach Lowe's,742,FL,22.9
+32724,303 E International Speedway Blv,Deland,Deland Lowe's,1945,FL,28.7
+32127,1751 Dunlawton Avenue,Port Orange,Port Orange Lowe's,741,FL,33.3
+32763,901 Saxon BLVD.,Orange City,Orange City Lowe's,467,FL,38.4
+32738,2170 Howland Boulevard,Deltona,Deltona Lowe's,2364,FL,39.3
+32159,13705 Us Higway 441,Lady Lake,Lady Lake Lowe's,1685,FL,7.9
+34785,5630 SEVEN MILE DRIVE,Wildwood,Wildwood Lowe's,3351,FL,14.3
+34788,9540 U.S. 441,Leesburg,Lake County Lowe's,569,FL,19.9
+32757,18795 Us Highway 441,Mt. Dora,MT. Dora Lowe's,2577,FL,25.8
+34453,2301 East Gulf To Lake Hwy,Inverness,Inverness Lowe's,1853,FL,29.8
+32712,1651 West Orange Blossom Trail,Apopka,Apopka Lowe's,2673,FL,37
+34711,1501 Sandy Grove Avenue,Clermont,Clermont Lowe's,2437,FL,39.1
+32773,3780 S Orlando Dr,Sanford,Sanford Lowe's,1657,FL,31.4
+32765,1155 Vidina Place,Oviedo,Oviedo Lowe's,1140,FL,41.1
+32730,6735 South Us Hwy 17-92,Fern Park,Fern Park Lowe's,2652,FL,43.3
+32714,110 N. State Road 434,Altamonte Springs,Altamonte Springs Lowe's,604,FL,45.2
+32780,4660 SOUTH ST.,Titusville,Titusville Lowe's,504,FL,29.9
+32825,12200 Lake Underhill Road,Orlando,Waterford Lake Lowe's,1161,FL,35.4
+32405,300 East 23RD ST.,Panama City,Panama City Lowe's,448,FL,82.8
+32407,11751 Panama City Beach Pkwy,Panama City Beach,Panama City Beach Lowe's,2367,FL,72.9
+32435,135 Business Park Road,Defuniak Springs,Defuniak Springs Lowe's,2886,FL,104.4
+32541,4405 Legendary Drive,Destin,Destin Lowe's,3166,FL,97.2
+32547,774 Beal Pkwy Nw,Fort Walton Beach,FT. Walton Beach Lowe's,479,FL,62
+32536,298 Rasberry Road,Crestview,Crestview Lowe's,1782,FL,67.3
+32563,1421 Tiger Park Lane,Gulf Breeze,Gulf Breeze Lowe's,1073,FL,79.7
+32571,5143 Highway 90,Pace,Milton Lowe's,2715,FL,74.2
+32504,1201 Airport BLVD.,Pensacola,Pensacola Lowe's,438,FL,65.1
+32505,4301 West Fairfield Drive,Pensacola,S.W. Pensacola Lowe's,1142,FL,3.7
+32534,777 West Nine Mile Road,Pensacola,Ensley Lowe's,2788,FL,8.2
+36535,3101 S. Mckenzie HWY.59,Foley,Foley Lowe's,577,AL,28.4
+36526,29645 Frederick Boulevard,Daphne,Daphne Lowe's,2251,AL,41.4
+36606,151 East I-65 Service Road South,Mobile,Mobile Lowe's,212,AL,55
+36619,4401 Rangeline Road,Mobile,S.W. Mobile Lowe's,1599,AL,44
+36608,7760 Airport BLVD.,Mobile,W. Mobile Lowe's,549,AL,44.9
+34606,4780 Commercial Way,Spring Hill,Spring Hill Lowe's,1605,FL,52.9
+34601,7117 Broad Street,Brooksville,Brooksville Lowe's,1827,FL,53.3
+32818,8700 W. Colonial DR.,Orlando,W. Orlando Lowe's,642,FL,8.3
+34787,3391 Daniels Road,Winter Garden,Winter Garden Lowe's,2651,FL,11
+32819,2800 West Sandlake Rd,Orlando,S. Orlando Lowe's,670,FL,16.1
+32827,12276 Andric Lane,Orlando,Lake Nona Lowe's,3350,FL,18.3
+32822,3500 South Semoran BLVD.,Orlando,S.E. Orlando Lowe's,1598,FL,19.3
+32955,3790 S Fiske Blvd,Rockledge,Rockledge Lowe's,1506,FL,22.6
+32809,730 SAND LAKE RD STE 212,Orlando,"LOWE'S OUTLET OF ORLANDO, FL",3646,FL,24.5
+32937,1934 Highway A1A,Indian Harbour Beach,Indian Harbour Beach Lowe's,2351,FL,31.4
+34741,1300 W Osceola Pkwy,Kissimmee,N. Kissimmee Lowe's,1652,FL,8.8
+34714,16905 Cagan Crossings Blvd,Clermont,S.W. Orlando Lowe's,2438,FL,12.9
+34746,4420 Pleasant Hill Road,Kissimmee,Poinciana Lowe's,2363,FL,18.3
+32907,1166 Malabar Rd Se,Palm Bay,Palm Bay Lowe's,2644,FL,3.4
+32904,2150 Minton RD.,Melbourne,Melbourne Lowe's,696,FL,6.8
+32966,6110 20TH ST.,Vero Beach,Vero Beach Lowe's,240,FL,27.4
+34986,701 Nw St Lucie Blvd,Port St. Lucie,ST. Lucie West Lowe's,2349,FL,50
+34957,4100 Northwest Federal Hwy,Jensen Beach,Jensen Beach Lowe's,703,FL,40.4
+34997,3620 Southeast Federal Highway,Stuart,Stuart Lowe's,1109,FL,47.6
+33870,2050 Us 27 North,Sebring,Sebring Lowe's,2224,FL,57.7
+33403,401 North Congress Avenue,Lake Park,Lake Park Lowe's,1720,FL,58.8
+33417,4701 Okeechobee Blvd,West Palm Beach,West Palm Beach Lowe's,1962,FL,64.6
+33325,11620 State Road 84,Davie,Davie Lowe's,3315,FL,10.6
+33331,6600 Dykes Road,Southwest Ranches,W. Davie Lowe's,725,FL,13.3
+33067,3651 Turtle Creek Dr,Coral Springs,Coral Springs Lowe's,704,FL,15.9
+34113,12730 Tamiami Trail East,Naples,S. Naples Lowe's,2261,FL,104.3
+34109,6415 Naples BLVD.,Naples,Naples Lowe's,613,FL,115.1
+33928,10070 Estero Town Commons Place,Estero,Estero Lowe's,2362,FL,129.5
+33912,14960 S. Tamiami Trail,Fort Myers,FT. Myers Lowe's,582,FL,136.2
+33428,21870 State Road 7,Boca Raton,W. Boca Raton Lowe's,1069,FL,8
+33426,1500 Corporate Drive,Boynton Beach,Boynton Beach Lowe's,1111,FL,19.1
+33411,103 S STATE ROAD 7,Royal Palm Beach,Royal Palm Beach Lowe's,654,FL,24.9
+33966,8040 Dani Dr,Ft. Myers,N.E. FT. Myers Lowe's,2221,FL,54.8
+33909,1651 Ne Pine Island RD.,Cape Coral,Cape Coral Lowe's,592,FL,53.3
+33914,285 Sw 25TH Lane,Cape Coral,W. Cape Coral Lowe's,2361,FL,56.7
+33511,11375 Causeway BLVD.,Brandon,Brandon Lowe's,573,FL,2.4
+33578,10425 Gibsonton Drive,Riverview,Riverview Lowe's,1911,FL,3.4
+33511,1515 E. Brandon BLVD.,Brandon,E. Brandon Lowe's,2282,FL,3.5
+33566,2801 James L. Redman Pkwy,Plant City,Plant City Lowe's,1592,FL,12.3
+33611,4210 South Dale Mabry Hwy,Tampa,S. Tampa Lowe's,1629,FL,12.8
+33647,6201 Commerce Palms Drive,Tampa,Tampa Palms Lowe's,1003,FL,16.1
+33618,12901 N. Dale Mabry Highway,Tampa,N. Tampa Lowe's,2360,FL,17.2
+33634,6275 W. Waters AVE.,Tampa,Central Tampa Lowe's,564,FL,17.9
+33549,21500 STATE RD 54,Lutz,Lutz Lowe's,2238,FL,22.8
+33635,13841 W. Hillsborough Ave,Tampa,Oldsmar Lowe's,2639,FL,23.4
+33809,3600 North Road 98,Lakeland,N. Lakeland Lowe's,2253,FL,21.1
+33541,7921 Gall Boulevard,Zephyrhills,Zephyrhills Lowe's,1854,FL,6.2
+33556,2317 GUNN HIGHWAY,Odessa,Trinity Lowe's,3477,FL,27.3
+33803,3525 Lakeland Highlands Road,Lakeland,Lakeland Lowe's,783,FL,29.8
+34219,8740 US 301 NORTH,Parrish,Parrish Lowe's,3453,FL,19.9
+33713,2365 25TH Street North,Saint Petersburg,ST. Petersburg Lowe's,740,FL,24.8
+34203,7395 52ND Place East,Bradenton,Bradenton Lowe's,772,FL,24.9
+34654,8312 Little Road,New Port Richey,Port Richey Lowe's,724,FL,21.2
+34689,41800 US HIGHWAY 19 N,Tarpon Springs,Tarpon Springs Lowe's,2777,FL,13.4
+33761,26990 Us Highway 19 N,Clearwater,Clearwater Lowe's,771,FL,16.7
+33830,425 East Van Fleet Drive,Bartow,Bartow Lowe's,2531,FL,21.3
+33823,2301 Us Highway 92 West,Auburndale,Auburndale Lowe's,2457,FL,18.7
+33759,2619 Gulf To Bay Boulevard,Clearwater,S. Clearwater Lowe's,1714,FL,17.5
+33781,7301 Park Blvd N,Pinellas Park,Pinellas Park Lowe's,1190,FL,21.3
+34205,4012 14TH Street West,Bradenton,Central Bradenton Lowe's,1843,FL,21.9
+33778,11101 Ulmerton Road,Largo,Largo Lowe's,1701,FL,16.6
+33880,490 CITI CENTRE STREET,Winter Haven,Winter Haven Lowe's,1079,FL,14
+33844,37051 Us Highway 27,Haines City,Haines City Lowe's,2702,FL,21.4
+33859,23227 Us Highway 27,Lake Wales,Lake Wales Lowe's,2240,FL,21.5
+33948,2000 Tamiami Trail,Port Charlotte,Port Charlotte Lowe's,1732,FL,51.3
+34287,5601 Tuscola Boulevard,North Port,North Port Lowe's,2727,FL,56.1
+34232,5750 Fruitville Road,Sarasota,N.E. Sarasota Lowe's,1935,FL,34
+34238,4020 Central Sarasota Parkway,Sarasota,Sw Sarasota Lowe's,2933,FL,37.4
+34293,1745 Tamiami Trail South,Venice,Venice Lowe's,1683,FL,37.9
+35007,235 Colonial Promenade Pkwy,Alabaster,Alabaster Lowe's,2525,AL,1.9
+35244,2100 Valleydale Road,Hoover,Hoover Lowe's,620,AL,8.3
+35020,1201 19TH Street North,Bessemer,Bessemer Lowe's,1531,AL,13.6
+35209,375 State Farm Pkwy,Homewood,Homewood Lowe's,580,AL,13.6
+35242,5291 Highway 280,Birmingham,Inverness Lowe's,1726,AL,14.7
+35068,1335 Walker Chapel Road,Fultondale,Fultondale Lowe's,1744,AL,25.1
+35235,1885 Edwards Lake RD.,Birmingham,Trussville Lowe's,594,AL,26.3
+35094,8900 Weaver Avenue,Leeds,Leeds Lowe's,1737,AL,28.4
+35405,4900 Oscar Baxter DR.,Tuscaloosa,Tuscaloosa Lowe's,423,AL,42.2
+35476,5703 Mcfarland Blvd,Northport,Northport Lowe's,2488,AL,45.2
+35055,"1717 Cherokee AVE., Sw",Cullman,Cullman Lowe's,313,AL,25.3
+36066,2307 Cobbs Ford Road,Prattville,Prattville Lowe's,1181,AL,42.5
+35803,10050 S. Memorial Pkwy,Huntsville,Huntsville Lowe's,411,AL,22.7
+35640,1807 Highway 31 Nw,Hartselle,Hartselle Lowe's,3006,AL,27.7
+35806,6275 UNIVERSITY DRIVE,Huntsville,Lowe's Outlet Huntsville,3645,AL,30.9
+35810,3505 Memorial Pkwy Nw,Huntsville,N. Huntsville Lowe's,1577,AL,31.7
+35758,7920 Hwy 72 West,Madison,Madison Lowe's,663,AL,33.2
+35601,1641 Beltine Road Sw,Decatur,Decatur Lowe's,1176,AL,34.1
+35611,1109 Us Highway 72 East,Athens,Athens Lowe's,1799,AL,39.6
+39705,2301 Woodmont Drive,Columbus,Columbus Lowe's,1166,MS,53.7
+39759,882 Highway 12 West,Starkville,Starkville Lowe's,2519,MS,45.9
+39301,100 15TH Place South,Meridian,Meridian Lowe's,1568,MS,61.9
+39350,1105 Central Drive,Philadelphia,Philadelphia Lowe's,2208,MS,63.3
+38804,3354 NORTH GLOSTER ST.,Tupelo,Tupelo Lowe's,529,MS,63.4
+39440,1490 Highway 15 North,Laurel,Laurel Lowe's,2563,MS,94
+35661,3415 Woodward Avenue,Muscle Shoals,Muscle Shoals Lowe's,1093,AL,48.7
+35630,130 Cox Creek Pkwy South,Florence,Florence Lowe's,481,AL,55.9
+38652,500 PARK PLAZA DRIVE,New Albany,New Albany Lowe's,3041,MS,69.5
+38834,1800 South Parkway,Corinth,Corinth Lowe's,91,MS,63.7
+38372,1895 Wayne Road,Savannah,Savannah Lowe's,2218,TN,69.2
+38401,2000 Hillary DR.,Columbia,Columbia Lowe's,729,TN,47.6
+37160,1734 North Main Street,Shelbyville,Shelbyville Lowe's,1767,TN,42.3
+38301,2071 South Highland Ave,Jackson,S. Jackson Lowe's,1893,TN,60.9
+38305,671 Vann Drive,Jackson,Jackson Lowe's,496,TN,68.2
+39465,40 Tyner Road,Petal,Petal Lowe's,3033,MS,93.9
+39581,3301 Denny Avenue,Pascagoula,Pascagoula Lowe's,712,MS,23.8
+39553,3200 Highway 90,Gautier,Gautier Lowe's,2700,MS,31.9
+39540,3700 Sangani BLVD.,Diberville,D'iberville Lowe's,690,MS,46.3
+39501,2151 John Hill BLVD.,Gulfport,Gulfport Lowe's,466,MS,50.1
+39402,6004 Us Highway 98,Hattiesburg,Hattiesburg Lowe's,537,MS,66.6
+39576,9020 Highway 603,Waveland,Waveland Lowe's,2350,MS,62.6
+39232,120 Ridge Way,Flowood,Flowood Lowe's,2553,MS,98.4
+37067,3060 Mallory Lane,Franklin,Franklin Lowe's,532,TN,9
+37167,410 Genie Lane,Smyrna,Smyrna Lowe's,1626,TN,11.4
+37211,5520 Nolensville Pike,Nashville,Nashville Lowe's,2725,TN,12.6
+37174,2000 Belshire Way,Spring Hill,Spring Hill Lowe's,2474,TN,14.6
+37129,1825 Old Fort Parkway,Murfreesboro,Murfreesboro Lowe's,659,TN,14.9
+37209,7034 Charlotte Pike,Nashville,W. Nashville Lowe's,629,TN,22.1
+37076,5025 Old Hickory BLVD.,Hermitage,Hermitage Lowe's,390,TN,23
+37122,"300 Pleasant Grove RD, Ste 200",Mt. Juliet,MT. Juliet Lowe's,2654,TN,23.8
+37207,3460 Dickerson Pike,Nashville,N. Nashville Lowe's,2851,TN,26.6
+37087,634 South Cumberland Street,Lebanon,Lebanon Lowe's,1692,TN,41.7
+37115,10 E Campbell Rd,Madison,Madison Lowe's,413,TN,15.3
+37075,360 East Main ST.,Hendersonville,Hendersonville Lowe's,668,TN,16.6
+42240,4580 FORT CAMPBELL BLVD.,Hopkinsville,Hopkinsville Lowe's,1666,KY,23
+37043,1622 MADISON STREET,Clarksville,S. Clarksville Lowe's,3003,TN,25.2
+37040,2150 LOWES DRIVE,Clarksville,Clarksville Lowe's,498,TN,25.5
+42071,1400 LOWE'S DRIVE,Murray,Murray Lowe's,722,KY,31
+38242,117 Memorial Drive,Paris,Paris Lowe's,1789,TN,36.6
+37055,116 Jackson Brothers BLVD.,Dickson,Dickson Lowe's,1675,TN,43.2
+42066,1208C Paris Road,Mayfield,Mayfield Lowe's,2490,KY,48.6
+37172,3480 Tom Austin Highway,Springfield,Springfield Lowe's,1747,TN,49.3
+42431,550 ISLAND FORD RD.,Madisonville,Madisonville Lowe's,16,KY,55
+42003,3131 Irvin Cobb Drive,Paducah,E. Paducah Lowe's,2460,KY,55.1
+38501,510 Neal Street,Cookeville,Cookeville Lowe's,578,TN,30.5
+37066,1301 Nashville Pike,Gallatin,Gallatin Lowe's,2618,TN,32.1
+42134,1555 Nashville Road,Franklin,Franklin Lowe's,2776,KY,25.9
+42104,150 AMERICAN LN,Bowling Green,Bowling Green Lowe's,451,KY,25.4
+42001,5176 HINKLEVILLE RD.,Paducah,Paducah Lowe's,465,KY,54
+42141,208 Sl Rogers Wells Blvd,Glasgow,Glasgow Lowe's,1796,KY,42
+38358,15471 South First Street,Milan,Milan Lowe's,2487,TN,53.8
+38555,2431 N. Main,Crossville,Crossville Lowe's,548,TN,45.9
+37748,1800 Roane State Highway,Harriman,Harriman Lowe's,1800,TN,44.4
+42501,2001 SOUTH HWY. 27,Somerset,Somerset Lowe's,558,KY,51.3
+38024,1155 Highway 51 Bypass West,Dyersburg,Dyersburg Lowe's,1731,TN,24.5
+72315,3790 East Main Street,Blytheville,Blytheville Lowe's,2534,AR,43.3
+38261,800 West Reelfoot Avenue,Union City,Union City Lowe's,1704,TN,43.6
+38053,8490 HIGHWAY 51 NORTH,Millington,Millington Lowe's,1869,TN,52.6
+38133,8300 HIGHWAY 64,Bartlett,E. Bartlett Lowe's,1187,TN,54.9
+38018,430 S. GERMANTOWN PARKWAY,Cordova,Germantown Parkway Lowe's,1526,TN,59.8
+63801,1240 S. MAIN STREET,Sikeston,Sikeston Lowe's,1209,MO,48.9
+72450,212 NORTH 23RD STREET,Paragould,Paragould Lowe's,2847,AR,60.6
+38122,585 NORTH PERKINS ROAD,Memphis,Memphis Lowe's,2237,TN,7.4
+38125,7895 WINCHESTER ROAD,Memphis,S.E. Memphis Lowe's,1163,TN,8.8
+38017,425 NEW BYHALIA ROAD,Collierville,Collierville Lowe's,2543,TN,10
+38654,8370 CAMP CREEK BLVD,Olive Branch,Olive Branch Lowe's,1988,MS,14.6
+38671,178 GOODMAN ROAD WEST,Southaven,Southaven Lowe's,1721,MS,18.7
+38606,1135 HIGHWAY 6 EAST,Batesville,Batesville Lowe's,1757,MS,60
+72401,2111 FAIR PARK BLVD.,Jonesboro,Jonesboro Lowe's,414,AR,56.3
+63701,3440 LOWES DRIVE,Cape Girardeau,Cape Girardeau Lowe's,317,MO,63.8
+42718,205 Jefra Avenue,Campbellsville,Campbellsville Lowe's,1770,KY,65.9
+38701,1886 Dr Mlk Jr Blvd,Greenville,Greenville Lowe's,1527,MS,63.5
+71601,2906A EAST HARDING AVENUE,Pine Bluff,Pine Bluff Lowe's,1628,AR,80.4
+39110,128 Grandview Boulevard,Madison,Madison Lowe's,2620,MS,83.2
+71202,4750 FRONTAGE RD,Monroe,Monroe Lowe's,450,LA,86.2
+39157,910 East County Line,Ridgeland,Ridgeland Lowe's,2622,MS,86.4
+39204,2250 Greenway Drive,Jackson,W. Jackson Lowe's,2369,MS,88.5
+71270,809 Morrison Drive,Ruston,Ruston Lowe's,2418,LA,109.4
+72117,4330 East Mccain Boulevard,North Little Rock,N. Little Rock Lowe's,1627,AR,117.3
+72076,2301 T.P. White Drive,Jacksonville,Jacksonville Lowe's,1766,AR,99.5
+72022,2330 NORTH REYNOLDS ROAD,Bryant,Bryant Lowe's,2471,AR,103.9
+72211,1100 SOUTH BOWMAN ROAD,Little Rock,West Little Rock Lowe's,3331,AR,105.1
+72143,3701 East Race Avenue,Searcy,Searcy Lowe's,1775,AR,99.5
+39648,1802 Pikes Point Circle,Mccomb,Mccomb Lowe's,1774,MS,76.7
+71360,3200 Monroe Highway,Pineville,Pineville Lowe's,2965,LA,83.1
+70815,9460 CORTANA PLACE,Baton Rouge,N. Baton Rouge Lowe's,461,LA,86.2
+71301,3201 INDUSTRIAL ST.,Alexandria,Alexandria Lowe's,586,LA,87.3
+70816,1777 Millerville Road,Baton Rouge,E. Baton Rouge Lowe's,2484,LA,87.6
+70401,3007 HIGHWAY 190 WEST,Hammond,Hammond Lowe's,1070,LA,98.9
+70570,1130 East Landry Street,Opelousas,Opelousas Lowe's,1822,LA,81.5
+70809,10303 SOUTH MALL DR.,Baton Rouge,S. Baton Rouge Lowe's,186,LA,84.4
+70433,1280 North Highway 190,Covington,Covington Lowe's,1698,LA,88.7
+70737,12484 Airline Highway,Gonzales,Gonzales Lowe's,2645,LA,82.8
+70507,120 EAST GLORIA SWITCH RD,Lafayette,N. Lafayette Lowe's,618,LA,83.6
+70461,39184 Natchez Drive,Slidell,Slidell Lowe's,1684,LA,75.2
+70117,2501 Elysian Fields Avenue,New Orleans,Central New Orleans Lowe's,2470,LA,50
+70002,3640 VETERANS MEMORIAL BOULEVARD,Metairie,Metairie Lowe's,1054,LA,52.3
+70121,121 Jefferson Highway,Jefferson,Jefferson Highway Lowe's,1877,LA,53.3
+70058,1351 MANHATTAN BLVD.,Harvey,Harvey Lowe's,1085,LA,49
+70072,4950 Promenade Blvd,Marrero,Marrero Lowe's,2975,LA,39.4
+40004,3790 East John Rowan BLVD.,Bardstown,Bardstown Lowe's,2530,KY,8.9
+40165,800 CONESTOGA PARKWAY,Shepherdsville,Shepherdsville Lowe's,2945,KY,11.6
+40229,9800 Preston Crossing BLVD.,Louisville,S. Louisville Lowe's,1518,KY,16.3
+42701,100 LOWE'S DRIVE,Elizabethtown,Elizabethtown Lowe's,460,KY,21.4
+40218,2100 Bashford Manor Lane,Louisville,C. Louisville Lowe's,1923,KY,22.3
+40258,6651 DIXIE HWY.,Louisville,S.W. Louisville Lowe's,705,KY,23.9
+40222,501 S. HURSTBOURNE PKWY,Louisville,E. Louisville Lowe's,474,KY,24.1
+40065,544 Taylorsville Road,Shelbyville,Shelbyville Lowe's,2592,KY,26.7
+40241,4930 Norton Healthcare Blvd,Louisville,N.E. Louisville Lowe's,2245,KY,29.1
+47129,1350 Veterans Parkway,Clarksville,Clarksville Lowe's,2542,IN,32.2
+40601,350 LEONARDWOOD RD.,Frankfort,Frankfort Lowe's,492,KY,11.1
+40324,109 Magnolia Drive,Georgetown,Georgetown Lowe's,1736,KY,28.6
+40503,4055 NICHOLS PARK DR.,Lexington,S. Lexington Lowe's,607,KY,34.6
+40356,1421 Keene Road,Nicholasville,Nicholasville Lowe's,2581,KY,35.9
+40509,200 OLD TODDS ROAD,Lexington,E. Lexington Lowe's,507,KY,37.4
+47250,511 Ivy Tech Drive,Madison,Madison Lowe's,1735,IN,20.3
+40422,51 MAY BOULEVARD,Danville,Danville Lowe's,1622,KY,30.6
+47025,970 W. Eads Parkway,Lawrenceburg,Lawrenceburg Lowe's,2522,IN,41.3
+40509,2300 Grey Lag Way,Lexington,N.E. Lexington Lowe's,2345,KY,40.9
+41042,4800 HOUSTON ROAD,Florence,Florence Lowe's,554,KY,40.4
+47201,3500 10TH Street,Columbus,Columbus Lowe's,1516,IN,43.6
+42303,415 FULTON DRIVE,Owensboro,Owensboro Lowe's,657,KY,50.7
+47715,6716 Oak Grove Road,Evansville,E. Evansville Lowe's,630,IN,46.8
+42420,2190 Us Highway 60 East,Henderson,Henderson Lowe's,2558,KY,50.6
+47712,103 South Red Bank Road,Evansville,W. Evansville Lowe's,679,IN,55.6
+40353,550 Indian Mound Drive,Mt Sterling,MT. Sterling Lowe's,2768,KY,17.5
+40391,1221 BY-PASS ROAD,Winchester,Winchester Lowe's,464,KY,24.2
+41056,314 East Maple Leaf Road,Maysville,Maysville Lowe's,2497,KY,24.7
+40475,814 EASTERN BYPASS,Richmond,Richmond Lowe's,1006,KY,42.9
+41076,2369 Alexandria Pike,Highland Heights,Highland Heights Lowe's,1071,KY,40.5
+45247,6150 Harrison Road,Cincinnati,Western Hills Lowe's,2338,OH,41.7
+45245,618 Mount Moriah Drive,Cincinnati,S.E. Cincinnati Lowe's,1160,OH,19.9
+45213,5385 Ridge Avenue,Cincinnati,Norwood Lowe's,1585,OH,26.6
+45150,5694 Romar Drive,Milford,Milford-miami Township Lowe's,1664,OH,28.2
+45246,505 EAST KEMPER ROAD,Cincinnati,Springdale Lowe's,760,OH,34.7
+45251,10235 COLERAIN AVE.,Cincinnati,N.W. Cincinnati Lowe's,534,OH,35
+45040,9380 S MASON MONTGOMERY RD,Mason,Mason Lowe's,542,OH,23.8
+45069,7975 Tylersville Square Road,West Chester,West Chester Lowe's,2649,OH,27
+45133,107 Careytown Rd,Hillsboro,Hillsboro Lowe's,2343,OH,44.4
+45065,575 Corwin Nixon Blvd,South Lebanon,S. Lebanon Lowe's,2853,OH,46.9
+45013,1495 MAIN ST.,Hamilton,Hamilton Lowe's,168,OH,25.3
+45601,867 NORTH BRIDGE ST.,Chillicothe,Chillicothe Lowe's,472,OH,43.8
+45177,1175 ROMBACH AVE.,Wilmington,Wilmington Lowe's,298,OH,65.9
+62901,1170 RENDLEMAN RD,Carbondale,Carbondale Lowe's,493,IL,55
+47591,2700 North 6TH Street,Vincennes,Vincennes Lowe's,1610,IN,67.3
+47421,3300 16TH Street,Bedford,Bedford Lowe's,1894,IN,67.2
+62864,111 DAVIDSON AVE.,Mount Vernon,MT. Vernon Lowe's,66,IL,78.8
+43050,1010 Coshocton Avenue,Mount Vernon,MT. Vernon Lowe's,1765,OH,11.9
+43068,8231 East Broad Street,Reynoldsburg,Reynoldsburg Lowe's,2852,OH,33.6
+43219,4141 MORSE CROSSING,Columbus,N.E. Columbus Lowe's,265,OH,37.3
+44906,940 N LEXINGTON SPRING MILL RD,Mansfield,Ontario Lowe's,264,OH,37.7
+43240,1465 POLARIS PARKWAY,Columbus,N. Columbus Lowe's,711,OH,38.2
+43232,2888 BRICE ROAD,Columbus,S.E. Columbus Lowe's,3,OH,38.4
+43213,3616 East Broad Street,Columbus,E. Columbus Lowe's,1211,OH,39.3
+43211,2345 Silver Drive,Columbus,Central Columbus Lowe's,1175,OH,20.9
+43207,3899 South High Street,Columbus,S. Columbus Lowe's,1595,OH,25.2
+43017,6555 DUBLIN CENTER DRIVE,Dublin,Dublin Lowe's,755,OH,1.5
+43026,3600 PARK MILL RUN DR.,Hilliard,W. Columbus Lowe's,37,OH,3.7
+43228,1675 GEORGESVILLE SQ. DR.,Columbus,S.W. Columbus Lowe's,181,OH,11.2
+43040,15775 Us 36E,Marysville,Marysville Lowe's,2944,OH,16.8
+43302,1840 MARION MT. GILEAD ROAD,Marion,Marion Lowe's,1091,OH,19.9
+45504,1601 N. BECHTLE AVE.,Springfield,Springfield Lowe's,453,OH,12
+43311,2168 US 68 SOUTH,Bellefontaine,Bellefontaine Lowe's,9,OH,24.1
+45324,2850-I CENTRE DRIVE,Fairborn,Beavercreek Lowe's,89,OH,27.4
+45385,126 Hospitality Drive,Xenia,Xenia Lowe's,2603,OH,28.4
+45424,8421 OLD TROY PIKE,Huber Heights,Huber Heights Lowe's,781,OH,28.7
+44691,3788 BURBANK ROAD,Wooster,Wooster Lowe's,1696,OH,28.3
+44646,101 Massillon Marketplace Dr Sw,Massillon,Massillon Lowe's,766,OH,43.7
+44663,495 Mill Road,New Philadelphia,New Philadelphia Lowe's,269,OH,45.5
+45365,2700 Michigan Street,Sidney,Sidney Lowe's,2511,OH,31.2
+45373,2000 West Main Street,Troy,Troy Lowe's,1523,OH,33.5
+44281,1065 Williams Reserve Blvd,Wadsworth,Wadsworth Lowe's,2213,OH,47.3
+45426,5252 SALEM AVE.,Trotwood,Dayton-trotwood Lowe's,42,OH,27.4
+45895,1340 Bellefontaine Street,Wapakoneta,Wapakoneta Lowe's,2978,OH,32.3
+45459,6300 WILMINGTON PIKE,Centerville,Wilmington Pike Lowe's,207,OH,35
+45331,1550 Wagner Avenue,Greenville,Greenville Lowe's,2524,OH,35.4
+45449,2900 MARTIN'S DRIVE,West Carrollton,Dayton Mall Lowe's,203,OH,33.9
+44883,1025 West Market Street,Tiffin,Tiffin Lowe's,2930,OH,36.5
+45807,2411 NORTH EASTOWN RD.,Lima,Lima Lowe's,255,OH,35.5
+45840,1077 BRIGHT ROAD,Findlay,Findlay Lowe's,1045,OH,38.7
+43420,"1952 NORTH STATE, RT. 53",Fremont,Fremont Lowe's,19,OH,43.7
+43551,10295 Fremont Pike,Perrysburg,Perrysburg Lowe's,1649,OH,51.2
+43615,5501 Airport Highway,Toledo,S.W. Toledo Lowe's,1643,OH,48.4
+44870,5500 MILAN RD. - SPACE 304,Sandusky,Sandusky Lowe's,77,OH,49
+43617,7000 W Central Ave,Toledo,Sylvania Township Lowe's,1614,OH,28.1
+43612,1136 West Alexis Road,Toledo,N. Toledo Lowe's,1659,OH,28.4
+48162,2191 North Telegraph Road,Monroe,Frenchtown Township Lowe's,1074,MI,43.6
+43512,1831 NORTH CLINTON ST.,Defiance,Defiance Lowe's,231,OH,47.8
+44053,7500 Oak Point Road,Lorain,Lorain Lowe's,2867,OH,38.8
+44035,646 MIDWAY BLVD.,Elyria,Elyria Lowe's,224,OH,44.9
+48183,21000 West Road,Woodhaven,Woodhaven Lowe's,2765,MI,33.1
+48195,16410 Trenton,Southgate,Southgate Lowe's,1205,MI,36.4
+49221,1369 Division ST.,Adrian,Adrian Lowe's,88,MI,36.2
+48197,3900 Carpenter Road,Ypsilanti,Ann Arbor Lowe's,734,MI,39
+48101,23111 Outer Drive,Allen Park,Allen Park Lowe's,1859,MI,43.7
+44011,1445 Center Road,Avon,Avon Lowe's,2770,OH,44.3
+44116,20639 Center Ridge Road,Rocky River,Rocky River Lowe's,2450,OH,44.5
+46805,1929 North Coliseum BLVD.,Fort Wayne,E. Fort Wayne Lowe's,126,IN,50.2
+46818,6931 Lima Rd,Fort Wayne,N. Ft Wayne Lowe's,1105,IN,51.7
+49202,1535 Boardman Road,Jackson,Jackson Lowe's,146,MI,52
+46804,4430 Illinois RD.,Fort Wayne,W. Fort Wayne Lowe's,53,IN,39.5
+49014,6122 B Drive North,Battle Creek,Battle Creek Lowe's,69,MI,55.5
+46714,2105 North Main Street,Bluffton,Bluffton Lowe's,1773,IN,56.8
+48103,5900 Jackson Road,Ann Arbor,Scio Township Lowe's,1750,MI,52.8
+46582,2495 JALYNN STREET,Warsaw,Warsaw Lowe's,1615,IN,56.9
+44720,"6375 STRIP AVE., N.W.",North Canton,Canton Lowe's,222,OH,50.3
+44312,940 Interstate Parkway,Akron,Green Lowe's,1768,OH,52.4
+44221,330 HOWE AVE,Cuyahoga,Lowe's Outlet Cuyahoga Falls,3644,OH,47.4
+44067,8224 Golden Link Blvd,Northfield,Macedonia Lowe's,1139,OH,55.2
+44136,9149 Pearl Road,Strongsville,Strongsville Lowe's,2339,OH,21.1
+44144,7327 NORTH CLIFF AVENUE,Brooklyn,Brooklyn Lowe's,770,OH,25.2
+44333,186 N. CLEVELAND-MASSILLON RD,Akron,Fairlawn Lowe's,633,OH,35
+44224,3570 HUDSON DRIVE,Stow,Stow Lowe's,605,OH,18.7
+47374,510 West Eaton Pike,Richmond,Richmond Lowe's,1092,IN,17.8
+45044,3125 TOWNE BOULEVARD,Middletown,Middletown Lowe's,303,OH,26.3
+47304,4401 West Clara Lane,Muncie,Muncie Lowe's,116,IN,42.3
+46013,3335 South Scatterfield Rd,Anderson,Anderson Lowe's,1031,IN,45.8
+46953,2842 South Western AVE.,Marion,Marion Lowe's,211,IN,57.4
+46060,16800 Mercantile Blvd,Noblesville,Noblesville Lowe's,1191,IN,18.2
+46250,8002 North Shadeland AVE.,Indianapolis,N.E. Indianapolis Lowe's,288,IN,25
+46033,14598 Lowes Way,Carmel,Carmel Lowe's,1525,IN,25.6
+46219,8801 East 25TH ST.,Indianapolis,E. Indianapolis Lowe's,272,IN,28.3
+46220,6002 North Rural Street,Indianapolis,Central Indianapolis Lowe's,635,IN,29.6
+46268,8440 Michigan RD.,Indianapolis,N.W. Indianapolis Lowe's,145,IN,32.8
+46902,4005 South Lafountain,Kokomo,Kokomo Lowe's,357,IN,33.5
+46077,6711 WHITESTOWN PARKWAY,Zionsville,Zionsville Lowe's,2766,IN,21.3
+46224,975 Beachway Drive,Indianapolis,W. Indianapolis Lowe's,275,IN,27.7
+47905,100 North Creasy Lane,Lafayette,Lafayette Lowe's,12,IN,18
+46112,630 West Northfield Drive,Brownsburg,Brownsburg Lowe's,2681,IN,26.8
+46123,7893 East Us Hwy 36,Avon,Avon Lowe's,1135,IN,33.5
+46203,4444 South Emerson Avenue,Indianapolis,Beech Grove Lowe's,2319,IN,20.5
+46227,8850 Madison Ave,Indianapolis,S. Indianapolis Lowe's,442,IN,25.2
+46131,2219 N. Morton Street,Franklin,Franklin Lowe's,2523,IN,27.6
+46158,851 Bridge Street,Mooresville,Mooresville Lowe's,1168,IN,12.2
+47404,350 North Gates DR.,Bloomington,Bloomington Lowe's,634,IN,26.2
+47802,4701 South Us HWY. 41,Terre Haute,Terre Haute Lowe's,215,IN,33.8
+61832,3636 N Vermilion,Danville,Danville Lowe's,52,IL,41.2
+46375,637 U.S. Highway 41,Schererville,Schererville Lowe's,1601,IN,7.6
+60620,8411 South Holland Road,Chicago,Chicago - 83rd And Stewart Lowe's,2301,IL,10.4
+46410,1520 East 79TH Avenue,Merrillville,Merrillville Lowe's,1569,IN,14.3
+60652,7971 South Cicero,Chicago,Chicago Lowe's,2304,IL,14.5
+60632,4640 S. Pulaski Rd,Chicago,Lowe's Outlet Chicago,3572,IL,16.9
+60462,15601 South Lagrange Road,Orland Park,Orland Park Lowe's,1828,IL,17.1
+60622,1360 NORTH ASHLAND AVENUE,Chicago,Wicker Park Lowe's,3284,IL,21.4
+60451,2480 E. Lincoln Highway,New Lenox,New Lenox Lowe's,2580,IL,22
+60639,2630 N. Narragansett AVE.,Chicago,Chicago-Brickyard Lowe's,1845,IL,25.6
+60712,3601 West Touhy Avenue,Lincolnwood,Lincolnwood Lowe's,1748,IL,29.1
+46360,5200 FRANKLIN STREET,Michigan City,Michigan City Lowe's,195,IN,30.2
+60915,860 N Kinzie Ave,Bradley,Kankakee Lowe's,118,IL,31
+46563,1100 Pilgrim Lane,Plymouth,Plymouth Lowe's,1956,IN,47.1
+46614,250 West Ireland Road,South Bend,South Bend Lowe's,2593,IN,38.3
+49120,2055 South 11TH Street,Niles,Niles Lowe's,1860,MI,39
+49022,1300 Mall Drive,Benton Harbor,Benton Harbor Lowe's,46,MI,39.9
+46545,4660 Grape Rd,Mishawaka,Mishawaka Lowe's,200,IN,30.4
+46514,110 County Road 6 W,Elkhart,Elkhart Lowe's,2942,IN,40.6
+46526,2219 Rieth BLVD.,Goshen,Goshen Lowe's,71,IN,42.3
+60490,245 South Weber Road,Bolingbrook,Bolingbrook Lowe's,2535,IL,51.8
+49002,5108 South Westnedge Avenue,Portage,Portage Lowe's,1110,MI,37.9
+49009,5125 West Main Street,Kalamazoo,Kalamazoo Lowe's,765,MI,40.4
+61822,1904 North Prospect AVE.,Champaign,Champaign Lowe's,80,IL,65.9
+48051,27990 23 Mile Road,Chesterfield,N. Chesterfield Lowe's,1156,MI,16.5
+48038,15350 Hall Road,Clinton Township,Clinton Township Lowe's,1008,MI,19.9
+48307,3277 South Rochester Road,Rochester Hills,Rochester Hills Lowe's,2305,MI,22.7
+48059,4200 24TH AVE.,Fort Gratiot,FT. Gratiot Lowe's,695,MI,23.4
+48035,35115 South Gratiot Avenue,Clinton Township,S. Clinton Township Lowe's,1716,MI,24.3
+48310,2000 Metropolitan Parkway,Sterling Height,Sterling Heights Lowe's,1779,MI,26
+48093,31140 Van Dyke Avenue,Warren,Warren Lowe's,684,MI,27.6
+48302,1801 S Telegraph Rd,Bloomfield Hills,Bloomfield Township Lowe's,713,MI,29.5
+48071,434 West Twelve Mile,Madison Heights,Madison Heights Lowe's,2312,MI,30
+48225,19340 Vernier Road,Harper Woods,Harper Woods Lowe's,1677,MI,31.8
+48034,28650 Telegraph Road,Southfield,Southfield Lowe's,1604,MI,7.9
+48390,2745 E West Maple Rd,Commerce Township,Commerce Township Lowe's,1814,MI,15.1
+48386,8550 Highland Road,White Lake,White Lake Lowe's,1823,MI,36.2
+48185,6555 N Newburgh Rd,Westland,Westland Lowe's,768,MI,13.1
+48187,44080 Ford Road,Canton,Canton Lowe's,1847,MI,14.4
+48165,30547 Lyon Center Drive East,New Hudson,Lyon Township Lowe's,2570,MI,17.6
+48843,1100 South Latson Road,Howell,Howell Lowe's,779,MI,22
+48911,6821 South Cedar Street,Lansing,S. Lansing Lowe's,1596,MI,35.2
+48604,2258 Tittabawasee RD.,Saginaw,Saginaw Lowe's,562,MI,51.7
+48642,1918 Airport RD.,Midland,Midland Lowe's,575,MI,66.1
+48917,320 N Marketplace Blvd,Lansing,W. Lansing Lowe's,777,MI,37.3
+49307,21555 Perry Avenue,Big Rapids,Big Rapids Lowe's,2532,MI,72.4
+49735,600 Edelweiss Village Pkwy,Gaylord,Gaylord Lowe's,1551,MI,79.4
+49525,4297 Plainfield Avenue N.E.,Grand Rapids,N.E. Grand Rapids Lowe's,1514,MI,81.1
+49684,3150 North Us 31 South,Traverse City,Traverse City Lowe's,1609,MI,81.8
+49512,3330 28TH Street Southeast,Kentwood,Kentwood Lowe's,1517,MI,86.9
+49418,4705 Canal Ave Sw,Grandville,Grandville Lowe's,1121,MI,94.8
+49770,2140 Anderson Road,Petoskey,Petoskey Lowe's,2585,MI,58.3
+49431,4460 West Us 10,Ludington,Ludington Lowe's,2318,MI,129.7
+49444,2035 East Sherman BLVD.,Muskegon,Muskegon Lowe's,199,MI,105.2
+49424,"12635 Felch ST., Suite 10",Holland,Holland Lowe's,330,MI,69.4
+54220,4401 CRAWFORD BLVD.,Manitowoc,Manitowoc Lowe's,2206,WI,92.9
+53222,12000 West Burleigh,Wauwatosa,Wauwatosa Lowe's,2309,WI,95.5
+54915,W3255 Van Roy Road,Appleton,Buchanan Lowe's,2486,WI,96.8
+53132,7027 South 27TH Street,Franklin,Franklin Lowe's,2554,WI,92.3
+49855,3500 Us 41 West,Marquette,Marquette Lowe's,2868,MI,142.6
+54467,230 Crossroads Drive,Plover,Plover Lowe's,2586,WI,186.1
+54904,1075 North Washburn Street,Oshkosh,Oshkosh Lowe's,2308,WI,186.3
+55746,12025 HIGHWAY 169 W,Hibbing,Hibbing Lowe's,2333,MN,212.9
+55082,5888 NOVA SCOTIA AVENUE NORTH,Oak Park Heights,Oak Park Heights Lowe's,2315,MN,204.1
+55434,11651 ULYSSES ST NE,Blaine,Blaine Lowe's,2465,MN,216.5
+55448,2700 MAIN ST NW,Coon Rapids,Coon Rapids Lowe's,1833,MN,181.3
+55118,1795 Robert St S,West St. Paul,W. ST. Paul Lowe's,2313,MN,182.9
+55369,11201 FOUNTAINS DR NORTH,Maple Grove,Maple Grove Lowe's,2627,MN,188.7
+50009,3610 8TH STREET SW,Altoona,Altoona Lowe's,2503,IA,19
+50266,450 South Jordan Creek Parkway,West Des Moines,Jordan Creek Lowe's,2648,IA,22.2
+50266,1700 50TH ST.,West Des Moines,W. Des Moines Lowe's,552,IA,22.4
+50010,120 AIRPORT RD.,Ames,Ames Lowe's,581,IA,44.2
+50701,400 East Tower Park Drive,Waterloo,Waterloo Lowe's,1712,IA,94.6
+52241,2701 2ND Street,Coralville,Coralville Lowe's,1688,IA,98.6
+52402,5300 Blairs Forest Blvd Ne,Cedar Rapids,Cedar Rapids Lowe's,2231,IA,102.8
+64601,100 WEST BUSINESS 36,Chillicothe,Chillicothe Lowe's,2459,MO,110.2
+52601,3435 AGENCY,Burlington,Burlington Lowe's,57,IA,126.7
+64506,3901 N. BELT HWY.,Saint Joseph,ST. Joseph Lowe's,305,MO,129
+68114,7525 DODGE STREET,Omaha,Central Omaha Lowe's,1159,NE,130.8
+68133,8707 SOUTH 71ST PLAZA,Papillion,Papillion Lowe's,2611,NE,132.3
+68116,3333 N. 147TH STREET,Omaha,N.W. Omaha Lowe's,1520,NE,135.8
+68130,18375 WRIGHT STREET,Omaha,S.W. Omaha Lowe's,1184,NE,116.1
+55060,1280 21ST AVENUE NW,Owatonna,Owatonna Lowe's,2518,MN,109.4
+55904,4550 Maine Avenue Se,Rochester,Rochester Lowe's,2736,MN,109.5
+52003,4100 DODGE ST.,Dubuque,Dubuque Lowe's,117,IA,134.6
+51106,5758 SUNNYBROOK DRIVE,Sioux City,Sioux City Lowe's,1695,IA,87.8
+68516,6101 Apples Way,Lincoln,S. Lincoln Lowe's,2739,NE,111.3
+65270,1800 EAST OUTER ROAD,Moberly,Moberly Lowe's,3088,MO,100.7
+64068,1920 N. STEWART ROAD,Liberty,Liberty Lowe's,1565,MO,116.1
+52807,3955 Elmore AVE.,Davenport,Davenport Lowe's,107,IA,136.6
+61265,3820 44TH Avenue DR.,Moline,Moline Lowe's,104,IL,102.9
+62305,6030 BROADWAY STREET,Quincy,Quincy Lowe's,1680,IL,120.2
+64154,8601 N. BOARDWALK AVENUE,Kansas City,N. Kansas City Lowe's,1078,MO,105.6
+64118,4811 North Oak Trafficway,Kansas City,Kansas City - Gladstone Lowe's,2767,MO,108.3
+64055,19000 EAST VALLEY VIEW PARKWAY,Independence,Independence Lowe's,1098,MO,111.9
+55379,4270 Dean Lakes Boulevard,Shakopee,Shakopee Lowe's,2628,MN,96.7
+55447,3205 VICKSBURG LANE NORTH,Plymouth,Plymouth Lowe's,1955,MN,113.1
+57106,4601 W. 26TH STREET,Sioux Falls,Sioux Falls Lowe's,2466,SD,116
+57006,812 25TH AVENUE,Brookings,Brookings Lowe's,2435,SD,130.6
+66615,1621 Southwest Arvonia Place,Topeka,Topeka Lowe's,521,KS,108.6
+66102,6920 State Avenue,Kansas City,Kansas City Lowe's,1830,KS,113.8
+61115,9700 North Alpine Road,Machesney Park,Machesney Park Lowe's,2310,IL,71.8
+61108,7130 East State Rd,Rockford,Rockford Lowe's,191,IL,74.2
+61401,531 West Carl Sandburg Dr,Galesburg,Galesburg Lowe's,92,IL,88.6
+60115,2050 Sycamore RD.,Dekalb,De Kalb Lowe's,59,IL,89.9
+53115,2015 E. Geneva Street,Delavan,Delavan Lowe's,2545,WI,96.3
+61615,5001 North Big Hollow Rd,Peoria,Peoria Lowe's,167,IL,107.8
+63401,3651 STARDUST DRIVE,Hannibal,Hannibal Lowe's,2991,MO,104.1
+61611,201 Riverside Drive,East Peoria,East Peoria Lowe's,1193,IL,80.3
+53142,6500 Green Bay Road,Kenosha,Kenosha Lowe's,2560,WI,62.8
+60061,1660 N Milwaukee Avenue,Vernon Hills,Vernon Hills Lowe's,2751,IL,83
+60156,300 North Randall Road,Lake In The Hills,Lake In The Hills Lowe's,1739,IL,71.9
+60062,1000 Willow Road,Northbrook,Northbrook Lowe's,2728,IL,68.3
+60005,990 West Algonquin Road,Arlington Heights,Arlington Heights Lowe's,2529,IL,70.5
+60188,400 West Army Trail,Carol Stream,Carol Stream Lowe's,1821,IL,62.1
+60174,955 South Randall Road,Saint Charles,ST. Charles Lowe's,1738,IL,52
+58201,4001 32ND AVENUE SOUTH,Grand Forks,Grand Forks Lowe's,1896,ND,206
+58103,5001 13TH AVE S,Fargo,Fargo Lowe's,1650,ND,206.7
+58503,1401 W CENTURY AVE,Bismarck,Bismarck Lowe's,2533,ND,194.9
+57701,2550 HAINES AVENUE,Rapid City,Rapid City Lowe's,1634,SD,225.2
+82009,1608 PRAIRIE AVENUE,Cheyenne,Cheyenne Lowe's,1539,WY,257.4
+80634,2400 47TH AVENUE,Greeley,Greeley Lowe's,1812,CO,296.8
+80525,4227 Corbett Drive,Fort Collins,Fort Collins Lowe's,2697,CO,298.4
+80537,1355 Sculptor Drive,Loveland,Loveland Lowe's,2568,CO,305.3
+80601,4980 EAST BROMLEY LANE,Brighton,Brighton Lowe's,2479,CO,271
+80501,355 Ken Pratt Blvd,Longmont,Longmont Lowe's,1874,CO,271.7
+59102,2717 KING AVENUE WEST,Billings,Billings Lowe's,319,MT,361.4
+80516,2910 ARAPAHOE ROAD,Erie,Erie Lowe's,3444,CO,297.1
+59718,1731 TSCHACHE LANE,Bozeman,Bozeman Lowe's,2608,MT,388.1
+80023,13650 ORCHARD PARKWAY,Westminster,N. Westminster Lowe's,2432,CO,265.9
+80234,261 WEST 104TH AVENUE,Northglenn,Northglenn Lowe's,246,CO,256.7
+59602,3291 NORTH SANDERS STREET,Helena,Helena Lowe's,2277,MT,437.3
+59901,2360 HIGHWAY 93 NORTH,Kalispell,Kalispell Lowe's,1904,MT,484.5
+59808,3100 NORTH RESERVE STREET,Missoula,Missoula Lowe's,1682,MT,494.9
+83404,925 E 17TH STREET,Idaho Falls,Idaho Falls Lowe's,1906,ID,182.6
+83202,650 BULLOCK STREET,Pocatello,Pocatello Lowe's,2587,ID,225.9
+84341,313 E 1400 North,Logan,Logan Lowe's,1501,UT,270.5
+84404,344 N. WASHINGTON BOULEVARD,Ogden,Ogden Lowe's,2858,UT,304
+84405,4155 RIVERDALE RD,Riverdale,Riverdale Lowe's,1080,UT,309.2
+83301,1350 BLUE LAKES BLVD NORTH,Twin Falls,Twin Falls Lowe's,2597,ID,367.1
+83814,901 APPLEWAY AVE,Coeur D Alene,Coeur D'alene Lowe's,18,ID,377.1
+99037,16205 E BROADWAY AVENUE,Spokane Valley,E. Spokane Valley Lowe's,2793,WA,334
+99212,E. 5204 SPRAGUE AVENUE,Spokane Valley,Spokane Valley Lowe's,172,WA,283.8
+99208,6606 NORTH DIVISION STREET,Spokane,North Spokane Lowes,3045,WA,287.3
+98837,1400 E. YONEZAWA BLVD.,Moses Lake,Moses Lake Lowe's,2956,WA,295
+83709,7990 WEST OVERLAND ROAD,Boise,Boise Lowe's,688,ID,248.2
+83646,3400 N EAGLE RD,Meridian,Meridian Lowe's,2573,ID,239.5
+83642,305 WEST OVERLAND ROAD,Meridian,S. Meridian Lowe's,2792,ID,216.9
+83651,1400 NAMPA-CALDWELL BLVD,Nampa,Nampa Lowe's,1785,ID,208
+99301,4520 N Road 68,Pasco,Pasco Lowe's,2344,WA,247.5
+99336,N 1020 COLORADO STREET,Kennewick,Kennewick Lowe's,249,WA,200
+98801,1200 WALLA WALLA AVENUE,Wenatchee,Wenatchee Lowe's,152,WA,207
+60564,1440 South Route 59,Naperville,Naperville Lowe's,1711,IL,28.7
+61704,2101 East Empire Street,Bloomington,Bloomington Lowe's,1203,IL,50
+62535,990 Hickory Point Plaza,Forsyth,Decatur Lowe's,245,IL,74.5
+62702,2560 North Dirksen Parkway,Springfield,N. Springfield Lowe's,1679,IL,77.9
+62704,3101 West Wabash,Springfield,Springfield Lowe's,258,IL,61.6
+62034,159 WHISTLE STOP DRIVE,Glen Carbon,Glen Carbon Lowe's,1795,IL,88.3
+62002,1619 HOMER ADAMS PKWY.,Alton,Alton Lowe's,591,IL,1.7
+63044,11974 Paul Mayer Ave,Bridgeton,Lowe's Outlet Bridgeton,3641,MO,16.8
+63301,2900 West Clay Street,Saint Charles,ST. Charles Lowe's,1057,MO,20.4
+63143,2300 MAPLEWOOD COMMONS DR,Maplewood,Maplewood Lowe's,1966,MO,20.7
+62208,6211 N. ILLINOIS,Fairview Heights,Fairview Heights Lowe's,643,IL,23.3
+63111,932 LOUGHBOROUGH AVENUE,Saint Louis,S. ST. Louis Lowe's,2300,MO,23.8
+63122,1212 SOUTH KIRKWOOD ROAD,Kirkwood,Kirkwood Lowe's,764,MO,26
+63005,290 THF BLVD,Chesterfield,Chesterfield Lowe's,731,MO,27.8
+63011,14810 MANCHESTER ROAD,Ballwin,Ballwin Lowe's,1503,MO,28.6
+62221,2501 GREENMOUNT COMMONS,Belleville,Belleville Lowe's,2302,IL,40
+63026,1 GRAVOIS BLUFFS PLAZA DRIVE,Fenton,Fenton Lowe's,1055,MO,46.7
+63376,8501 MEXICO ROAD,St Peters,O'fallon Lowe's,753,MO,34.5
+63367,6302 RONALD REAGAN DRIVE,Lake Saint Louis,Lake ST. Louis Lowe's,2311,MO,16.5
+63385,1889 WENTZVILLE PARKWAY,Wentzville,Wentzville Lowe's,2761,MO,18.2
+63010,920 ARNOLD COMMONS DR,Arnold,Arnold Lowe's,2303,MO,40.7
+63028,1111 BRADLEY STREET,Festus,Festus Lowe's,1809,MO,27.2
+63640,625 West Karsch Boulevard,Farmington,Farmington Lowe's,1746,MO,34
+65201,201 CONLEY RD,Columbia,Columbia Lowe's,8,MO,82.8
+63090,2023 WASHINGTON CROSSING,Washington,Washington Lowe's,1648,MO,69.1
+63080,760 EAGLES COURT,Sullivan,Oak Grove Village Lowe's,2729,MO,29.3
+65401,2300 NORTH BISHOP AVENUE,Rolla,Rolla Lowe's,1083,MO,42.4
+65109,3441 MISSOURI BLVD,Jefferson City,Jefferson City Lowe's,1077,MO,47.3
+65301,3811 WEST BROADWAY,Sedalia,Sedalia Lowe's,1067,MO,89.7
+64093,912 NORTH COLLEGE AVENUE,Warrensburg,Warrensburg Lowe's,2600,MO,103.4
+65584,120 Carson Boulevard,Saint Robert,ST. Robert Lowe's,2769,MO,71.2
+65536,190 Highway 32,Lebanon,Lebanon Lowe's,2565,MO,80.1
+72653,124 Charles Blackburn Drive,Mountain Home,Mountain Home Lowe's,2236,AR,98.1
+64081,1830 NORTHWEST CHIPMAN ROAD,Lees Summit,Lee's Summit Lowe's,1180,MO,47.6
+64133,4201 Sterling Avenue,Kansas City,East Kansas City Lowe's,2943,MO,48.2
+64083,225 North Dean Avenue,Raymore,Raymore Lowe's,2626,MO,54.2
+64145,1700 W. 133RD STREET,Kansas City,S. Kansas City Lowe's,1623,MO,58.4
+66205,4960 ROE BOULEVARD,Roeland Park,Roeland Park Lowe's,2588,KS,24.8
+66212,7001 West 95TH Street,Overland Park,Overland Park Lowe's,3379,KS,28.1
+66217,16300 West 65TH Street,Shawnee,Shawnee Lowe's,1084,KS,30.5
+66062,13750 South Blackbob RD.,Olathe,Olathe Lowe's,721,KS,27.9
+64836,433 West Fir Road,Carthage,Carthage Lowe's,2647,MO,50.7
+64804,2600 S RANGE LINE RD,Joplin,Joplin Lowe's,278,MO,54.3
+64850,1490 CLEMON DRIVE,Neosho,Neosho Lowe's,2849,MO,70.2
+65708,925 EAST US HIGHWAY 60,Monett,Monett Lowe's,2576,MO,74.7
+65738,1225 Us Highway 60 East,Republic,Republic Lowe's,2314,MO,78.9
+65065,950 HIGHWAY 42,Osage Beach,Osage Beach Lowe's,1147,MO,65.3
+65803,1707 WEST NORTON ROAD,Springfield,N. Springfield Lowe's,733,MO,44
+65804,1850 E. PRIMROSE,Springfield,Springfield Lowe's,422,MO,48.8
+65721,1800 West Marler Lane,Ozark,Ozark Lowe's,2226,MO,55
+74344,2131 SOUTH MAIN STREET,Grove,Grove Lowe's,1752,OK,67.7
+72712,1100 N.W. LOWES AVENUE,Bentonville,N. Bentonville Lowe's,2230,AR,67.7
+72756,300 NORTH 46TH ST.,Rogers,Rogers Lowe's,694,AR,81.7
+72761,3499 HIGHWAY 412 E,Siloam Springs,Siloam Springs Lowe's,2491,AR,62.7
+72762,4233 WEST SUNSET AVE,Springdale,Springdale Lowe's,1826,AR,66
+72703,1050 ZION RD,Fayetteville,Fayetteville Lowe's,432,AR,44.8
+72704,3231 W. Martin Luther King BLVD.,Fayetteville,S. Fayetteville Lowe's,1806,AR,34.4
+65672,165 MALL ROAD,Hollister,Hollister Lowe's,1096,MO,56.8
+72802,3011 Parkway East,Russellville,Russellville Lowe's,235,AR,98.5
+67401,3035 SOUTH 9TH STREET,Salina,Salina Lowe's,1559,KS,72.8
+67501,1930 East 17TH Avenue,Hutchinson,Hutchinson Lowe's,1745,KS,91.1
+67207,11959 East Kellogg Drive,Wichita,E. Wichita Lowe's,1547,KS,98.7
+67205,2626 North Maize Road,Wichita,N.W. Wichita Lowe's,2340,KS,99.4
+67209,333 South Ridge RD.,Wichita,W. Wichita Lowe's,614,KS,102.1
+67037,424 WEST PATRIOT AVENUE,Derby,Derby Lowe's,2504,KS,106.4
+74006,2205 SE ADAMS BLVD.,Bartlesville,Bartlesville Lowe's,351,OK,62.4
+74055,12001 E. 96TH STREET NORTH,Owasso,Owasso Lowe's,1500,OK,92.3
+74019,1746 SOUTH LYNN RIGGS BLVD,Claremore,Claremore Lowe's,1891,OK,92.8
+74601,3500 NORTH 14TH ST.,Ponca City,Ponca City Lowe's,72,OK,87.3
+74112,1525 SOUTH YALE AVENUE,Tulsa,Tulsa-midtown Lowe's,1580,OK,89.4
+73703,5201 W GARRIOTT RD,Enid,Enid Lowe's,205,OK,131.3
+74075,1616 NORTH PERKINS RD.,Stillwater,Stillwater Lowe's,241,OK,64
+73003,2401 NORTH KELLY AVENUE,Edmond,N. Edmond Lowe's,2854,OK,115.3
+73034,1320 East 2ND Street,Edmond,Edmond Lowe's,1549,OK,108.6
+73134,2400 W. MEMORIAL RD.,Oklahoma City,N. Oklahoma City Lowe's,535,OK,114.6
+73099,1605 Garth Brooks Blvd,Yukon,Yukon Lowe's,1134,OK,152.9
+74012,1900 EAST HILLSIDE DRIVE,Broken Arrow,Broken Arrow Lowe's,1536,OK,80.3
+74133,10156 E 71ST ST,Tulsa,S. Tulsa Lowe's,243,OK,81
+74132,7225 S OLYMPIA WEST,Tulsa,W. Tulsa Lowe's,2756,OK,67.4
+74008,11114 SOUTH MEMORIAL DRIVE,Bixby,Bixby Lowe's,1532,OK,73.6
+81008,1225 W US HIGHWAY 50,Pueblo,Pueblo Lowe's,318,CO,240
+80016,24505 E. WHEATLANDS PARKWAY,Aurora,E. Aurora Lowe's,2780,CO,234.6
+80134,10000 SOUTH TWENTY MILE ROAD,Parker,Parker Lowe's,1755,CO,238.6
+80015,4455 SOUTH BUCKLEY ROAD,Aurora,S.E. Aurora Lowe's,1730,CO,208.3
+80922,2945 NEW CENTER POINT,Colorado Springs,E. Colorado Springs Lowe's,1099,CO,208.4
+80920,4252 ROYAL PINE DRIVE,Colorado Springs,N. Colorado Springs Lowe's,2578,CO,208.8
+80817,7710 FOUNTAIN MESA ROAD,Fountain,Fountain Lowe's,2607,CO,210
+80909,701 NORTH ACADEMY BOULEVARD,Colorado Springs,C. Colorado Springs Lowe's,2806,CO,210.8
+80108,1360 New Beale Street,Castle Rock,Castle Rock Lowe's,2274,CO,186.9
+80918,4880 N NEVADA AVENUE,Colorado Springs,W. Colorado Springs Lowe's,2423,CO,187.3
+80012,1701 SOUTH HAVANA STREET,Aurora,Aurora Lowe's,102,CO,177.2
+80111,9100 EAST PEAKVIEW AVENUE,Greenwood Village,Greenwood Village Lowe's,311,CO,178.4
+81005,2900 WEST PUEBLO BLVD,Pueblo,S. Pueblo Lowe's,2742,CO,163.2
+79124,6401 LOWES LN,Amarillo,N.W. Amarillo Lowe's,2801,TX,199.3
+79119,5000 SOUTH COULTER ST.,Amarillo,Amarillo Lowe's,270,TX,203
+88101,3601 NORTH PRINCE STREET,Clovis,Clovis Lowe's,1781,NM,215.9
+80031,5600 WEST 88TH AVENUE,Westminster,Westminster Lowe's,1989,CO,113
+70301,614 North Canal,Thibodaux,Thibodaux Lowe's,2596,LA,41.9
+70360,1592 MARTIN LUTHER KING BLVD.,Houma,Houma Lowe's,596,LA,44.9
+70560,2816 HIGHWAY 14,New Iberia,New Iberia Lowe's,1107,LA,48.1
+70510,2700 Charity Street,Abbeville,Abbeville Lowe's,3015,LA,56.2
+70503,3726 AMBASSADOR CAFFERY,Lafayette,Lafayette Lowe's,484,LA,60.5
+70526,142 Julia John Drive,Crowley,Crowley Lowe's,2203,LA,19.6
+70607,2800 DEREK DRIVE,Lake Charles,Lake Charles Lowe's,589,LA,64.4
+70663,305 S. CITIES SERVICE HIGHWAY,Sulphur,Sulphur Lowe's,1899,LA,73.4
+71446,2200 Mcrae Street,Leesville,Leesville Lowe's,2234,LA,59.5
+77640,8383 Memorial Blvd,Port Arthur,Port Arthur Lowe's,1151,TX,79.2
+77706,4120 Dowlen Road,Beaumont,Beaumont Lowe's,95,TX,56.4
+75951,900 West Gibson,Jasper,Jasper Lowe's,1769,TX,69.5
+75901,3501 South Medford,Lufkin,Lufkin Lowe's,82,TX,75
+75965,220 North Stallings Road,Nacogdoches,Nacogdoches Lowe's,1772,TX,82.4
+77351,120 Us 59 Loop South,Livingston,Livingston Lowe's,1790,TX,81.3
+77521,5002 Garth RD.,Baytown,Baytown Lowe's,97,TX,86.8
+77346,7355 Fm 1960 Road East,Humble,Atascocita Lowe's,1530,TX,92.4
+71111,2360 Airline Drive,Bossier City,Bossier City Lowe's,1813,LA,45.7
+71105,7301 Youree Drive,Shreveport,S.E. Shreveport Lowe's,1968,LA,46.8
+71118,2710 ALKAY DRIVE,Shreveport,Shreveport Lowe's,428,LA,52.1
+75670,910 EAST END BLVD. NORTH,Marshall,Marshall Lowe's,1762,TX,83.1
+75501,501 Walton Drive,Texarkana,Texarkana Lowe's,174,TX,92.3
+75605,3313 NORTH FOURTH,Longview,Longview Lowe's,519,TX,58.9
+75654,1603 US HIGHWAY 79 SOUTH,Henderson,Henderson Lowe's,2559,TX,72.8
+75455,1220 LAKEWOOD DRIVE,Mount Pleasant,MT. Pleasant Lowe's,1802,TX,80.2
+75703,5720 SOUTH BROADWAY,Tyler,Tyler Lowe's,463,TX,78.1
+71913,300 CORNER STONE BLVD.,Hot Springs,Hot Springs Lowe's,597,AR,103.9
+75771,3200 SOUTH MAIN STREET,Lindale,Lindale Lowe's,1965,TX,94
+72032,1325 Highway 64 W,Conway,Conway Lowe's,236,AR,66.1
+75482,1711 SOUTH BROADWAY STREET,Sulphur Springs,Sulphur Springs Lowe's,1810,TX,89.8
+72903,8001 ROGERS AVE.,Fort Smith,Fort Smith Lowe's,462,AR,109.2
+72956,2120 FAYETTEVILLE ROAD,Van Buren,Van Buren Lowe's,2598,AR,98.6
+74501,530 SOUTH GEORGE NIGH EXPRESSWAY,Mcalester,Mcalester Lowe's,2571,OK,100.1
+74464,161 MEADOW CREEK DRIVE,Tahlequah,Tahlequah Lowe's,1818,OK,105.7
+74403,2901 OLD SHAWNEE,Muskogee,Muskogee Lowe's,124,OK,105.8
+73064,1000 East State Highway 152,Mustang,Mustang Lowe's,2903,OK,18.5
+73069,2555 HEMPHILL DRIVE,Norman,Norman Lowe's,1165,OK,22.9
+73160,1501 South I-35 Service Road,Moore,Moore Lowe's,2655,OK,24.5
+73139,100 SW 74TH ST,Oklahoma City,S. Oklahoma City Lowe's,268,OK,25.9
+73112,3801 NORTH MAY ROAD,Oklahoma City,C. Oklahoma City Lowe's,2540,OK,29.8
+73110,7151 SE 29TH STREET,Midwest City,Midwest City Lowe's,2574,OK,32.9
+74804,4817 NORTH KICKAPOO AVE,Shawnee,Shawnee Lowe's,5,OK,30
+73505,4402 N.W. Cache Road,Lawton,Lawton Lowe's,1724,OK,19.5
+76308,3301 KELL BLVD.,Wichita Falls,Wichita Falls Lowe's,75,TX,70.8
+73401,2701 12TH AVENUE NW,Ardmore,Ardmore Lowe's,1749,OK,21.8
+74701,720 UNIVERSITY PLACE,Durant,Durant Lowe's,2214,OK,53.2
+75090,2801 N US HIGHWAY 75,Sherman,Sherman Lowe's,127,TX,64.6
+76234,1201 W. US HIGHWAY 380 BUSINESS,Decatur,Decatur Lowe's,2235,TX,51.1
+76205,1255 S LOOP 288,Denton,Denton Lowe's,183,TX,52.3
+75068,2773 E. Eldorado Parkway,Little Elm,Little Elm Lowe's,2567,TX,57.4
+75078,4301 E. UNIVERSITY DR.,Prosper,Prosper Lowe's,3104,TX,59.3
+75028,6200 LONG PRAIRIE ROAD,Flower Mound,Flower Mound Lowe's,2516,TX,60.9
+75070,2055 NORTH CENTRAL EXPRESSWAY,Mckinney,Mckinney Lowe's,2825,TX,62.6
+75067,1051 N STEMMONS FWY,Lewisville,Lewisville Lowe's,551,TX,62.8
+75070,8550 S.H. 121,Mckinney,S. Mckinney Lowe's,2878,TX,75.8
+75013,1010 WEST MCDERMOTT DRIVE,Allen,Allen Lowe's,1199,TX,77.2
+75402,3122 INTERSTATE 30 WEST,Greenville,Greenville Lowe's,2646,TX,78.1
+75034,3360 PRESTON ROAD,Frisco,Frisco Lowe's,1059,TX,60.9
+79424,5022 WEST LOOP 289,Lubbock,Lubbock Lowe's,271,TX,140
+76248,600 N. TARRANT PKWY.,Keller,Keller Lowe's,1524,TX,79.9
+87532,407 Lowdermilk Lane,Espanola,Espanola Lowe's,2510,NM,186.1
+87507,3458 Zafarano Road,Santa Fe,Santa Fe Lowe's,2556,NM,190.6
+75023,5001 CENTRAL EXPY,Plano,E. Plano Lowe's,505,TX,52.9
+75244,11920 INWOOD RD.,Dallas,N. Dallas Lowe's,515,TX,3.2
+75006,1253 EAST TRINITY MILLS RD,Carrollton,Carrollton Lowe's,550,TX,4.2
+75252,19210 Preston RD.,Dallas,W. Plano Lowe's,665,TX,4.8
+75081,501 SOUTH PLANO ROAD,Richardson,Richardson Lowe's,2779,TX,8.3
+75209,6011 LEMMON AVENUE,Dallas,C. Dallas Lowe's,2280,TX,8.6
+75238,11333 E. NORTHWEST HIGHWAY,Dallas,N.E. Dallas Lowe's,1780,TX,11
+75062,3500 W Airport Freeway,Irving,Lowe's Outlet Irving,3573,TX,12.3
+75212,1710 CHALK HILL RD,Dallas,W. Dallas Lowe's,1771,TX,4.6
+76039,3000 STATE HIGHWAY 121,Euless,Euless Lowe's,2440,TX,9.4
+76120,1111 EASTCHASE PARKWAY,Ft. Worth,E. Fort Worth Lowe's,2546,TX,12.7
+76092,201 NORTH KIMBALL AVENUE,Southlake,Southlake Lowe's,732,TX,12.8
+75232,8520 SOUTH HAMPTON RD.,Dallas,S.W. Dallas Lowe's,513,TX,13.1
+76015,1000 WEST ARBROOK,Arlington,S. Arlington Lowe's,520,TX,13.4
+75094,111 EAST FM 544,Murphy,Murphy Lowe's,2929,TX,5.8
+75040,2949 N GEORGE BUSH FREEWAY,Garland,Garland Lowe's,611,TX,10.5
+76054,770 Grapevine HWY.,Hurst,Hurst Lowe's,533,TX,14.1
+75032,851 N. STEGER TOWN DR,Rockwall,Rockwall Lowe's,610,TX,0.3
+75150,4444 N. GALLOWAY AVE.,Mesquite,Mesquite Lowe's,510,TX,9.9
+75126,902 E US HIGHWAY 80,Forney,Forney Lowe's,2441,TX,10
+76063,1901 Highway 287 N,Mansfield,Mansfield Lowe's,1511,TX,11.3
+76028,920 NORTH BURLESON BLVD.,Burleson,Burleson Lowe's,514,TX,15.8
+75165,1420 NORTH HIGHWAY 77,Waxahachie,Waxahachie Lowe's,2601,TX,17.3
+75156,201 WEST MAIN STREET,Gun Barrel City,Gun Barrel City Lowe's,1801,TX,34.1
+75801,2715 South Loop 256,Palestine,Palestine Lowe's,1892,TX,47.9
+76710,201 North New Road,Waco,Waco Lowe's,129,TX,56.7
+76033,2100 NORTH MAIN STREET,Cleburne,Cleburne Lowe's,2220,TX,48
+77802,3225 FREEDOM BLVD.,Bryan,Bryan Lowe's,103,TX,76.2
+77845,4451 HIGHWAY 6 S,College Station,College Station Lowe's,3032,TX,78.9
+77304,1920 Westview BLVD.,Conroe,Conroe Lowe's,232,TX,54.5
+77384,3052 College Park Drive,Conroe,The Woodlands Lowe's,1515,TX,61.8
+77339,22600 Eastex Fwy,Kingwood,Kingwood Lowe's,750,TX,70.6
+77388,20201 N. IH45,Spring,Spring Lowe's,563,TX,71.2
+77379,20902 Kuykendahl Road,Spring,W. Spring Lowe's,2822,TX,71.6
+76502,605 Sw H.K. Dodgen Loop,Temple,Temple Lowe's,221,TX,72.9
+77377,14236 FM2920,Tomball,Tomball Lowe's,1052,TX,72.5
+77833,2750 Highway 36 South,Brenham,Brenham Lowe's,2521,TX,74.4
+76132,4305 BRYANT IRVIN ROAD,Fort Worth,S. FT. Worth Lowe's,525,TX,18.1
+76116,600 STATE HIGHWAY 183,Fort Worth,White Settlement Lowe's,1619,TX,16.5
+76087,118 E INTERSTATE 20,Weatherford,Weatherford Lowe's,1969,TX,10.8
+76135,3500 Nw Centre Drive,Fort Worth,Lake Worth Lowe's,1582,TX,12.7
+76048,1021 EAST HIGHWAY 377,Granbury,Granbury Lowe's,2225,TX,20.9
+79601,1634 E MUSGRAVE BLVD,Abilene,N. Abilene Lowe's,2719,TX,116.6
+79606,4134 RIDGEMONT DR.,Abilene,Abilene Lowe's,138,TX,87.3
+76904,5301 SHERWOOD WAY,San Angelo,San Angelo Lowe's,90,TX,92.4
+76542,2801 South W.S. Young Dr,Killeen,Killeen Lowe's,209,TX,111.2
+78654,3200 N Us Highway 281,Marble Falls,Marble Falls Lowe's,3002,TX,80.8
+78634,201 Ed Schmidt Boulevard,Hutto,Hutto Lowe's,2670,TX,40.7
+78681,120 Sundance Parkway,Round Rock,Round Rock Lowe's,778,TX,46.9
+78641,1495 S Highway 183,Leander,Leander Lowe's,2774,TX,47.9
+78717,"13201 N Ranch Rd 620, Bldg G",Austin,N.W. Austin Lowe's,590,TX,51.2
+78753,"13000 N I35 Svc Rd SB, Bldg 12",Austin,N.E. Austin Lowe's,1725,TX,51.3
+78757,8000 Shoal Creek Boulevard,Austin,Central Austin Lowe's,1727,TX,56.1
+78738,12611 Suite 100 Shops Pkwy,Bee Cave,Bee Cave Lowe's,1948,TX,45.7
+78745,5510 S IH 35,Austin,S.E. Austin (E. Stassney Ln.),689,TX,45.7
+78602,719 Highway 71 W,Bastrop,Bastrop Lowe's,2840,TX,46.6
+78745,6400 BRODIE LANE,Austin,S.W. Austin (Brodie Ln.),2513,TX,34.7
+78028,651 Loop 534,Kerrville,Kerrville Lowe's,1560,TX,100.6
+79707,3315 NORTH LOOP 250 W.,Midland,Midland Lowe's,63,TX,130.6
+79762,"4101 EAST 42ND, STE P",Odessa,Odessa Lowe's,2962,TX,140.2
+78257,18303 Rim Drive,San Antonio,San Antonio Lowe's,2480,TX,116.1
+78250,11333 Bandera Rod,San Antonio,N.W. San Antonio Lowe's,1088,TX,116.5
+78253,5303 W Loop 1604 N,San Antonio,Alamo Ranch - San Antonio Lowe's,2898,TX,117.5
+78248,1200 North F.M. 1604 West,San Antonio,N. San Antonio Lowe's,1579,TX,120.6
+78245,203 Sw Loop 410,San Antonio,W. San Antonio Lowe's,1504,TX,122.7
+78229,7901 Callaghan Road,San Antonio,N.W. Central San Antonio Lowe's,1155,TX,123.1
+78209,1470 Austin Highway,San Antonio,N.E. Central San Antonio Lowe's,1645,TX,120.2
+88240,1510 WEST JOE HARVEY BLVD,Hobbs,Hobbs Lowe's,3202,NM,171.1
+78852,574 South Bibb Avenue,Eagle Pass,Eagle Pass Lowe's,2798,TX,182.1
+88220,2519 WEST PIERCE STREET,Carlsbad,Carlsbad Lowe's,3167,NM,185.8
+77087,1000 Gulfgate Center Mall,Houston,S.E. Houston Lowe's,1128,TX,5.2
+77008,1521 North Loop West,Houston,N. Central Houston Lowe's,681,TX,5.8
+77096,4645 BEECHNUT STREET,Houston,Meyerland Lowe's,1570,TX,6.6
+77055,9640 KATY RD,Houston,Bunker Hill Lowe's,1058,TX,10.1
+77049,6161 E. Sam Houston Pkwy North,Houston,E. Houston Lowe's,1145,TX,13
+77077,2610 Kirkwood Drive,Houston,Royal Oaks Lowe's,1131,TX,13.4
+77505,5400 Fairmont Parkway,Pasadena,Pasadena Lowe's,1053,TX,14.2
+77581,2741 Broadway Street,Pearland,Pearland Lowe's,685,TX,14.5
+77459,3807 Fm 1092,Missouri City,Missouri City Lowe's,3027,TX,16.9
+77069,5319 FM 1960 ROAD W,Houston,Lowe's Outlet Houston,3642,TX,18.3
+77598,19225 Gulf Freeway,Webster,Baybrook Lowe's,651,TX,14.3
+77095,15555 FM529,Copperfield,Copperfield Lowe's,555,TX,15.7
+77070,"19580 TOMBALL PKWY,STATE HWY 249",Houston,N.W. Houston Lowe's,501,TX,17.1
+77429,14128 CYPRESS-ROSEHILL Road,Cypress,Cypress Lowe's,2371,TX,12.8
+77479,16510 S. W. Freeway,Sugar Land,Sugar Land Lowe's,511,TX,13.3
+77094,19935 Katy Freeway,Houston,Katy Lowe's,98,TX,17.9
+77573,1655 W. Fm 646,League City,League City Lowe's,2821,TX,17.5
+77494,9505 SPRING GREEN BLVD,Katy,Cinco Ranch Lowe's,3306,TX,16.6
+77590,3620 Emmett F. Lowry Expway,Texas City,Texas City Lowe's,28,TX,17.6
+77471,28005 Southwest Freeway,Rosenberg,Rosenberg Lowe's,1898,TX,15.9
+77566,200 HWY. 332 East,Lake Jackson,Lake Jackson Lowe's,137,TX,31.6
+77904,8602 North Navarro ST.,Victoria,Victoria Lowe's,282,TX,62.3
+78336,150 South Fm 1069,Aransas Pass,Aransas Pass Lowe's,2506,TX,79.6
+78412,1530 Airline Road,Corpus Christi,Corpus Christi Lowe's,1825,TX,81.7
+78130,1455 Ih 35 South,New Braunfels,New Braunfels Lowe's,2812,TX,90.2
+78666,2211 Ih 35 South,San Marcos,San Marcos Lowe's,159,TX,91
+78223,3302 Goliad Road,San Antonio,S.E. San Antonio Lowe's,2789,TX,93.7
+78154,17280 Ih 35 N,Schertz,Schertz Lowe's,2824,TX,93.8
+78363,1420 General Cavazos Blvd,Kingsville,Kingsville Lowe's,1763,TX,98.4
+78233,11718 I.H. 35 North,San Antonio,N.E. San Antonio Lowe's,1625,TX,89.8
+78224,7843 Ih 35 S,San Antonio,S. San Antonio Lowe's,2786,TX,90.6
+78640,5753 Kyle Parkway,Kyle,Kyle Lowe's,2961,TX,72.5
+78041,6623 San Dario Avenue,Laredo,Laredo Lowe's,1563,TX,3.8
+78539,2802 W. Univeristy Drive,Edinburg,Edinburg Lowe's,2485,TX,116.1
+78504,5700 North 10TH Street,Mcallen,N. Mcallen Lowe's,2656,TX,117.5
+78577,707 South Jackson Road,Pharr,Pharr Lowe's,1702,TX,121.4
+78596,1015 E EXPRESSWAY 83,Weslaco,Weslaco Lowe's,2980,TX,131.6
+78550,4705 South Expressway 77/83,Harlingen,Harlingen Lowe's,2468,TX,143
+78520,525 East Ruben Torres Blvd,Brownsville,Brownsville Lowe's,2669,TX,127.3
+87111,3010 JUAN TABO BLVD NE,Albuquerque,E. Albuquerque Lowe's,1543,NM,217.4
+87113,6200 PASEO DEL-NORTE,Albuquerque,N.E. Albuquerque Lowe's,756,NM,220.9
+88310,4201 Scenic Dr,Alamogordo,Alamogordo Lowe's,1761,NM,176.5
+79936,11950 ROJAS DRIVE,El Paso,E. El Paso Lowe's,1146,TX,151.4
+79938,12100 MONTANA AVENUE,El Paso,Far East El Paso Lowe's,2928,TX,152.2
+79924,4531 WOODROW BEAN TRANSMTN. RD.,El Paso,N. El Paso Lowe's,1137,TX,164.3
+79912,430 East Redd Road,El Paso,W. El Paso Lowe's,1152,TX,169.7
+88001,3200 NORTH MAIN STREET,Las Cruces,Las Cruces Lowe's,1158,NM,197.7
+87031,1600 MAIN STREET NW,Los Lunas,Los Lunas Lowe's,3048,NM,195
+87104,2001 12TH STREET NW,Albuquerque,C. Albuquerque Lowe's,2539,NM,215
+85635,3700 MARTIN LUTHER KING PARKWAY,Sierra Vista,Sierra Vista Lowe's,2663,AZ,216.5
+80002,5405 WADSWORTH BYPASS,Arvada,Arvada Lowe's,340,CO,0.6
+80215,10555 WEST COLFAX AVENUE,Lakewood,N. Lakewood Lowe's,1903,CO,4.5
+80123,5258 S. Wadsworth Boulevard,Littleton,Lakewood Lowe's,1630,CO,12.6
+80120,5095 South Santa Fe Drive,Littleton,Littleton Lowe's,2419,CO,12.8
+80498,201 BUFFALO MOUNTAIN DRIVE,Silverthorne,Silverthorne Lowe's,3206,CO,31.4
+81601,215 West Meadows Drive,Glenwood Springs,Glenwood Springs Lowe's,1905,CO,75.9
+87402,5451 PINON HILLS BLVD,Farmington,Farmington Lowe's,2501,NM,134.1
+81505,2525 RIMROCK AVENUE,Grand Junction,Grand Junction Lowe's,1554,CO,137.7
+87124,3805 NORTHERN BOULEVARD NE,Rio Rancho,Rio Rancho Lowe's,2879,NM,146.1
+87114,3500 NM 528 NW,Albuquerque,N.W. Albuquerque Lowe's,1636,NM,151.1
+84078,2105 West Highway 40,Vernal,Vernal Lowe's,2834,UT,187.8
+84660,1386 N. CANYON CREEK PKWY,Spanish Fork,Spanish Fork Lowe's,3427,UT,219.5
+84058,140 WEST UNIVERSITY PARKWAY,Orem,Orem Lowe's,178,UT,220.4
+84043,242 North 1200 East,Lehi,Lehi Lowe's,2293,UT,209.5
+84094,9291 SOUTH QUARRY BEND DRIVE,Sandy,Sandy Lowe's,2606,UT,220
+84065,12462 S CREEK MEADOW ROAD,Riverton City,Riverton Lowe's,2296,UT,221.8
+84123,469 WEST 4500 SOUTH,Murray,Murray Lowe's,342,UT,155.1
+84115,1335 SOUTH 300 WEST,Salt Lake City,Salt Lake City Lowe's,2275,UT,155.6
+84041,1055 W. ANTELOPE DRIVE,Layton,Layton Lowe's,15,UT,207.2
+84015,1986 NORTH 2000 WEST,Clinton,Clinton Lowe's,2845,UT,207.8
+84087,350 N 545 W,West Bountiful,West Bountiful Lowe's,2662,UT,212.8
+84120,4050 South 5600 West,West Valley City,West Valley City Lowe's,1133,UT,68.6
+98903,2235 LONGFIBRE AVE,Yakima,Yakima Lowe's,3240,WA,166.2
+97756,1313 SW CANAL BOULEVARD,Redmond,Redmond Lowe's,2865,OR,228.4
+97701,20501 COOLEY ROAD,Bend,Bend Lowe's,1690,OR,232.8
+84084,7456 SOUTH PLAZA CENTER DR.,West Jordan,W. Jordan Lowe's,1613,UT,90.8
+84790,415 SOUTH RIVER ROAD,Saint George,ST. George Lowe's,1118,UT,203.5
+85901,5800 S WHITE MOUNTAIN ROAD,Show Low,Show Low Lowe's,2833,AZ,205.2
+86301,2300 EAST STATE ROUTE 69,Prescott,Prescott Lowe's,1157,AZ,211
+89115,2465 N NELLIS BOULEVARD,Las Vegas,N.E. Las Vegas Lowe's,2477,NV,166.4
+89030,2570 EAST CRAIG ROAD,North Las Vegas,North Las Vegas Lowe's,2721,NV,167.4
+89015,1401 SOUTH BOULDER HIGHWAY,Henderson,C. Henderson Lowe's,1537,NV,168.8
+89104,2875 E. CHARLESTON BLVD.,Las Vegas,Sunrise Lowe's,1620,NV,170.3
+89014,440 MARKS STREET,Henderson,Henderson Lowe's,1033,NV,170.6
+89130,6050 WEST CRAIG ROAD,Las Vegas,N.W. Las Vegas Lowe's,1863,NV,172.9
+89119,5825 SOUTH EASTERN AVENUE,Las Vegas,Las Vegas Lowe's,2271,NV,173.5
+89143,7751 N EL CAPITAN WAY,Las Vegas,Centennial Hills Lowe's,2844,NV,173.7
+89102,4625 W. CHARLESTON BLVD.,Las Vegas,C. Las Vegas Lowe's,1639,NV,174.7
+89128,7550 WEST WASHINGTON,Las Vegas,Summerlin Lowe's,784,NV,138.1
+89183,9955 SOUTH EASTERN AVENUE,Las Vegas,W. Henderson Lowe's,1719,NV,160.8
+85041,1950 WEST BASELINE ROAD,Phoenix,S. Phoenix Lowe's,2421,AZ,5.4
+85035,1620 NORTH 75TH AVENUE,Phoenix,W. Phoenix Lowe's,1042,AZ,8.6
+85301,5809 West Northern AVE.,Glendale,Glendale Lowe's,1728,AZ,9.3
+85257,7950 EAST MCDOWELL ROAD,Scottsdale,S. Scottsdale Lowe's,1850,AZ,9.5
+85283,777 EAST BASELINE ROAD,Tempe,Tempe Lowe's,3000,AZ,9.8
+85226,7100 West Ray Road,Chandler,W. Chandler Lowe's,674,AZ,11.1
+85053,2929 W. Thunderbird Road,Phoenix,N. Phoenix Lowe's,1204,AZ,11.1
+85381,8497 West Thunderbird Road,Peoria,Peoria Lowe's,1117,AZ,14.4
+85224,2900 WEST CHANDLER BLVD,Chandler,E. Chandler Lowe's,1032,AZ,14.6
+85254,16285 NORTH SCOTTSDALE RD,Scottsdale,Scottsdale Lowe's,792,AZ,15.4
+85338,13191 W MCDOWELL RD,Goodyear,Goodyear Lowe's,1553,AZ,12.1
+85374,13363 W. GRAND AVENUE,Surprise,Surprise Lowe's,1607,AZ,16.6
+85085,"2501 W. HAPPY VALLEY RD, BDG 40",Phoenix,Happy Valley Lowe's,2557,AZ,14.5
+85383,25311 N Lake Pleasant Pkwy,Peoria,N. Peoria Lowe's,2820,AZ,15.2
+85377,34700 N CAVE CREEK RD,Carefree,Carefree Lowe's,2683,AZ,14.3
+85296,734 South Gilbert Road,Gilbert,Gilbert Lowe's,1090,AZ,15.6
+85248,4300 S. ARIZONA AVENUE,Chandler,Ocotillo Lowe's,2582,AZ,15
+85206,1440 SOUTH HIGLEY ROAD,Mesa,E. Mesa Lowe's,714,AZ,15.6
+85326,700 SOUTH WATSON ROAD,Buckeye,Buckeye Lowe's,2295,AZ,18.1
+85209,1229 S. Ellsworth Road,Mesa,Apache Junction Lowe's,2527,AZ,5.2
+85297,4730 S. HIGLEY ROAD,Gilbert,E. Gilbert Lowe's,2808,AZ,14.9
+85122,1436 E. FLORENCE BOULEVARD,Casa Grande,Casa Grande Lowe's,2272,AZ,9.1
+85741,4075 WEST INA ROAD,Tucson,Marana Lowe's,1707,AZ,46.4
+85705,4151 North Oracle Road,Tucson,C. Tucson Lowe's,1638,AZ,51.2
+85710,7105 EAST SPEEDWAY BOULEVARD,Tucson,E. Tucson Lowe's,1754,AZ,53.1
+85746,1800 WEST VALENCIA ROAD,Tucson,S.W. Tucson Lowe's,1791,AZ,61.4
+85364,115 WEST 32ND STREET,Yuma,Yuma Lowe's,1082,AZ,65.1
+86404,4000 Highway 95N,Lake Havasu City,Lake Havasu Lowe's,2562,AZ,46.8
+86442,1680 Highway 95,Bullhead City,Bullhead City Lowe's,2202,AZ,88.5
+92243,2053 NORTH IMPERIAL AVENUE,El Centro,El Centro Lowe's,2550,CA,82.9
+92253,78-865 Highway 111,La Quinta,La Quinta Lowe's,208,CA,103
+92211,35900 MONTEREY AVENUE,Palm Desert,Palm Desert Lowe's,2583,CA,108.8
+92264,5201 EAST RAMON ROAD,Palm Springs,Palm Springs Lowe's,1026,CA,114.9
+91915,2225 OTAY LAKES ROAD,Chula Vista,Eastlake Lowe's,1742,CA,128.5
+92071,9416 MISSION GORGE ROAD,Santee,Santee Lowe's,1661,CA,131.5
+92064,13750 POWAY ROAD,Poway,Poway Lowe's,3214,CA,135.4
+92108,2318 NORTHSIDE DRIVE,San Diego,Mission Valley Lowe's,1013,CA,138.5
+92025,620 West Mission Avenue,Escondido,Escondido Lowe's,2481,CA,142
+89148,5050 South Fort Apache Road,Las Vegas,W. Spring Valley Lowe's,1703,NV,93.7
+89144,851 S. PAVILION CENTER DRIVE,Las Vegas,W. Summerlin Lowe's,1836,NV,83.7
+93612,875 SHAW AVENUE,Clovis,Clovis Lowe's,1541,CA,107.7
+93720,7651 NORTH BLACKSTONE AVE.,Fresno,Fresno Lowe's,795,CA,110.9
+93291,3020 NORTH DEMAREE STREET,Visalia,N. Visalia Lowe's,2660,CA,112.9
+93277,4144 South Mooney Boulevard,Visalia,Visalia Lowe's,1611,CA,115.7
+93274,1145 E Prosperity Avenue,Tulare,Tulare Lowe's,2473,CA,120.1
+93257,500 West Vandalia Avenue,Porterville,Porterville Lowe's,2278,CA,121.3
+93637,2100 WEST CLEVELAND AVENUE,Madera,Madera Lowe's,2712,CA,121.6
+93230,1955 W Lacey Blvd,Hanford,Hanford Lowe's,2215,CA,127.5
+95370,120 OLD WARDS FERRY ROAD,Sonora,Sonora Lowe's,2279,CA,130.5
+95348,1750 WEST OLIVE AVENUE,Merced,Merced Lowe's,1672,CA,137.2
+89408,375 STANLEY DR E,Fernley,Fernley Lowe's,2661,NV,126.7
+89701,430 Fairview Drive,Carson City,Carson City Lowe's,1024,NV,143.4
+89434,1355 SCHEELS DRIVE,Sparks,Sparks Lowe's,3034,NV,148.6
+89511,5075 KIETZKE LANE,Reno,Reno Lowe's,321,NV,151.1
+95642,12071 INDUSTRY BLVD,Jackson,Martell Lowe's,2335,CA,198.1
+95630,800 EAST BIDWELL STREET,Folsom,Folsom Lowe's,1087,CA,221.5
+95648,51 LINCOLN BLVD.,Lincoln,N. Lincoln Lowe's,2499,CA,74
+95678,10201 FAIRWAY DRIVE,Roseville,N. Roseville Lowe's,1207,CA,74.6
+95610,7840 GREENBACK LANE,Citrus Heights,Citrus Heights Lowe's,1540,CA,76.7
+95928,2350 FOREST AVE,Chico,Chico Lowe's,1201,CA,242.5
+95670,3251 ZINFANDEL DRIVE,Rancho Cordova,Rancho Cordova Lowe's,2341,CA,81.9
+95993,935 THARP ROAD,Yuba City,Yuba City Lowe's,1933,CA,105.2
+96002,1200 EAST CYPRESS AVENUE,Redding,Redding Lowe's,1926,CA,157
+90250,2800 W 120TH ST,Hawthorne,Hawthorne Lowe's,1555,CA,5.2
+90019,4550 WEST PICO BLVD UNIT D-101,Los Angeles,Mid-city Los Angeles Lowe's,2714,CA,7.3
+90660,8600 WASHINGTON BOULEVARD,Pico Rivera,Pico Rivera Lowe's,1591,CA,8.7
+90501,22255 Western Ave,Torrance,Torrance Lowe's,250,CA,10.3
+90505,2700 Skypark Drive,Torrance,W. Torrance Lowe's,2268,CA,12.3
+90650,14873 CARMENITA ROAD,Norwalk,Norwalk Lowe's,56,CA,12.7
+90815,2840 N Bellflower Blvd,Long Beach,Central Long Beach Lowe's,785,CA,13.3
+90808,7300 East Carson Street,Long Beach,N.E. Long Beach Lowe's,773,CA,13.4
+91504,2000 W EMPIRE AVE,Burbank,Burbank Lowe's,1144,CA,16.1
+90631,1380 SOUTH BEACH BOULEVARD,La Habra,La Habra Lowe's,1562,CA,16.7
+91016,725 W Huntington Drive,Monrovia,Lowe's Outlet Monrovia,3566,CA,16.8
+91331,13500 PAXTON STREET,Pacoima,Pacoima Lowe's,1852,CA,16.8
+91324,19601 Nordhoff St,Northridge,Northridge Lowe's,1873,CA,22
+91748,17789 CASTELTON STREET,City Of Industry,Puente Hills Lowe's,1872,CA,13.6
+91722,1348 NORTH AZUSA AVENUE,Covina,Covina Lowe's,3151,CA,15.1
+91304,8383 TOPANGA CANYON BLVD,West Hills,West Hills Lowe's,1162,CA,14.8
+91321,19001 GOLDEN VALLEY RD,Santa Clarita,E. Santa Clarita Lowe's,1972,CA,23.4
+91350,26415 BOUQUET CANYON ROAD,Santa Clarita,Santa Clarita Lowe's,1510,CA,21.5
+93065,1275 Simi Town Center Way,Simi Valley,Simi Valley Lowe's,1971,CA,21.8
+92801,1500 NORTH LEMON STREET,Anaheim,Anaheim Lowe's,1030,CA,17.8
+92647,8175 WARNER AVENUE,Huntington Beach,Huntington Beach Lowe's,1753,CA,20.7
+91320,1027 Academy Drive,Thousand Oaks,Newbury Park Lowe's,3170,CA,14
+93036,301 WEST GONZALES ROAD,Oxnard,Oxnard Lowe's,1941,CA,25.3
+93003,500 SOUTH MILLS ROAD,Ventura,C. Ventura Lowe's,1734,CA,30.1
+91773,633 WEST BONITA AVENUE,San Dimas,San Dimas Lowe's,1170,CA,15.3
+91709,13251 PEYTON DRIVE,Chino Hills,Chino Hills Lowe's,316,CA,12.8
+92782,2500 PARK AVENUE,Tustin,Tustin Lowe's,2605,CA,15.3
+92673,907 AVENIDA PICO,San Clemente,San Clemente Lowe's,1050,CA,42.1
+91786,1659 W FOOTHILL BLVD,Upland,Upland Lowe's,1041,CA,16.7
+91709,4777 CHINO HILLS PARKWAY,Chino Hills,S. Chino Hills Lowe's,2783,CA,18.9
+93551,39500 LOWES DR,Palmdale,Palmdale Lowe's,791,CA,30.1
+93534,730 WEST AVENUE K,Lancaster,Lancaster Lowe's,2502,CA,26.1
+93552,37080 47TH STREET EAST,Palmdale,E. Palmdale Lowe's,2547,CA,27.8
+91730,11399 FOOTHILL BLVD.,Rancho Cucamonga,Rancho Cucamonga Lowe's,774,CA,1.7
+92336,16851 SIERRA LAKES PARKWAY,Fontana,N. Fontana Lowe's,1700,CA,6.9
+91761,2390 SOUTH GROVE AVENUE,Ontario,Ontario Lowe's,2270,CA,7.9
+91752,6413 PATS RANCH ROAD,Jurupa Valley,Jurupa Valley Lowe's,2330,CA,10.9
+92407,4060 NORTH HALLMARK PKWY,San Bernardino,Lowe's Outlet San Bernardino,3568,CA,12.8
+92503,9851 MAGNOLIA AVENUE,Riverside,Riverside Lowe's,1048,CA,15.7
+92879,1285 MAGNOLIA AVENUE,Corona,Corona Lowe's,1743,CA,13.4
+92553,12400 DAY STREET,Moreno Valley,Moreno Valley Lowe's,1574,CA,16.1
+92008,2515 PALOMAR AIRPORT RD,Carlsbad,Carlsbad Lowe's,2331,CA,34.8
+92083,151 VISTA VILLAGE DRIVE,Vista,Vista Lowe's,1616,CA,38.7
+92057,155 OLD GROVE ROAD,Oceanside,Oceanside Lowe's,1588,CA,42.3
+92591,40390 WINCHESTER ROAD,Temecula,Temecula Lowe's,775,CA,60
+92562,24701 MADISON AVENUE,Murrieta,Murrieta Lowe's,1576,CA,62.5
+92545,350 SOUTH SANDERSON AVENUE,Hemet,Hemet Lowe's,1556,CA,49.4
+92584,30472 HAUN ROAD,Menifee,Menifee Lowe's,2294,CA,27
+92532,29335 Central Avenue,Lake Elsinore,Lake Elsinore Lowe's,1987,CA,28.9
+92688,30481 AVENIDA DE LAS FLORES,Rancho Santa Margarita,Rancho Santa Margarita Lowe's,758,CA,27.2
+92373,1725 WEST REDLANDS BLVD,Redlands,Redlands Lowe's,759,CA,61.7
+92346,27847 GREENSPOT ROAD,Highland,Highland Lowe's,2856,CA,62.1
+92308,12189 Apple Valley Road,Apple Valley,Apple Valley Lowe's,2528,CA,57.7
+92392,14333 Bear Valley Road,Victorville,Victorville Lowe's,1001,CA,70.9
+93454,935 E BETTERAVIA ROAD,Santa Maria,Santa Maria Lowe's,3352,CA,62.8
+93307,6200 COLONY STREET,Bakersfield,S. Bakersfield Lowe's,1708,CA,71.9
+93308,7825 ROSEDALE HIGHWAY,Bakersfield,Bakersfield Lowe's,790,CA,79.5
+93446,2445 GOLDEN HILL ROAD,Paso Robles,Paso Robles Lowe's,2730,CA,38.1
+93305,1601 COLUMBUS STREET,Bakersfield,N.E. Bakersfield Lowe's,2424,CA,31.3
+93906,107 E. BORONDA ROAD,Salinas,Salinas Lowe's,2805,CA,106.9
+95020,7151 CAMINO ARROYO,Gilroy,Gilroy Lowe's,1552,CA,84.9
+95123,5550 COTTLE ROAD,San Jose,S. San Jose Lowe's,1756,CA,105.4
+95380,3303 ENTERTAINMENT WAY,Turlock,Turlock Lowe's,2334,CA,100.9
+95356,3801 PELANDALE AVENUE,Modesto,Modesto Lowe's,1086,CA,107.5
+95131,775 RIDDER PARK DRIVE,San Jose,E. San Jose Lowe's,2790,CA,61.9
+94551,4255 FIRST STREET,Livermore,Livermore Lowe's,1150,CA,65.4
+94085,811 EAST ARQUES AVENUE,Sunnyvale,Sunnyvale Lowe's,2211,CA,58
+94538,43612 PACIFIC COMMONS BLVD,Fremont,Fremont Lowe's,1895,CA,66.3
+94587,32040 UNION LANDING BLVD.,Union City,Union City Lowe's,1132,CA,73.2
+94568,3750 DUBLIN BOULEVARD,Dublin,Dublin Lowe's,2273,CA,80
+94066,1340 EL CAMINO REAL,San Bruno,San Bruno Lowe's,1019,CA,80.4
+94124,491 BAYSHORE BLVD,San Francisco,San Francisco Lowe's,3095,CA,16.7
+94520,1935 ARNOLD INDUSTRIAL WAY,Concord,Concord Lowe's,2604,CA,35.7
+94591,401 COLUMBUS PARKWAY,Vallejo,Vallejo Lowe's,1871,CA,33.7
+94509,1951 AUTO CENTER DRIVE,Antioch,Antioch Lowe's,1043,CA,35.2
+94931,7921 REDWOOD DRIVE,Cotati,Cotati Lowe's,1901,CA,40.2
+94531,5503 LONE TREE WAY,Antioch,S. Antioch Lowe's,2508,CA,35.5
+95219,10342 TRINITY PARKWAY,Stockton,N. Stockton Lowe's,2227,CA,19.2
+95212,3645 EAST HAMMER LANE,Stockton,E. Stockton Lowe's,1545,CA,22.8
+95242,1389 S. LOWER SACRAMENTO ROAD,Lodi,Lodi Lowe's,1706,CA,24.8
+94533,3400 NORTH TEXAS STREET,Fairfield,Fairfield Lowe's,3164,CA,35.8
+95688,1751 EAST MONTE VISTA AVENUE,Vacaville,Vacaville Lowe's,1143,CA,36.6
+95691,2250 LAKE WASHINGTON BLVD,West Sacramento,West Sacramento Lowe's,2755,CA,56.3
+95624,8369 POWER INN ROAD,Elk Grove,Elk Grove Lowe's,1148,CA,56.8
+97504,3601 CRATER LAKE HIGHWAY,Medford,Medford Lowe's,248,OR,117.3
+97470,3300 NW AVIATION DRIVE,Roseburg,Roseburg Lowe's,1741,OR,164
+97402,3595 WEST 11TH AVENUE,Eugene,W. Eugene Lowe's,2940,OR,167.2
+97322,1300 9TH AVE SE,Albany,Albany Lowe's,3057,OR,206.4
+97302,1930 TURNER ROAD SOUTHEAST,Salem,Salem Lowe's,1600,OR,226.5
+97303,6225 ULALI DRIVE NE,Keizer,Keizer Lowe's,2619,OR,224.7
+96797,94-805 LUMIAINA STREET,Waipahu,Waipahu Lowe's,119,HI,98.4
+96817,411 PACIFIC STREET,Honolulu,Iwilei - Honolulu Lowe's,2336,HI,108.9
+96732,214 HO'OKELE STREET,Kahului,Kahului Lowe's,3279,HI,203.7
+96740,75-5677 HALE KAPILI STREET,Kailua Kona,Kona Lowe's,1561,HI,275.6
+99515,10900 OLD SEWARD HIGHWAY,Anchorage,S. Anchorage Lowe's,1633,AK,4581.9
+99503,333 EAST TUDOR ROAD,Anchorage,Anchorage Lowe's,289,AK,4582.6
+99504,1200 NORTH MULDOON,Anchorage,N.E. Anchorage Lowe's,2955,AK,4587.8
+99654,2561 EAST SUN MOUNTAIN AVE,Wasilla,Wasilla Lowe's,2512,AK,4605.6
+99701,425 MERHAR AVENUE,Fairbanks,Fairbanks Lowe's,1985,AK,4714.9
+98226,1050 EAST SUNSET DRIVE,Bellingham,Bellingham Lowe's,1631,WA,5636.9
+97123,1951 S.E. 24TH Avenue,Hillsboro,Hillsboro Lowe's,1558,OR,5.1
+97223,12615 S. W. 72ND AVENUE,Tigard,Tigard Lowe's,1108,OR,8
+97217,1160 N. HAYDEN MEADOWS DRIVE,Portland,Portland-delta Park Lowe's,2579,OR,10
+97222,13631 S.E. JOHNSON ROAD,Milwaukie,Clackamas County Lowe's,1824,OR,14.7
+98662,11413 N.E. 76TH STREET,Vancouver,E. Vancouver Lowe's,1632,WA,18.1
+98683,18801 Se Mill Plain Blvd,Vancouver,Lacamas Lake Lowe's,2954,WA,19.3
+97060,1000 NE WOOD VILLAGE BOULEVARD,Wood Village,Wood Village Lowe's,1114,OR,20.8
+97128,1250 SW BOOTH BEND ROAD,Mcminnville,Mcminnville Lowe's,1693,OR,28.5
+98632,2850 OCEAN BEACH HIGHWAY,Longview,Longview Lowe's,1887,WA,62.1
+98503,5610 CORPORATE LANE SE,Lacey,S. Lacey Lowe's,2738,WA,64.3
+98516,4230 MARTIN WAY EAST,Olympia,Olympia Lowe's,1167,WA,76.4
+98003,35425 ENCHANTED PARKWAY SOUTH,Federal Way,Federal Way Lowe's,2346,WA,2.7
+98002,1232 A STREET NORTHEAST,Auburn,Auburn Lowe's,1089,WA,3.9
+98032,24050 PACIFIC HIGHWAY SOUTH,Kent,Kent-midway Lowe's,2561,WA,4.4
+98188,101 ANDOVER PARK EAST,Tukwila,Tukwila Lowe's,10,WA,9.9
+98466,2701 SOUTH ORCHARD STREET,Tacoma,Tacoma Lowe's,26,WA,10.8
+98374,3511 5TH STREET SE,Puyallup,Puyallup Lowe's,2734,WA,11.5
+98391,19911 SOUTH PRAIRIE ROAD EAST,Bonney Lake,Bonney Lake Lowe's,2895,WA,12.8
+98055,1000 GARDEN AVE N,Renton,Renton Lowe's,2420,WA,13.3
+98499,5115 100TH STREET S.W.,Lakewood,Lakewood Lowe's,1081,WA,14
+98144,2700 RAINIER AVENUE SOUTH,Seattle,Rainier Lowe's,4,WA,17.8
+98027,1625 11TH AVENUE NW,Issaquah,Issaquah Lowe's,140,WA,8.1
+98133,12525 AURORA AVENUE NORTH,Seattle,N. Seattle Lowe's,252,WA,10
+98036,3100 196TH SW,Lynnwood,Lynnwood Lowe's,285,WA,14.6
+98012,2002 132ND STREET S.E.,Mill Creek,Mill Creek Lowe's,1573,WA,18.2
+98311,5600 STATE HIGHWAY 303 N.E.,Bremerton,Bremerton Lowe's,1534,WA,19.8
+98272,19393 TJERNE PLACE SE,Monroe,Monroe Lowe's,2781,WA,20.3
+98367,150 SEDGWICK RD,Port Orchard,Port Orchard Lowe's,2733,WA,18.6
+98201,2505 PACIFIC AVENUE,Everett,Everett Lowe's,149,WA,19.4
+98223,3300 169TH PLACE NE,Arlington,Smokey Point Lowe's,61,WA,22.3
+98383,2221 NW MYHRE ROAD,Silverdale,Silverdale Lowe's,2746,WA,20.2
+98273,1717 FREEWAY DRIVE,Mount Vernon,Mount Vernon Lowe's,35,WA,13.6

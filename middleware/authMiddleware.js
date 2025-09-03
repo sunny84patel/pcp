@@ -10,7 +10,13 @@ export const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { userId, role }
+    // Normalize the user object - map userId to id for consistency
+    req.user = {
+      id: decoded.userId,  // ✅ Map userId to id
+      userId: decoded.userId,  // Keep original for compatibility
+      role: decoded.role
+    };
+    console.log("Decoded user:", req.user); // 👀 debug
     next();
   } catch (err) {
     return res.status(403).json({ msg: 'Invalid token' });

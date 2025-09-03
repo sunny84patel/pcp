@@ -175,7 +175,7 @@ const run = async () => {
         await mongoose.connect(mongoUri);
         console.log('✅ Connected to MongoDB');
 
-        const searchTerms = ['Ceiling','Dinning', 'Electrical', 'Hardware', 'Outdoor', 'Plumbing']; // Add more if needed
+        const searchTerms = ['Bolts','Brush','Ceiling','Dinning', 'Electrical', 'Hardware', 'Outdoor', 'Plumbing']; // Add more if needed
 
         for (const term of searchTerms) {
             const safeTerm = term.replace(/\s+/g, '_').toLowerCase();

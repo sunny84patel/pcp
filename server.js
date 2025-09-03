@@ -8,6 +8,8 @@ import productRoutes from './routes/productRoutes.js';
 import productdetailRoutes from './routes/productdetailRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import compareRoutes from './routes/compareRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -78,6 +80,8 @@ app.use('/api', productRoutes);
 app.use('/api', productdetailRoutes);
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
+app.use('/api', compareRoutes);
+app.use('/api', wishlistRoutes);
 
 // ==================
 // Local development: run server

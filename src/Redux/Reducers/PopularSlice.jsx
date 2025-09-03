@@ -14,7 +14,7 @@ export const fetchPopularProducts = createAsyncThunk(
 
 const popularProductsSlice = createSlice({
   name: 'popular',
-  initialState: { items: [], loading: false, error: null },
+  initialState: { items: [], loading: false, error: null,hasLoaded: false },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPopularProducts.pending, (state) => {
@@ -24,6 +24,7 @@ const popularProductsSlice = createSlice({
       .addCase(fetchPopularProducts.fulfilled, (state, action) => {
         state.items = Array.isArray(action.payload) ? action.payload : [];
         state.loading = false;
+        state.hasLoaded = true;
       })
       .addCase(fetchPopularProducts.rejected, (state, action) => {
         state.error = action.error?.message || 'Failed to fetch popular products';

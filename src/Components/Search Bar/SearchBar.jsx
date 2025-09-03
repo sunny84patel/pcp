@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef  } from "react";
 import { Search } from "lucide-react";
 import axios from "axios";
 import debounce from "lodash.debounce"; // npm install lodash.debounce
 import { useNavigate } from "react-router-dom";
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = forwardRef(({ onSearch }, ref) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -218,6 +218,7 @@ const SearchBar = ({ onSearch }) => {
         <div className="flex justify-center mt-6 relative" ref={suggestionBoxRef}>
           <div className="relative w-full max-w-2xl">
             <input
+              ref={ref} 
               type="text"
               placeholder="Search your products"
               className="w-full pr-12 text-sm focus:outline-none"
@@ -394,7 +395,7 @@ const SearchBar = ({ onSearch }) => {
       </form>
     </div>
   );
-};
+});
 
 // Enhanced utility function to add a product to viewed products (matching your data structure)
 export const addToViewedProducts = (product) => {

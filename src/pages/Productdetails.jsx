@@ -23,7 +23,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClipLoader } from "react-spinners";
 import { fetchNearestLowesStore } from "../Redux/Reducers/lowesstore";
 import { fetchNearestStore } from "../Redux/Reducers/NearestStoreSlice";
-
+import { addToWishlist, removeFromWishlist } from "../Redux/Reducers/WishlistSlice";
+import { toast } from "react-hot-toast";
+import { toggleCompare } from "../Redux/Reducers/CompareSlice";
 // Lazy loaded sections with better loading states
 const RecentlyViewed = React.lazy(() =>
   import("../Components/RecentlyViewed/RecentlyViewed")
@@ -34,14 +36,24 @@ const SimilarProducts = React.lazy(() =>
 const Footer = React.lazy(() => import("../Components/Footer/Footer"));
 
 // Memoized subcomponents
-const ProductImage = memo(({ product }) => (
+const ProductImage = memo(({ product, handleWishlistToggle, isInWishlist }) => (
   <div className="flex-1 bg-white rounded-lg shadow p-6 w-full relative">
     <div className="absolute top-4 right-4 flex space-x-3 z-10">
       <button className="p-2 rounded-xl hover:shadow-md cursor-pointer">
         <Share2 className="w-5 h-5 text-black" />
       </button>
-      <button className="p-2 bg-[#E3E5FC] rounded-xl shadow-sm hover:shadow-md cursor-pointer">
-        <Heart className="w-5 h-5 text-black" />
+      <button
+        onClick={(e) => handleWishlistToggle(e, product.productId)}
+        className={`p-2 rounded-xl shadow-sm hover:shadow-md cursor-pointer transition-all duration-200 ${isInWishlist(product.productId)
+          ? "bg-red-100 hover:bg-red-200"
+          : "bg-[#E3E5FC] hover:bg-[#D1D5F7]"
+          }`}
+      >
+        {isInWishlist(product.productId) ? (
+          <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+        ) : (
+          <Heart className="w-5 h-5 text-black" />
+        )}
       </button>
     </div>
     <img
@@ -54,12 +66,22 @@ const ProductImage = memo(({ product }) => (
   </div>
 ));
 
+
 const RetailerCard = memo(({ offer, renderStars }) => {
   const dispatch = useDispatch();
-  
+
   // Get both store data from Redux
-  const { store: homeDepotStore, loading: homeDepotLoading, error: homeDepotError } = useSelector((state) => state.nearestStore);
-  const { store: lowesStore, loading: lowesLoading, error: lowesError } = useSelector((state) => state.nearestLowesStore);
+  const {
+    store: homeDepotStore,
+    loading: homeDepotLoading,
+    error: homeDepotError,
+  } = useSelector((state) => state.nearestStore);
+
+  const {
+    store: lowesStore,
+    loading: lowesLoading,
+    error: lowesError,
+  } = useSelector((state) => state.nearestLowesStore);
 
   // Debug logs
   console.log("RetailerCard mounted for:", offer.store);
@@ -71,37 +93,46 @@ const RetailerCard = memo(({ offer, renderStars }) => {
     if (offer.store === "Lowe's") {
       dispatch(fetchNearestLowesStore());
     } else if (offer.store === "Home Depot") {
-      dispatch(fetchNearestStore()); // Your existing Home Depot thunk
+      dispatch(fetchNearestStore());
     }
   }, [dispatch, offer.store]);
 
-  // Determine which store data to use based on the offer
+  // Normalize data for rendering
   const getCurrentStoreData = () => {
     if (offer.store === "Lowe's") {
       return {
         storeData: lowesStore,
         loading: lowesLoading,
         error: lowesError,
-        // Map Lowe's data structure to match your display format
-        displayStore: lowesStore ? {
-          address: `${lowesStore.street_address}, ${lowesStore.city}, ${lowesStore.zip_state} ${lowesStore.zipcode}`,
-          store_id: lowesStore.store_no,
-          distance: lowesStore.distance || lowesStore.calculatedDistance?.toFixed(1),
-          name: lowesStore.store_name
-        } : null
+        displayStore: lowesStore
+          ? {
+            address: `${lowesStore.street_address}, ${lowesStore.city}, ${lowesStore.zip_state} ${lowesStore.zipcode}`,
+            store_id: lowesStore.store_no,
+            distance: lowesStore.calculatedDistance
+              ? lowesStore.calculatedDistance.toFixed(1)
+              : null,
+            name: lowesStore.store_name,
+          }
+          : null,
       };
     } else {
-      // Home Depot (existing structure)
       return {
         storeData: homeDepotStore,
         loading: homeDepotLoading,
         error: homeDepotError,
         displayStore: homeDepotStore
+          ? {
+            ...homeDepotStore,
+            distance: homeDepotStore.calculatedDistance
+              ? homeDepotStore.calculatedDistance.toFixed(1)
+              : homeDepotStore.distance,
+          }
+          : null,
       };
     }
   };
 
-  const { storeData, loading, error, displayStore } = getCurrentStoreData();
+  const { loading, error, displayStore } = getCurrentStoreData();
 
   return (
     <div className="border rounded-lg p-4 shadow-sm bg-white space-y-2 border-purple-700">
@@ -197,7 +228,6 @@ const RetailerCard = memo(({ offer, renderStars }) => {
               <p className="text-gray-600 text-xs ml-6">
                 Store ID:{" "}
                 <span className="font-semibold">{displayStore.store_id}</span>
-                {/* Show store name for Lowe's */}
                 {offer.store === "Lowe's" && displayStore.name && (
                   <span className="ml-2">({displayStore.name})</span>
                 )}
@@ -244,6 +274,10 @@ const ProductDetailsPage = () => {
   const dispatch = useDispatch();
   const dropdownRef = useRef(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { isAuthenticated } = useSelector((state) => state.otp);
+  const [localWishlist, setLocalWishlist] = useState([]);
+  const isInWishlist = (productId) => localWishlist.includes(productId);
+
 
   const sortOptions = useMemo(() => ["Lowest Price", "Highest Price"], []);
   const [selectedOption, setSelectedOption] = useState(sortOptions[0]);
@@ -251,7 +285,38 @@ const ProductDetailsPage = () => {
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
-  
+
+  const handleWishlistToggle = (e, productId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error("Please login first to use wishlist!");
+      return;
+    }
+
+    if (isInWishlist(productId)) {
+      setLocalWishlist((prev) => prev.filter((id) => id !== productId));
+      dispatch(removeFromWishlist(productId));
+    } else {
+      setLocalWishlist((prev) => [...prev, productId]);
+      dispatch(addToWishlist(productId));
+    }
+  };
+  const { selected } = useSelector((state) => state.compare);
+
+  const handleCompareToggle = (e, productId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      toast.error("Please login first to use compare!");
+      return;
+    }
+
+    dispatch(toggleCompare(productId));
+  };
+
   const fetchedRef = useRef(null);
   // Debounced localStorage save to reduce blocking operations
   const saveToLocalStorage = useCallback((productData) => {
@@ -405,7 +470,7 @@ const ProductDetailsPage = () => {
 
               <span
                 className="cursor-pointer hover:underline font-normal"
-                // onClick={() => navigate("/tools-equipment")}
+              // onClick={() => navigate("/tools-equipment")}
               >
                 Tools & Equipments
               </span>
@@ -413,7 +478,7 @@ const ProductDetailsPage = () => {
 
               <span
                 className="cursor-pointer hover:underline font-normal text-[#070707]"
-                // onClick={() => navigate("/drills")}
+              // onClick={() => navigate("/drills")}
               >
                 Drills
               </span>
@@ -431,20 +496,29 @@ const ProductDetailsPage = () => {
           <button className="flex items-center gap-1 hover:text-black font-bold cursor-pointer">
             <AlarmClock /> Set Price Alert
           </button>
-          <label className="flex font-bold items-center gap-2 cursor-pointer hover:text-black">
-            Add to Compare
+          <label
+            className="flex font-bold items-center gap-2 cursor-pointer hover:text-black"
+            onClick={(e) => handleCompareToggle(e, product.productId)}
+          >
             <input
               type="checkbox"
+              checked={selected.includes(product.productId)}
+              readOnly
               className="form-checkbox accent-purple-600 cursor-pointer"
-              aria-label="Add to comparison list"
             />
+            Add to Compare
           </label>
+
         </div>
       </div>
 
       {/* Product & Offers */}
       <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
-        <ProductImage product={product} />
+        <ProductImage
+          product={product}
+          handleWishlistToggle={handleWishlistToggle}
+          isInWishlist={isInWishlist}
+        />
 
         {/* Retailers */}
         <div className="flex-[1.5] w-full space-y-4 bg-[#E3E5FC66] p-6 rounded-2xl">
@@ -457,9 +531,8 @@ const ProductDetailsPage = () => {
             >
               <span>{selectedOption}</span>
               <ChevronDown
-                className={`h-4 w-4 transition-transform ${
-                  isDropdownOpen ? "rotate-180" : ""
-                }`}
+                className={`h-4 w-4 transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 

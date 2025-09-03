@@ -15,6 +15,7 @@ const RecentlyViewed = () => {
     items: products,
     loading,
     error,
+    hasLoaded,
   } = useSelector((state) => state.recent);
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -60,10 +61,10 @@ const RecentlyViewed = () => {
 
   // Fetch products from API if we have IDs
   useEffect(() => {
-    if (storedViewed.length > 0) {
+    if (storedViewed.length > 0 && !hasLoaded) {
       dispatch(fetchProductsByIds(storedViewed));
     }
-  }, [dispatch, storedViewed]);
+  }, [dispatch, storedViewed, hasLoaded]);
 
   // Handle responsive items per view
   useEffect(() => {
@@ -183,11 +184,10 @@ const RecentlyViewed = () => {
             <button
               onClick={prevSlide}
               disabled={currentSlide === 0}
-              className={`absolute left-12 z-10 w-10 h-8 rounded-full transition-all ${
-                currentSlide === 0
+              className={`absolute left-12 z-10 w-10 h-8 rounded-full transition-all ${currentSlide === 0
                   ? "text-gray-400 cursor-not-allowed"
                   : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
-              }`}
+                }`}
               style={{
                 border: "2px solid #5F43B2",
               }}
@@ -200,9 +200,8 @@ const RecentlyViewed = () => {
               <div
                 className="flex transition-transform duration-300 ease-in-out"
                 style={{
-                  transform: `translateX(-${
-                    currentSlide * (100 / itemsPerView)
-                  }%)`,
+                  transform: `translateX(-${currentSlide * (100 / itemsPerView)
+                    }%)`,
                   width: `${(displayProducts.length / itemsPerView) * 100}%`,
                 }}
               >
@@ -269,7 +268,7 @@ const RecentlyViewed = () => {
                                         </div>
                                         {product.stores["lowe's"].listPrice &&
                                           product.stores["lowe's"].listPrice >
-                                            product.stores["lowe's"].price && (
+                                          product.stores["lowe's"].price && (
                                             <div className="text-xs text-green-600 font-medium">
                                               Save $
                                               {(
@@ -291,8 +290,8 @@ const RecentlyViewed = () => {
                                           .listPrice &&
                                           product.stores["homedepot"]
                                             .listPrice >
-                                            product.stores["homedepot"]
-                                              .price && (
+                                          product.stores["homedepot"]
+                                            .price && (
                                             <div className="text-xs text-green-600 font-medium">
                                               Save $
                                               {(
@@ -333,11 +332,10 @@ const RecentlyViewed = () => {
             <button
               onClick={nextSlide}
               disabled={currentSlide >= maxSlide}
-              className={`absolute right-10 z-10 w-10 h-8 rounded-full transition-all ${
-                currentSlide >= maxSlide
+              className={`absolute right-10 z-10 w-10 h-8 rounded-full transition-all ${currentSlide >= maxSlide
                   ? "text-gray-400 cursor-not-allowed"
                   : "bg-white shadow-lg hover:shadow-xl text-gray-600 hover:bg-gray-50 cursor-pointer"
-              }`}
+                }`}
               style={{
                 border: "2px solid #5F43B2",
               }}

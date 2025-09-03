@@ -122,8 +122,8 @@ const AuthForm = () => {
       };
 
       // Save in localStorage
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", token);
+      sessionStorage.setItem("user", JSON.stringify(userData));
+      sessionStorage.setItem("token", token);
 
       // Save in Redux using setUser
       dispatch(

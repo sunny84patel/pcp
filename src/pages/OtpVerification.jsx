@@ -70,7 +70,7 @@ const SuccessLoader = () => (
 const OtpVerification = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const identifier = useSelector((state) => state.login?.identifier || localStorage.getItem('tempIdentifier')); // fallback
+  const identifier = useSelector((state) => state.login?.identifier || sessionStorage.getItem('tempIdentifier')); // fallback
   const inputsRef = useRef([...Array(6)].map(() => React.createRef()));
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
 
@@ -158,8 +158,8 @@ const OtpVerification = () => {
 
       if (verifyOTP.fulfilled.match(resultAction)) {
         console.log("✅ OTP verification successful");
-        localStorage.setItem("token", resultAction.payload.token);
-        localStorage.removeItem('tempIdentifier'); // Clean up
+        sessionStorage.setItem("token", resultAction.payload.token);
+        sessionStorage.removeItem('tempIdentifier'); // Clean up
 
         // Update login state if available
         if (window.loginSliceActions) {

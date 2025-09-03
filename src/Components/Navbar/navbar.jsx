@@ -20,7 +20,7 @@ import {
 } from "../../Redux/Reducers/OtpSlice";
 import location2 from "../../assets/images/location2.png";
 import italic from "../../assets/images/ITALIC.png";
-
+import { fetchZipFromCoords } from "../../Redux/Reducers/LocationSlice";
 /* ---------- helpers for avatar initials & color ---------- */
 const getInitials = (name = "") => {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -66,7 +66,32 @@ const Navbar = ({ postalCode }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { store, loading, error } = useSelector((state) => state.nearestStore);
+  const { zipcode, city, state, loading, error } = useSelector(
+    (state) => state.location
+  );
+  console.log("Location slice state:", { zipcode, city, state, loading, error });
+
+  useEffect(() => {
+    // ✅ Only fetch if we don't already have location in Redux
+    if (!zipcode && !loading && !error) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            dispatch(
+              fetchZipFromCoords({
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+              })
+            );
+          },
+          (err) => {
+            console.error("Geolocation error:", err.message);
+          }
+        );
+      }
+    }
+  }, [dispatch, zipcode, loading, error]);
+
 
   // ✅ Read from OTP slice where the actual user data is stored
   const { user, isAuthenticated } = useSelector((state) => state.otp);
@@ -116,33 +141,27 @@ const Navbar = ({ postalCode }) => {
     try {
       console.log("Logout initiated...");
 
-      // Clear localStorage
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("authToken"); // In case you use this key too
+      // Clear both storages just in case
+      localStorage.clear();
+      sessionStorage.clear();
 
       // Reset Redux states
       dispatch(loginLogout());
       dispatch(otpLogout());
       dispatch(resetOTPState());
 
-      // Close dropdown
       setIsProfileOpen(false);
-
-      // Reset component states
       setImageError(false);
       setImageLoading(true);
 
       console.log("Logout completed, navigating to login...");
-
-      // Navigate to login page
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout error:", error);
-      // Still navigate to login even if there's an error
       navigate("/login", { replace: true });
     }
   };
+
 
   const categories = [
     "Tools",
@@ -178,9 +197,8 @@ const Navbar = ({ postalCode }) => {
           <img
             src={highResImage || user.image}
             alt={user?.name || "Profile"}
-            className={`w-full h-full object-cover ${
-              imageLoading ? "opacity-0" : "opacity-100"
-            } transition-opacity duration-300`}
+            className={`w-full h-full object-cover ${imageLoading ? "opacity-0" : "opacity-100"
+              } transition-opacity duration-300`}
             onLoad={handleImageLoad}
             onError={handleImageError}
             crossOrigin="anonymous"
@@ -225,7 +243,7 @@ const Navbar = ({ postalCode }) => {
           <div className="hidden md:flex items-center space-x-2 text-white">
             <img src={location2} alt="Location Icon" className="w-4 h-4" />
             <span className="text-sm font-medium">
-              {loading ? "Detecting..." : store?.postal_code || "No Zip Available"}
+              {loading ? "Detecting..." : zipcode || "No Zip Available"}
             </span>
           </div>
 
@@ -241,9 +259,8 @@ const Navbar = ({ postalCode }) => {
               >
                 <span>All Categories</span>
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -270,7 +287,7 @@ const Navbar = ({ postalCode }) => {
             </button>
 
             <button
-              // onClick={() => navigate("/compare")}
+              onClick={() => navigate("/compare")}
               className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200  text-white cursor-pointer"
             >
               <GitCompare className="h-4 w-4" />
@@ -287,7 +304,7 @@ const Navbar = ({ postalCode }) => {
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center relative">
               <button
-                // onClick={() => navigate("/wishlist")}
+                onClick={() => navigate("/wishlist")}
                 className="flex items-center justify-center w-10 h-10 text-white  rounded-full transition-colors duration-200 cursor-pointer"
                 title="Wishlist"
               >
@@ -450,7 +467,7 @@ const Navbar = ({ postalCode }) => {
                 <button
                   onClick={() => {
                     setIsMenuOpen(false);
-                    // navigate("/wishlist");
+                    navigate("/wishlist");
                   }}
                   className="flex items-center text-gray-700 hover:bg-gray-100 px-4 py-3 text-sm font-medium transition-colors duration-200 cursor-pointer"
                 >

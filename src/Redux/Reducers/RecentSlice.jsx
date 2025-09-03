@@ -14,7 +14,7 @@ export const fetchProductsByIds = createAsyncThunk(
 
 const recentlyViewedSlice = createSlice({
   name: 'recent',
-  initialState: { items: [], loading: false, error: null },
+  initialState: { items: [], loading: false, error: null, hasLoaded: false },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProductsByIds.pending, (state) => {
@@ -24,6 +24,7 @@ const recentlyViewedSlice = createSlice({
       .addCase(fetchProductsByIds.fulfilled, (state, action) => {
         state.items = Array.isArray(action.payload) ? action.payload : [];
         state.loading = false;
+        state.hasLoaded = true;
       })
       .addCase(fetchProductsByIds.rejected, (state, action) => {
         state.error = action.error?.message || 'Failed to fetch recent products';

@@ -20,6 +20,7 @@ const priceDropSlice = createSlice({
     items: [],
     loading: false,
     error: null,
+    hasLoaded: false,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -31,6 +32,7 @@ const priceDropSlice = createSlice({
       .addCase(fetchPriceDroppedProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.items = Array.isArray(action.payload) ? action.payload : [];
+        state.hasLoaded = true;
       })
       .addCase(fetchPriceDroppedProducts.rejected, (state, action) => {
         state.loading = false;

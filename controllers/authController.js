@@ -6,7 +6,9 @@ import validator from 'validator';
 import { sendEmailOTP } from '../utils/emailSender.js';
 import { setEmailOTP, verifyEmailOTP } from '../utils/emailotp.js';
 import dotenv from "dotenv";
-
+import admin from "firebase-admin";
+import path from "path";
+import { fileURLToPath } from "url";
 dotenv.config();
 
 const accountSid = process.env.TWILIO_SID;
@@ -273,5 +275,65 @@ export const verifyOTP = async (req, res) => {
       msg: "Server error verifying OTP.",
       error: err.message
     });
+  }
+};
+
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+if (!admin.apps.length) {
+  const serviceAccountPath = path.join(__dirname, "../config/firebase-service-account.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountPath),
+  });
+}
+
+// 🔹 Verify Firebase token → issue your own JWT
+export const googleLogin = async (req, res) => {
+  try {
+    const { firebaseToken } = req.body;
+    if (!firebaseToken) {
+      return res.status(400).json({ msg: "Firebase token is required" });
+    }
+
+    // ✅ Verify Firebase token
+    const decoded = await admin.auth().verifyIdToken(firebaseToken);
+
+    // Check if user exists in DB
+    let user = await User.findOne({ email: decoded.email });
+
+    // If new user → create entry
+    if (!user) {
+      user = new User({
+        fullName: decoded.name || "Google User",
+        email: decoded.email,
+        mobile: "",
+        zipCode: "",
+        isVerified: true,
+        role: "user",
+      });
+      await user.save();
+    }
+
+    // ✅ Issue your JWT
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      msg: "Google login successful",
+      token,
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error("❌ Google login failed:", err);
+    res.status(401).json({ msg: "Invalid Google login", error: err.message });
   }
 };

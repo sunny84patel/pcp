@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../Components/Navbar/navbar";
 import Footer from "../Components/Footer/Footer";
-import { Star, Share2, Trash2, Bell, Clock3 } from "lucide-react";
+import { Star, Share2, Trash2, Bell, Clock3, ArrowLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
 
 import homedepot from "../assets/images/homedepot.png";
@@ -12,6 +12,7 @@ import offericon from "../assets/images/offericon.png";
 // Import Redux actions
 import { fetchWishlist, removeFromWishlist } from "../Redux/Reducers/WishlistSlice";
 import { toggleCompare } from "../Redux/Reducers/CompareSlice";
+import { useNavigate } from "react-router-dom";
 
 // ===== small pieces =====
 const Stars = ({ value }) => (
@@ -172,6 +173,7 @@ export default function WishlistPage() {
   const { products: wishlistProducts, loading, error } = useSelector((state) => state.wishlist);
   const [deletingItems, setDeletingItems] = useState(new Set());
   const [clearingAll, setClearingAll] = useState(false);
+    const navigate = useNavigate();
 
   // Fetch wishlist on component mount
   useEffect(() => {
@@ -258,12 +260,22 @@ export default function WishlistPage() {
           className="flex justify-between items-end pb-3 mb-8"
           style={{ borderBottom: "1px solid #ABA9A980" }}
         >
-          <div className="text-[18px] font-semibold">
+          <div className="flex items-center gap-3 text-[18px] font-semibold">
+          <button
+            onClick={() => navigate(-1)} // go back one step in history
+            className="flex items-center gap-1 text-black-600 cursor-pointer"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            <span className="text-sm font-medium ">Back</span>
+          </button>
+
+          <div>
             My Wishlist
             <span className="ml-2 text-sm font-normal text-gray-500">
               {wishlistProducts.length} products in your wishlist
             </span>
           </div>
+        </div>
           <div className="flex items-center gap-6 text-sm">
             <button 
               className="text-gray-700 hover:text-black disabled:opacity-50 flex items-center gap-2"

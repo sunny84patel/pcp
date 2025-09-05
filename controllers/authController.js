@@ -282,9 +282,12 @@ export const verifyOTP = async (req, res) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 if (!admin.apps.length) {
-  const serviceAccountPath = path.join(__dirname, "../config/firebase-service-account.json");
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountPath),
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    }),
   });
 }
 

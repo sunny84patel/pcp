@@ -10,7 +10,10 @@ import lowes from "../assets/images/lowes.png";
 import offericon from "../assets/images/offericon.png";
 
 // Import Redux actions
-import { fetchWishlist, removeFromWishlist } from "../Redux/Reducers/WishlistSlice";
+import {
+  fetchWishlist,
+  removeFromWishlist,
+} from "../Redux/Reducers/WishlistSlice";
 import { toggleCompare } from "../Redux/Reducers/CompareSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -31,13 +34,17 @@ const PriceTile = ({ product }) => {
   let storeDisplayName = "Home Depot";
 
   if (
-    storeId === "lowe's" || storeId === "lowes" || storeId === "lowe" ||
+    storeId === "lowe's" ||
+    storeId === "lowes" ||
+    storeId === "lowe" ||
     storeData.storeId?.toLowerCase().includes("lowe")
   ) {
     storeLogo = lowes;
     storeDisplayName = "Lowe's";
   } else if (
-    storeId === "homedepot" || storeId === "home depot" || storeId === "home_depot" ||
+    storeId === "homedepot" ||
+    storeId === "home depot" ||
+    storeId === "home_depot" ||
     storeData.storeId?.toLowerCase().includes("depot")
   ) {
     storeLogo = homedepot;
@@ -78,7 +85,6 @@ const PriceTile = ({ product }) => {
   );
 };
 
-
 const WishlistRow = ({ item, onDelete, isDeleting }) => {
   const dispatch = useDispatch();
   const selected = useSelector((state) => state.compare.selected);
@@ -91,14 +97,14 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
           <ClipLoader color="#5F43B2" size={30} />
         </div>
       )}
-      
+
       <div className="flex items-center gap-4">
         {/* Image */}
         <div className="flex-shrink-0">
-          <img 
-            src={item.images?.[0] || "/placeholder-product.jpg"} 
-            alt={item.name} 
-            className="h-20 w-20 object-contain" 
+          <img
+            src={item.images?.[0] || "/placeholder-product.jpg"}
+            alt={item.name}
+            className="h-20 w-20 object-contain"
           />
         </div>
 
@@ -108,26 +114,30 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-semibold text-gray-900">{item.name}</h3>
           </div>
-          
+
           {/* Model number */}
           {item.modelNo && (
             <div className="text-xs text-gray-600 mb-1">{item.modelNo}</div>
           )}
-          
+
           <Stars value={item.stores?.[0]?.rating || 0} />
 
           {/* Prices + Offers */}
           <div className="mt-1 flex items-center gap-4">
             <PriceTile product={item} />
-            
+
             {/* Divider */}
             <div className="h-10 w-px bg-gray-300" />
-            
+
             {/* Offers - Using static data since API might not have this */}
             <div>
               <div className="text-sm font-medium text-gray-900">3 Offers</div>
               <div className="mt-1 flex items-center gap-1">
-                <img src={offericon} alt="" className="h-5 w-auto object-contain" />
+                <img
+                  src={offericon}
+                  alt=""
+                  className="h-5 w-auto object-contain"
+                />
               </div>
             </div>
           </div>
@@ -136,7 +146,10 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
         {/* Actions */}
         <div className="flex flex-col items-end gap-6 ml-4">
           <div className="flex gap-2">
-            <button className="rounded-full p-2 hover:bg-gray-100" title="Share">
+            <button
+              className="rounded-full p-2 hover:bg-gray-100"
+              title="Share"
+            >
               <Share2 className="h-4 w-4" />
             </button>
             <button
@@ -154,8 +167,8 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
           </button>
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-800 cursor-pointer">
             <span>Add to Compare</span>
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               className="h-4 w-4 accent-[#5F43B2]"
               checked={selected.includes(item.productId)}
               onChange={() => dispatch(toggleCompare(item.productId))}
@@ -170,10 +183,14 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
 // ===== page =====
 export default function WishlistPage() {
   const dispatch = useDispatch();
-  const { products: wishlistProducts, loading, error } = useSelector((state) => state.wishlist);
+  const {
+    products: wishlistProducts,
+    loading,
+    error,
+  } = useSelector((state) => state.wishlist);
   const [deletingItems, setDeletingItems] = useState(new Set());
   const [clearingAll, setClearingAll] = useState(false);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // Fetch wishlist on component mount
   useEffect(() => {
@@ -182,14 +199,14 @@ export default function WishlistPage() {
 
   // Handle item removal
   const handleRemove = async (productId) => {
-    setDeletingItems(prev => new Set(prev).add(productId));
-    
+    setDeletingItems((prev) => new Set(prev).add(productId));
+
     try {
       await dispatch(removeFromWishlist(productId)).unwrap();
     } catch (error) {
       console.error("Failed to remove item:", error);
     } finally {
-      setDeletingItems(prev => {
+      setDeletingItems((prev) => {
         const newSet = new Set(prev);
         newSet.delete(productId);
         return newSet;
@@ -235,9 +252,11 @@ export default function WishlistPage() {
         <div className="mx-auto w-full max-w-7xl px-4 py-6">
           <div className="text-center text-red-500 py-8">
             <div className="mb-4">❌</div>
-            <div className="text-lg font-semibold mb-2">Error loading wishlist</div>
+            <div className="text-lg font-semibold mb-2">
+              Error loading wishlist
+            </div>
             <div className="text-sm">{error.message || error}</div>
-            <button 
+            <button
               className="mt-4 px-4 py-2 bg-[#5F43B2] text-white rounded-lg hover:bg-[#4F33A2] transition-colors"
               onClick={() => dispatch(fetchWishlist())}
             >
@@ -261,23 +280,23 @@ export default function WishlistPage() {
           style={{ borderBottom: "1px solid #ABA9A980" }}
         >
           <div className="flex items-center gap-3 text-[18px] font-semibold">
-          <button
-            onClick={() => navigate(-1)} // go back one step in history
-            className="flex items-center gap-1 text-black-600 cursor-pointer"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span className="text-sm font-medium ">Back</span>
-          </button>
+            <button
+              onClick={() => navigate(-1)} // go back one step in history
+              className="flex items-center gap-1 text-black-600 cursor-pointer"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span className="text-sm font-medium ">Back</span>
+            </button>
 
-          <div>
-            My Wishlist
-            <span className="ml-2 text-sm font-normal text-gray-500">
-              {wishlistProducts.length} products in your wishlist
-            </span>
+            <div>
+              My Wishlist
+              <span className="ml-2 text-sm font-normal text-gray-500">
+                {wishlistProducts.length} products in your wishlist
+              </span>
+            </div>
           </div>
-        </div>
           <div className="flex items-center gap-6 text-sm">
-            <button 
+            <button
               className="text-gray-700 hover:text-black disabled:opacity-50 flex items-center gap-2"
               onClick={handleClearAll}
               disabled={loading || wishlistProducts.length === 0 || clearingAll}
@@ -298,9 +317,16 @@ export default function WishlistPage() {
         {wishlistProducts.length === 0 && !loading ? (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">💝</div>
-            <div className="text-gray-500 text-lg mb-4">Your wishlist is empty</div>
-            <div className="text-gray-400 mb-6">Start adding products you love!</div>
-            <button className="px-6 py-3 bg-[#5F43B2] text-white rounded-lg hover:bg-[#4F33A2] transition-colors">
+            <div className="text-gray-500 text-lg mb-4">
+              Your wishlist is empty
+            </div>
+            <div className="text-gray-400 mb-6">
+              Start adding products you love!
+            </div>
+            <button
+              className="px-6 py-3 bg-[#5F43B2] text-white rounded-lg hover:bg-[#4F33A2] transition-colors cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               Browse Products
             </button>
           </div>
@@ -309,9 +335,9 @@ export default function WishlistPage() {
             {/* rows */}
             <div className="space-y-4">
               {wishlistProducts.map((item) => (
-                <WishlistRow 
-                  key={item.productId} 
-                  item={item} 
+                <WishlistRow
+                  key={item.productId}
+                  item={item}
                   onDelete={() => handleRemove(item.productId)}
                   isDeleting={deletingItems.has(item.productId)}
                 />
@@ -328,7 +354,9 @@ export default function WishlistPage() {
                   <button
                     key={n}
                     className={`h-8 w-8 rounded-full text-sm ${
-                      n === 1 ? "bg-[#5F43B2] text-white" : "border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      n === 1
+                        ? "bg-[#5F43B2] text-white"
+                        : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                     }`}
                   >
                     {n}

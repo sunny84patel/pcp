@@ -1,34 +1,27 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+// SimilarProducts.jsx - Updated to remove duplicate API call
+
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSimilarProducts } from "../../Redux/Reducers/SimilarProductSlice";
 import { ArrowRight } from "lucide-react";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import lowes from "../../assets/images/lowes.png";
 import homedepot from "../../assets/images/homedepot.png";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SimilarProducts = () => {
-  const dispatch = useDispatch();
-  const { id } = useParams();
-
   const {
     items: products,
     loading,
     error,
   } = useSelector((state) => state.similarProducts);
-  console.log("Similar Products:", products);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(4.5);
-  const fetchedRef = useRef(null);
 
-  useEffect(() => {
-    if (id && fetchedRef.current !== id) {
-      dispatch(fetchSimilarProducts(id));
-      fetchedRef.current = id;
-    }
-  }, [id, dispatch]);
+  // REMOVED: The useEffect that was calling fetchSimilarProducts
+  // This is now handled by the parent ProductDetailsPage component
+  // for parallel loading
 
   // Enhanced mapping with correct storeId handling from your API structure
   const groupedProducts = useMemo(() => {
@@ -153,11 +146,6 @@ const SimilarProducts = () => {
     return currency === "USD" ? `$${price}` : `${price} ${currency}`;
   };
 
-  // const getBestPrice = (stores) => {
-  //   const prices = Object.values(stores).map(store => parseFloat(store.price)).filter(price => !isNaN(price));
-  //   return prices.length > 0 ? Math.min(...prices) : null;
-  // };
-
   return (
     <div className="w-full max-w-7xl mx-auto p-4 pt-16 bg-white">
       <div className="flex justify-between items-center mb-6">
@@ -208,7 +196,6 @@ const SimilarProducts = () => {
                   // Check for stores using exact storeId values from API
                   const hasLowes = !!product.stores["lowe's"];
                   const hasHomeDepot = !!product.stores["homedepot"];
-                  // const bestPrice = getBestPrice(product.stores);
 
                   return (
                     <div
@@ -233,16 +220,6 @@ const SimilarProducts = () => {
                                 e.target.src = "/placeholder-product.jpg";
                               }}
                             />
-                            {/* {bestPrice && (
-                              <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
-                                Best: {formatPrice(bestPrice)}
-                              </div>
-                            )}
-                            {product.brand && (
-                              <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded-md text-xs">
-                                {product.brand}
-                              </div>
-                            )} */}
                           </div>
 
                           <div className="p-4">
@@ -261,7 +238,6 @@ const SimilarProducts = () => {
                               )}
                             </div>
 
-                            {/* Store Information */}
                             {/* Store Information */}
                             <div className="mt-2">
                               {hasLowes || hasHomeDepot ? (

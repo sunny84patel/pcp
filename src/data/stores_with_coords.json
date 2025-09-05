@@ -12064,5 +12064,904 @@
     "address": "18855 Lyndon B Johnson Fwy, Mesquite TX ",
     "lat": 32.8154,
     "lng": -96.6307
+  },
+    {
+    "store": "7254",
+    "address": "2925 Main Street SW, Airdrie, AB",
+    "postal_code": "T4B 3G5",
+    "lat": 51.278754,
+    "lng": -114.0104555
+  },
+  {
+    "store": "7037",
+    "address": "1818 16th Ave. N.W., Calgary, AB",
+    "postal_code": "T2M 0L8",
+    "lat": 51.0674364,
+    "lng": -114.1050783
+  },
+  {
+    "store": "7227",
+    "address": "604-1 Westmount Shopping, Edmonton, AB",
+    "postal_code": "T5M 3L7",
+    "lat": 53.560455,
+    "lng": -113.553362
+  },
+  {
+    "store": "7222",
+    "address": "9280 Southfort Drive, Fort Saskatchewan, AB",
+    "postal_code": "T8L 0C5",
+    "lat": 53.693566,
+    "lng": -113.216736
+  },
+  {
+    "store": "7175",
+    "address": "11222 A 103 Ave, Grande Prairie, AB",
+    "postal_code": "T8V 7H1",
+    "lat": 55.1725856,
+    "lng": -118.8289774
+  },
+  {
+    "store": "7170",
+    "address": "3708 Mayor Magrath Dr.South, Lethbridge, AB",
+    "postal_code": "T1K 7V1",
+    "lat": 49.6569199,
+    "lng": -112.7940035
+  },
+  {
+    "store": "7258",
+    "address": "7705-44th Street, Lloydminster, AB",
+    "postal_code": "T9V 0X9",
+    "lat": 53.2766032,
+    "lng": -110.0597382
+  },
+  {
+    "store": "7036",
+    "address": "1851 Strachan Road S.E., Medicine Hat, AB",
+    "postal_code": "T1B 4V7"
+  },
+  {
+    "store": "7223",
+    "address": "10-101 Southbank Boulevard, Okotoks, AB",
+    "postal_code": "T1S 0G1",
+    "lat": 50.7044136,
+    "lng": -113.948122
+  },
+  {
+    "store": "7131",
+    "address": "2030-50th Avenue, Red Deer, AB",
+    "postal_code": "T4R 3A2",
+    "lat": 52.2365774,
+    "lng": -113.8158278
+  },
+  {
+    "store": "7172",
+    "address": "200-390 Baseline Road, Sherwood Park, AB",
+    "postal_code": "T8H 1X1",
+    "lat": 53.5426636,
+    "lng": -113.2965621
+  },
+  {
+    "store": "7050",
+    "address": "180 Hwy 16A, Spruce Grove, AB",
+    "postal_code": "T7X 3X3",
+    "lat": 53.5421337,
+    "lng": -113.9250212
+  },
+  {
+    "store": "7088",
+    "address": "750 St. Albert Road, St. Albert, AB",
+    "postal_code": "T8N 7H5",
+    "lat": 53.665284,
+    "lng": -113.636115
+  },
+  {
+    "store": "7141",
+    "address": "1956 Vedder Way, Abbotsford, BC",
+    "postal_code": "V2S 8K1",
+    "lat": 49.0357911,
+    "lng": -122.2699896
+  },
+  {
+    "store": "7047",
+    "address": "3950 Henning Drive, Burnaby, BC",
+    "postal_code": "V5C 6M2",
+    "lat": 49.2631686,
+    "lng": -123.0169765
+  },
+  {
+    "store": "7221",
+    "address": "1482 Island Highway, Campbell River, BC",
+    "postal_code": "V9W 8C9",
+    "lat": 50.0352552,
+    "lng": -125.247448
+  },
+  {
+    "store": "7273",
+    "address": "100-8443 Eagle Landing Pkwy, Chilliwack, BC",
+    "postal_code": "V2P 0E2",
+    "lat": 49.151167,
+    "lng": -121.9803418
+  },
+  {
+    "store": "7045",
+    "address": "1900 United Boulevard, Coquitlam, BC",
+    "postal_code": "V3K 6Z1",
+    "lat": 49.2268895,
+    "lng": -122.8431168
+  },
+  {
+    "store": "7177",
+    "address": "388 Lerwick Road, Courtenay, BC",
+    "postal_code": "V9N 9E5",
+    "lat": 49.7122133,
+    "lng": -124.9644516
+  },
+  {
+    "store": "7255",
+    "address": "2000 McPhee Road, Cranbrook, BC",
+    "postal_code": "V1C 0A3",
+    "lat": 49.5355005,
+    "lng": -115.7558172
+  },
+  {
+    "store": "7272",
+    "address": "2980 Drinkwater Road, Duncan, BC",
+    "postal_code": "V9L 6C6",
+    "lat": 48.8026473,
+    "lng": -123.7176154
+  },
+  {
+    "store": "7144",
+    "address": "1020 Hillside Drive, Kamloops, BC",
+    "postal_code": "V2E 2S5",
+    "lat": 50.6671551,
+    "lng": -120.3742356
+  },
+  {
+    "store": "7032",
+    "address": "2515 Enterprise Way, Kelowna, BC",
+    "postal_code": "V1X 6C1",
+    "lat": 49.887061,
+    "lng": -119.4295629
+  },
+  {
+    "store": "7041",
+    "address": "6550 - 200th Street, Langley, BC",
+    "postal_code": "V2Y 1P2"
+  },
+  {
+    "store": "7040",
+    "address": "6555 Metral Street, Nanaimo, BC",
+    "postal_code": "V9T 2L9",
+    "lat": 49.2321857,
+    "lng": -124.0458224
+  },
+  {
+    "store": "7145",
+    "address": "1069 Nicola Dr., Port Coquitlam, BC",
+    "postal_code": "V3B 8B2",
+    "lat": 49.2552807,
+    "lng": -122.7401191
+  },
+  {
+    "store": "7171",
+    "address": "5959 O'Grady Road, Prince George, BC",
+    "postal_code": "V2N 6Z5",
+    "lat": 53.8625945,
+    "lng": -122.7787122
+  },
+  {
+    "store": "7043",
+    "address": "2700 Sweden Way, Richmond, BC",
+    "postal_code": "V6V 1K1",
+    "lat": 49.1944473,
+    "lng": -123.0812957
+  },
+  {
+    "store": "7055",
+    "address": "3986 Shelbourne Street, Saanich, BC",
+    "postal_code": "V8N 3E3",
+    "lat": 48.4706517,
+    "lng": -123.3330283
+  },
+  {
+    "store": "7053",
+    "address": "39251 Discovery Way, Squamish, BC",
+    "postal_code": "V8B 0M9",
+    "lat": 49.7246441,
+    "lng": -123.1507256
+  },
+  {
+    "store": "7046",
+    "address": "12701-110th Avenue, Surrey, BC",
+    "postal_code": "V3V 3K7"
+  },
+  {
+    "store": "7259",
+    "address": "2388 Cambie Street, Vancouver, BC",
+    "postal_code": "V5Z 2T8",
+    "lat": 49.2642868,
+    "lng": -123.114304
+  },
+  {
+    "store": "7084",
+    "address": "5501 Anderson Way, Vernon, BC",
+    "postal_code": "V1T 9V1",
+    "lat": 50.2888804,
+    "lng": -119.2654408
+  },
+  {
+    "store": "7074",
+    "address": "2400 Millstream Road, Victoria, BC",
+    "postal_code": "V9B 3R3",
+    "lat": 48.4626396,
+    "lng": -123.5000138
+  },
+  {
+    "store": "7035",
+    "address": "840 Main Street, West Vancouver, BC",
+    "postal_code": "V7T 2Z3",
+    "lat": 49.325799,
+    "lng": -123.142519
+  },
+  {
+    "store": "7252",
+    "address": "3550 Carrington Road, Unit #401, Westbank, BC",
+    "postal_code": "V4T 2Z1",
+    "lat": 49.8371687,
+    "lng": -119.6134561
+  },
+  {
+    "store": "7038",
+    "address": "801 18th Street North, Brandon, MB",
+    "postal_code": "R7A 7S1",
+    "lat": 49.8653813,
+    "lng": -99.9602165
+  },
+  {
+    "store": "7057",
+    "address": "727 Empress Street, Winnipeg, MB",
+    "postal_code": "R3G 3P5",
+    "lat": 49.8897681,
+    "lng": -97.1944915
+  },
+  {
+    "store": "7233",
+    "address": "1450 Regent Street, Fredericton, NB",
+    "postal_code": "E3C 0A4",
+    "lat": 45.9286662,
+    "lng": -66.6607396
+  },
+  {
+    "store": "7148",
+    "address": "235 Mapleton Road, Moncton, NB",
+    "postal_code": "E1C 0G9",
+    "lat": 46.1143865,
+    "lng": -64.8252548
+  },
+  {
+    "store": "7103",
+    "address": "55 Depot Court, Saint John, NB",
+    "postal_code": "E2J 5E5",
+    "lat": 45.303116,
+    "lng": -66.0232327
+  },
+  {
+    "store": "7077",
+    "address": "70 Kelsey Drive, St. Johns, NL",
+    "postal_code": "A1B 5C7"
+  },
+  {
+    "store": "7257",
+    "address": "40 Finnian Row, Dartmouth, NS",
+    "postal_code": "B3B 0B6",
+    "lat": 44.6958693,
+    "lng": -63.5654065
+  },
+  {
+    "store": "7126",
+    "address": "368 Lacewood Drive, Halifax, NS",
+    "postal_code": "B3S 1L8",
+    "lat": 44.6563913,
+    "lng": -63.6716848
+  },
+  {
+    "store": "7261",
+    "address": "21 Silver Fox Ave., New Minas, NS",
+    "postal_code": "B4N 0C9",
+    "lat": 45.0673283,
+    "lng": -64.439118
+  },
+  {
+    "store": "7151",
+    "address": "50 Sydney Port Access Road, Sydney, NS",
+    "postal_code": "B1P 7H2",
+    "lat": 46.1599362,
+    "lng": -60.1930058
+  },
+  {
+    "store": "7109",
+    "address": "256-260 Kingston Road East, Ajax, ON",
+    "postal_code": "L1Z 1G1",
+    "lat": 43.8680591,
+    "lng": -78.9956898
+  },
+  {
+    "store": "7007",
+    "address": "122 Martindale Crescent, Ancaster, ON",
+    "postal_code": "L9K 1J9",
+    "lat": 43.2297244,
+    "lng": -79.9413162
+  },
+  {
+    "store": "7135",
+    "address": "15360 Bayview Avenue, Aurora, ON",
+    "postal_code": "L4G 7G1",
+    "lat": 44.0064244,
+    "lng": -79.4442971
+  },
+  {
+    "store": "7079",
+    "address": "3779 Strandherd Drive, Barrhaven, ON",
+    "postal_code": "K2J 5M4",
+    "lat": 45.2677021,
+    "lng": -75.7515452
+  },
+  {
+    "store": "7024",
+    "address": "10 Barrie View Drive, Barrie, ON",
+    "postal_code": "L4N 6A7",
+    "lat": 44.3399091,
+    "lng": -79.6875074
+  },
+  {
+    "store": "7133",
+    "address": "210 Bell Blvd, Belleville, ON",
+    "postal_code": "K8P 5H6",
+    "lat": 44.1856724,
+    "lng": -77.4083004
+  },
+  {
+    "store": "7269",
+    "address": "12760 Highway # 50, Bolton, ON",
+    "postal_code": "L7E 4G1",
+    "lat": 43.8620564,
+    "lng": -79.7176022
+  },
+  {
+    "store": "7240",
+    "address": "120 Clarington Boulevard, Bowmanville, ON",
+    "postal_code": "L1C 0C3",
+    "lat": 43.9085911,
+    "lng": -78.7070463
+  },
+  {
+    "store": "7164",
+    "address": "20 Depot Drive, R.R.2, Bracebridge, ON",
+    "postal_code": "P1L 0A1",
+    "lat": 45.0359733,
+    "lng": -79.2947526
+  },
+  {
+    "store": "7264",
+    "address": "470 Holland Street West, Bradford, ON",
+    "postal_code": "L3Z 0A2",
+    "lat": 44.1077542,
+    "lng": -79.5909644
+  },
+  {
+    "store": "7110",
+    "address": "60 Great Lakes Drive, Brampton, ON",
+    "postal_code": "L6R 2K7",
+    "lat": 43.7306112,
+    "lng": -79.7653052
+  },
+  {
+    "store": "7138",
+    "address": "25 Holiday Drive, Brantford, ON",
+    "postal_code": "N3R 7J4",
+    "lat": 43.1644257,
+    "lng": -80.2399706
+  },
+  {
+    "store": "7085",
+    "address": "2120 Parkdale Avenue, Brockville, ON",
+    "postal_code": "K6V 5T2",
+    "lat": 44.6142981,
+    "lng": -75.6885058
+  },
+  {
+    "store": "7021",
+    "address": "3050 Davidson Court, Burlington, ON",
+    "postal_code": "L7M 4M9",
+    "lat": 43.3557487,
+    "lng": -79.8064066
+  },
+  {
+    "store": "7166",
+    "address": "35 Pine Bush Drive, Cambridge, ON",
+    "postal_code": "N1R 8E2"
+  },
+  {
+    "store": "7263",
+    "address": "570 McNeely Avenue, Carleton Place, ON",
+    "postal_code": "K7C 0A7",
+    "lat": 45.1295648,
+    "lng": -76.1196166
+  },
+  {
+    "store": "7178",
+    "address": "8582 Pioneer Line, Chatham, ON",
+    "postal_code": "N7M 5J7",
+    "lat": 42.4324263,
+    "lng": -82.2179258
+  },
+  {
+    "store": "7251",
+    "address": "1050 De Palma Drive, Cobourg, ON",
+    "postal_code": "K9A 0A8",
+    "lat": 43.9777952,
+    "lng": -78.2026981
+  },
+  {
+    "store": "7234",
+    "address": "10 High Street, Collingwood, ON",
+    "postal_code": "L9Y 3J6",
+    "lat": 44.4997542,
+    "lng": -80.2343233
+  },
+  {
+    "store": "7075",
+    "address": "1825 Brookdale Avenue, Cornwall, ON",
+    "postal_code": "K6J 5X7",
+    "lat": 45.0373673,
+    "lng": -74.7600239
+  },
+  {
+    "store": "7011",
+    "address": "193 North Queen Street, Etobicoke, ON",
+    "postal_code": "M9C 4Y1",
+    "lat": 43.6157131,
+    "lng": -79.5548609
+  },
+  {
+    "store": "7025",
+    "address": "1616 Cyrville Road, Gloucester, ON",
+    "postal_code": "K1B 3L8",
+    "lat": 45.4225268,
+    "lng": -75.6264918
+  },
+  {
+    "store": "7142",
+    "address": "63 Woodlawn Road West, Guelph, ON",
+    "postal_code": "N1H 1G8",
+    "lat": 43.5640183,
+    "lng": -80.2800831
+  },
+  {
+    "store": "7008",
+    "address": "350 Centennial Parkway, Hamilton, ON",
+    "postal_code": "L8E 2X4",
+    "lat": 43.2414021,
+    "lng": -79.7583934
+  },
+  {
+    "store": "7244",
+    "address": "9 Ott Street, Huntsville, ON",
+    "postal_code": "P3H 0A2"
+  },
+  {
+    "store": "7108",
+    "address": "10 Frank Nighbor Place, Kanata, ON",
+    "postal_code": "K2T 1C4",
+    "lat": 45.301925,
+    "lng": -75.9171713
+  },
+  {
+    "store": "7081",
+    "address": "606 Gardiners Road, Kingston, ON",
+    "postal_code": "K7M 3X9",
+    "lat": 44.2461795,
+    "lng": -76.5659991
+  },
+  {
+    "store": "7179",
+    "address": "1450 Ottawa Street South, Kitchener, ON",
+    "postal_code": "N2E 4E2",
+    "lat": 43.4153109,
+    "lng": -80.5157075
+  },
+  {
+    "store": "7009",
+    "address": "600 Fanshawe Park Rd. E., London, ON",
+    "postal_code": "N5X 1L1",
+    "lat": 43.0348628,
+    "lng": -81.2554636
+  },
+  {
+    "store": "7247",
+    "address": "16775 Highway 12, Midland, ON",
+    "postal_code": "L4R 0A9",
+    "lat": 44.7292524,
+    "lng": -79.8760452
+  },
+  {
+    "store": "7241",
+    "address": "1013 Maple Avenue, Milton, ON",
+    "postal_code": "L9T 0A5",
+    "lat": 43.5361432,
+    "lng": -79.8737921
+  },
+  {
+    "store": "7112",
+    "address": "3065 Mavis Road, Mississauga, ON",
+    "postal_code": "L5C 1T7",
+    "lat": 43.5707115,
+    "lng": -79.6383957
+  },
+  {
+    "store": "7030",
+    "address": "17850 Yonge Street, Newmarket, ON",
+    "postal_code": "L3Y 8S1",
+    "lat": 44.062367,
+    "lng": -79.4841907
+  },
+  {
+    "store": "7174",
+    "address": "7190 Morrison Street, Niagara Falls, ON",
+    "postal_code": "L2E 7K5",
+    "lat": 43.1030022,
+    "lng": -79.1153618
+  },
+  {
+    "store": "7160",
+    "address": "1275 Seymour Street, North Bay, ON",
+    "postal_code": "P1B 9V6",
+    "lat": 46.3092133,
+    "lng": -79.4385186
+  },
+  {
+    "store": "7157",
+    "address": "99 Cross Avenue, Oakville, ON",
+    "postal_code": "L6J 2W7",
+    "lat": 43.4542245,
+    "lng": -79.6870348
+  },
+  {
+    "store": "7167",
+    "address": "49 Fourth Avenue, Orangeville, ON",
+    "postal_code": "L9W 1G7"
+  },
+  {
+    "store": "7137",
+    "address": "3225 Monarch Dr., Orillia, ON",
+    "postal_code": "L3V 7Z4",
+    "lat": 44.6100233,
+    "lng": -79.450624
+  },
+  {
+    "store": "7118",
+    "address": "2121 10th Line, Orleans, ON",
+    "postal_code": "K4A 4C5",
+    "lat": 45.4588568,
+    "lng": -75.4842211
+  },
+  {
+    "store": "7123",
+    "address": "1481 Harmony Rd. N., Oshawa, ON",
+    "postal_code": "L1H 7K5",
+    "lat": 43.9453847,
+    "lng": -78.8495837
+  },
+  {
+    "store": "7158",
+    "address": "2056 Bank Street, Ottawa, ON",
+    "postal_code": "K1V 7Z8",
+    "lat": 45.3643525,
+    "lng": -75.6607937
+  },
+  {
+    "store": "7154",
+    "address": "1590-20th Avenue East, Owen Sound, ON",
+    "postal_code": "N4K 5N3",
+    "lat": 44.573306,
+    "lng": -80.9182441
+  },
+  {
+    "store": "7226",
+    "address": "100 Bowes Street, Parry Sound, ON",
+    "postal_code": "P2A 2L7",
+    "lat": 45.3444052,
+    "lng": -80.0107553
+  },
+  {
+    "store": "7242",
+    "address": "27 Robinson Lane, Pembroke, ON",
+    "postal_code": "K8A 0A5"
+  },
+  {
+    "store": "7116",
+    "address": "500 Lansdowne Street West, Peterborough, ON",
+    "postal_code": "K9J 8J7",
+    "lat": 44.2827578,
+    "lng": -78.3420589
+  },
+  {
+    "store": "7238",
+    "address": "1105-A Kingston Road, Pickering, ON",
+    "postal_code": "L1V 1B5",
+    "lat": 43.8315971,
+    "lng": -79.0957443
+  },
+  {
+    "store": "7161",
+    "address": "10885 Leslie Street, Richmond Hill, ON",
+    "postal_code": "L4S 0B2",
+    "lat": 43.8994554,
+    "lng": -79.3945171
+  },
+  {
+    "store": "7153",
+    "address": "1350 Quinn Drive, Sarnia, ON",
+    "postal_code": "N7S 6L5",
+    "lat": 42.9862262,
+    "lng": -82.3535785
+  },
+  {
+    "store": "7034",
+    "address": "530 Great Northern Road, Sault Ste. Marie, ON",
+    "postal_code": "P6B 4Z9",
+    "lat": 46.5423975,
+    "lng": -84.3188965
+  },
+  {
+    "store": "7001",
+    "address": "428 Ellesmere Road, Scarborough, ON",
+    "postal_code": "M1R 4E6",
+    "lat": 43.7630705,
+    "lng": -79.2980777
+  },
+  {
+    "store": "7023",
+    "address": "20 YMCA Drive, St. Catharines, ON",
+    "postal_code": "L2N 7R6",
+    "lat": 43.1798675,
+    "lng": -79.2461285
+  },
+  {
+    "store": "7256",
+    "address": "1775 Stone Church Road East, Stoney Creek, ON",
+    "postal_code": "L8J 0B4",
+    "lat": 43.1929578,
+    "lng": -79.8110058
+  },
+  {
+    "store": "7022",
+    "address": "1500 Marcus Drive, Sudbury, ON",
+    "postal_code": "P3B 4K5",
+    "lat": 46.5036779,
+    "lng": -80.9415705
+  },
+  {
+    "store": "7102",
+    "address": "359 Main Street, Thunder Bay, ON",
+    "postal_code": "P7B 5L6",
+    "lat": 48.4037946,
+    "lng": -89.2368517
+  },
+  {
+    "store": "7236",
+    "address": "2143 Riverside Drive, Timmins, ON",
+    "postal_code": "P4N 7C3",
+    "lat": 48.4724664,
+    "lng": -81.3995278
+  },
+  {
+    "store": "7080",
+    "address": "1000 Gerrard Street East, Toronto, ON",
+    "postal_code": "M4M 3G6",
+    "lat": 43.6693135,
+    "lng": -79.3395634
+  },
+  {
+    "store": "7253",
+    "address": "55 Cityview Blvd., Vaughan, ON",
+    "postal_code": "L4H 4E8",
+    "lat": 43.8475437,
+    "lng": -79.5531323
+  },
+  {
+    "store": "7105",
+    "address": "600 King Street North, Waterloo, ON",
+    "postal_code": "N2V 2J5",
+    "lat": 43.501854,
+    "lng": -80.533249
+  },
+  {
+    "store": "7249",
+    "address": "4200 Garden Street, Whitby, ON",
+    "postal_code": "L1R 3K5",
+    "lat": 43.9215803,
+    "lng": -78.9494366
+  },
+  {
+    "store": "7184",
+    "address": "6630 Tecumseh Rd. E, Windsor, ON",
+    "postal_code": "N8T 1E6",
+    "lat": 42.3135784,
+    "lng": -82.9441104
+  },
+  {
+    "store": "7002",
+    "address": "140 Northview Boulevard, Woodbridge, ON",
+    "postal_code": "L4L 8T2"
+  },
+  {
+    "store": "7182",
+    "address": "901 Juliana Drive, Woodstock, ON",
+    "postal_code": "N4V 1B9",
+    "lat": 43.1133809,
+    "lng": -80.7391352
+  },
+  {
+    "store": "7173",
+    "address": "60 Buchanan Drive, Charlottetown, PE",
+    "postal_code": "C1E 2E4",
+    "lat": 46.2611831,
+    "lng": -63.1557881
+  },
+  {
+    "store": "7156",
+    "address": "11300 Renaude Lapointe, Anjou, QC",
+    "postal_code": "H1J 2V7",
+    "lat": 45.6112193,
+    "lng": -73.5916946
+  },
+  {
+    "store": "7159",
+    "address": "2400 Boul du Faubourg, Boisbriand, QC",
+    "postal_code": "J7H 1S3",
+    "lat": 45.6247502,
+    "lng": -73.8479996
+  },
+  {
+    "store": "7140",
+    "address": "243 Montee Paiement, Gatineau, QC",
+    "postal_code": "J8P 6M7",
+    "lat": 45.4876592,
+    "lng": -75.6762108
+  },
+  {
+    "store": "7188",
+    "address": "165 Rue Simonds Nord, Granby, QC",
+    "postal_code": "J2J 0R7",
+    "lat": 45.421493,
+    "lng": -72.7519709
+  },
+  {
+    "store": "7152",
+    "address": "500 Auguste, Greenfield Park, QC",
+    "postal_code": "J4V 3R4",
+    "lat": 45.4858147,
+    "lng": -73.4627297
+  },
+  {
+    "store": "7139",
+    "address": "660 Montee des Pionniers, Lachenaie, QC",
+    "postal_code": "J6V 1N9",
+    "lat": 45.7212061,
+    "lng": -73.5064651
+  },
+  {
+    "store": "7124",
+    "address": "1400 Le Corbusier Blvd, Laval, QC",
+    "postal_code": "H7N 6J5",
+    "lat": 45.5588804,
+    "lng": -73.7258937
+  },
+  {
+    "store": "7189",
+    "address": "500 rue de la Concorde, Lévis, QC",
+    "postal_code": "G6W 8A8",
+    "lat": 46.7281446,
+    "lng": -71.2750998
+  },
+  {
+    "store": "7128",
+    "address": "4625 Saint-Antoine West, Montréal, QC",
+    "postal_code": "H4C 1E2",
+    "lat": 45.4764837,
+    "lng": -73.5934563
+  },
+  {
+    "store": "7266",
+    "address": "185 Hymus Boulevard, Pointe-Claire, QC",
+    "postal_code": "H9R 1E9",
+    "lat": 45.4617687,
+    "lng": -73.8202795
+  },
+  {
+    "store": "7162",
+    "address": "300 rue Bouvier, Québec, QC",
+    "postal_code": "G2J 1R8",
+    "lat": 46.8429696,
+    "lng": -71.2706065
+  },
+  {
+    "store": "7150",
+    "address": "901 Rue de l'Étang, Saint-Bruno-de-Montarville, QC",
+    "postal_code": "J3V 6N8",
+    "lat": 45.5065207,
+    "lng": -73.3841957
+  },
+  {
+    "store": "7185",
+    "address": "490 Voie de la Desserte, Saint-Constant, QC",
+    "postal_code": "J5A 2S6",
+    "lat": 45.3883864,
+    "lng": -73.5720325
+  },
+  {
+    "store": "7224",
+    "address": "850 Douglas Street, Saint-Jean-sur-Richelieu, QC",
+    "postal_code": "J3A 1V1",
+    "lat": 45.332306,
+    "lng": -73.2846515
+  },
+  {
+    "store": "7147",
+    "address": "1045 Boul du Grand Heron, Saint-Jérôme, QC",
+    "postal_code": "J7Y 3P2",
+    "lat": 45.7597697,
+    "lng": -74.0157346
+  },
+  {
+    "store": "7163",
+    "address": "1516 Rue Jules-Verne, Sainte-Foy, QC",
+    "postal_code": "G2G 2R5",
+    "lat": 46.7821688,
+    "lng": -71.3461681
+  },
+  {
+    "store": "7089",
+    "address": "1355 boulevard du Plateau Saint-Joseph, Sherbrooke, QC",
+    "postal_code": "J1L 3C5",
+    "lat": 45.4209541,
+    "lng": -71.9689337
+  },
+  {
+    "store": "7169",
+    "address": "4500 Real-Proulx, Trois-Rivières, QC",
+    "postal_code": "G9A 6P9",
+    "lat": 46.32982,
+    "lng": -72.5811819
+  },
+  {
+    "store": "7187",
+    "address": "55 Boulevard de la Cité des Jeunes, Vaudreuil-Dorion, QC",
+    "postal_code": "J7V 8C1",
+    "lat": 45.4068414,
+    "lng": -74.0357306
+  },
+  {
+    "store": "7087",
+    "address": "160 Boulevard Arthabaska Ouest, Victoriaville, QC",
+    "postal_code": "G6S 0P2",
+    "lat": 46.0700737,
+    "lng": -71.9289895
+  },
+  {
+    "store": "7052",
+    "address": "1867 Victoria Avenue E., Regina, SK",
+    "postal_code": "S4N 6E6",
+    "lat": 50.4463017,
+    "lng": -104.5577769
+  },
+  {
+    "store": "7051",
+    "address": "707 Circle Drive East, Saskatoon, SK",
+    "postal_code": "S7K 0V1",
+    "lat": 52.1575112,
+    "lng": -106.6580575
   }
 ]

@@ -26,6 +26,7 @@ import { fetchNearestStore } from "../Redux/Reducers/NearestStoreSlice";
 import { addToWishlist, removeFromWishlist } from "../Redux/Reducers/WishlistSlice";
 import { toast } from "react-hot-toast";
 import { toggleCompare } from "../Redux/Reducers/CompareSlice";
+import { fetchSimilarProducts } from "../Redux/Reducers/SimilarProductSlice";
 // Lazy loaded sections with better loading states
 const RecentlyViewed = React.lazy(() =>
   import("../Components/RecentlyViewed/RecentlyViewed")
@@ -371,11 +372,12 @@ const ProductDetailsPage = () => {
 
   useEffect(() => {
     if (id && fetchedRef.current !== id) {
+      // Parallel API calls - both will start at the same time
       dispatch(fetchProductDetail(id));
+      dispatch(fetchSimilarProducts(id)); // Add this line to fetch similar products in parallel
       fetchedRef.current = id;
     }
   }, [id, dispatch]);
-
   // Save to localStorage (non-blocking)
   useEffect(() => {
     if (product?.productId) {

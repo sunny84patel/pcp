@@ -14,6 +14,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import { Link } from "react-router-dom";
 import { setUser } from "../Redux/Reducers/OtpSlice";
+import API from "../api";
 
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
@@ -26,9 +27,8 @@ const Toast = ({ message, type, onClose }) => {
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ${
-        type === "success" ? "bg-green-500 text-white" : "bg-red-500 text-white"
-      }`}
+      className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 ${type === "success" ? "bg-green-500 text-white" : "bg-red-500 text-white"
+        }`}
     >
       <div className="flex items-center gap-3">
         <div className="flex-shrink-0">
@@ -108,39 +108,27 @@ const AuthForm = () => {
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+      const firebaseToken = await result.user.getIdToken();
 
-      // Get Firebase ID token
-      const token = await user.getIdToken();
+      // Send Firebase token to backend
+      const response = await API.post("/google-login", { firebaseToken });
 
-      // Format user data for Redux
-      const userData = {
-        uid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        image: user.photoURL,
-      };
+      const { token, user } = response.data;
 
-      // Save in localStorage
-      sessionStorage.setItem("user", JSON.stringify(userData));
+      // Save unified token
       sessionStorage.setItem("token", token);
+      sessionStorage.setItem("user", JSON.stringify(user));
 
-      // Save in Redux using setUser
-      dispatch(
-        setUser({
-          user: userData,
-          token: token,
-        })
-      );
+      dispatch(setUser({ user, token }));
 
-      console.log("✅ Google Login Success:", userData);
-
+      console.log("✅ Google login success:", user);
       navigate("/");
-    } catch (error) {
-      console.error("❌ Google Login Failed:", error);
+    } catch (err) {
+      console.error("❌ Google login failed:", err);
       showToast("Login failed. Please try again.", "error");
     }
   };
+
 
   const handleStatusChange = (currentStatus) => {
     if (currentStatus === "succeeded" || currentStatus === "failed") {

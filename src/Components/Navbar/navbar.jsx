@@ -363,7 +363,7 @@ const Navbar = ({ postalCode }) => {
                     {/* Menu Items */}
                     <div className="px-2 pb-3">
                       {/* Wishlist Button */}
-                      {/* <button
+                      <button
                         onClick={() => {
                           setIsProfileOpen(false);
                           navigate("/wishlist");
@@ -372,10 +372,10 @@ const Navbar = ({ postalCode }) => {
                         role="menuitem"
                       >
                         Wishlist
-                      </button> */}
+                      </button>
 
                       {/* Profile Button */}
-                      {/* <button
+                      <button
                         onClick={() => {
                           setIsProfileOpen(false);
                           navigate("/profile");
@@ -384,7 +384,7 @@ const Navbar = ({ postalCode }) => {
                         role="menuitem"
                       >
                         My Profile
-                      </button> */}
+                      </button>
 
                       {/* Logout Button */}
                       <button

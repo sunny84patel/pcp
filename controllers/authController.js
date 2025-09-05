@@ -314,8 +314,15 @@ export const googleLogin = async (req, res) => {
         zipCode: "",
         isVerified: true,
         role: "user",
+        image: decoded.picture || "", // ✅ Save Google profile picture
       });
       await user.save();
+    } else {
+      // ✅ Update user image if changed
+      if (decoded.picture && user.image !== decoded.picture) {
+        user.image = decoded.picture;
+        await user.save();
+      }
     }
 
     // ✅ Issue your JWT
@@ -333,6 +340,7 @@ export const googleLogin = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        image: user.image, // ✅ Send profile image in response
       },
     });
   } catch (err) {

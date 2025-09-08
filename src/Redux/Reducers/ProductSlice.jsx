@@ -22,7 +22,7 @@ export const fetchProductsByIds = createAsyncThunk(
   'products/fetchProductsByIds',
   async (ids, thunkAPI) => {
     try {
-      const res = await axios.get(`${API_URL}/api/recent?ids=${ids.join(',')}`);
+      const res = await axios.get(`${API}/api/recent?ids=${ids.join(',')}`);
       console.log('recently products response:', res.data);
       return res.data.results;
     } catch (err) {

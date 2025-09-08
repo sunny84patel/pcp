@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar/navbar";
 import Footer from "../Components/Footer/Footer";
 import {
@@ -9,7 +9,10 @@ import {
   Trash2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser, deleteUser, logout } from "../Redux/Reducers/userSlice";
+import { logout as otpLogout, resetOTPState } from "../Redux/Reducers/OtpSlice";
+import { logout as loginLogout } from "../Redux/Reducers/LoginSlice";
 const groups = [
   { title: "Account", items: ["Profile Overview", "Wishlist"] },
   {
@@ -25,7 +28,24 @@ export default function ProfileOverviewPage() {
   });
   const [active, setActive] = useState("Profile Overview");
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useDispatch();
 
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    dispatch(loginLogout());
+    dispatch(otpLogout());
+    dispatch(resetOTPState());
+    
+    navigate("/", { replace: true });
+  };
+
+  const handleDelete = async () => {
+    const res = await dispatch(deleteUser());
+    if (res.meta.requestStatus === "fulfilled") {
+      navigate("/"); // ✅ redirect after successful delete
+    }
+  };
   const onSave = (e) => {
     e?.preventDefault?.();
     // TODO: call your API here
@@ -90,11 +110,18 @@ export default function ProfileOverviewPage() {
             ))}
 
             <div className="mt-3">
-              <button className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200">
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 cursor-pointer"
+              >
                 <LogOut className="h-4 w-4" />
                 Log Out
               </button>
-              <button className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-xs text-gray-500 hover:bg-gray-50">
+
+              <button
+                onClick={handleDelete}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 px-4 py-2 text-xs text-gray-500 hover:bg-gray-50 cursor-pointer"
+              >
                 <Trash2 className="h-4 w-4" />
                 Delete Account
               </button>
@@ -140,18 +167,55 @@ function Header({ title }) {
 }
 
 function ProfileOverview({ isEditing, setIsEditing, onSave }) {
-  // (Keep simple placeholders to match your screenshot)
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+  const [form, setForm] = useState(user || {});
+
+  useEffect(() => {
+    if (user) setForm(user);
+  }, [user]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    dispatch(updateUser(form));
+    setIsEditing(false);
+  };
+
   return (
-    <form onSubmit={onSave} className="max-w-xl">
+    <form onSubmit={handleSave} className="max-w-xl">
       <div className="space-y-4 mt-8">
-        <Field label="Full Name" placeholder="Anonymous" disabled={isEditing} />
-        <Field label="Email" placeholder="Anonymous" disabled={isEditing} />
+        <Field
+          label="Full Name"
+          name="fullName"
+          value={form.fullName || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
+        <Field
+          label="Email"
+          name="email"
+          value={form.email || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
         <Field
           label="Mobile Number"
-          placeholder="(222) 555-XXXX"
-          disabled={isEditing}
+          name="mobile"
+          value={form.mobile || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
         />
-        <Field label="Zip Code" placeholder="14304" disabled={isEditing} />
+        <Field
+          label="Zip Code"
+          name="zip"
+          value={form.zip || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+        />
       </div>
 
       <div className="ml-16 mt-12 flex items-center">
@@ -159,7 +223,6 @@ function ProfileOverview({ isEditing, setIsEditing, onSave }) {
           type="button"
           onClick={() => setIsEditing((v) => !v)}
           className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-gray-900"
-          title="Edit"
         >
           <Pencil className="h-4 w-4" />
           Edit
@@ -426,13 +489,15 @@ function Faqs() {
   );
 }
 
-function Field({ label, placeholder, disabled }) {
+function Field({ label, name, value, onChange, disabled }) {
   return (
     <div className="flex items-center gap-4">
       <label className="w-32 text-sm font-medium">{label}</label>
       <input
         type="text"
-        placeholder={placeholder}
+        name={name}
+        value={value}
+        onChange={onChange}
         disabled={disabled}
         className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm disabled:bg-gray-50"
       />

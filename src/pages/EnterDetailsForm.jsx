@@ -4,6 +4,7 @@ import Footer from "../Components/Footer/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { signup, resetSignupState } from "../Redux/Reducers/SignupSlice";
 import { useNavigate } from "react-router-dom";
+
 // Toast Component
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
@@ -77,6 +78,7 @@ const EnterDetailsForm = () => {
     email: "",
     mobile: "",
     zipCode: "",
+    countryCode: "IN", // Default to India
   });
 
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
@@ -163,7 +165,7 @@ const EnterDetailsForm = () => {
             Enter Details
           </h2>
           <p className="text-sm text-gray-500">
-            Please fill in your details to help you serve better.
+            Please fill in your details to help us serve you better.
           </p>
 
           {/* Input Fields */}
@@ -176,16 +178,8 @@ const EnterDetailsForm = () => {
               onChange={handleChange}
               required
               disabled={isLoading}
-              style={{
-                height: "48px",
-                fontSize: "16px",
-                borderColor: "rgba(0, 0, 0, 0.54)",
-                color: "black",
-                padding: "0 16px",
-                outline: "none",
-                placeholderColor: "rgba(109, 109, 109, 1)",
-              }}
-              className="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+              className="w-full border rounded-md px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+              style={{ height: "48px", fontSize: "16px", color: "black" }}
             />
             <input
               type="email"
@@ -195,36 +189,41 @@ const EnterDetailsForm = () => {
               onChange={handleChange}
               required
               disabled={isLoading}
-              style={{
-                height: "48px",
-                fontSize: "16px",
-                borderColor: "rgba(0, 0, 0, 0.54)",
-                color: "black",
-                padding: "0 16px",
-                outline: "none",
-                placeholderColor: "rgba(109, 109, 109, 1)",
-              }}
-              className="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+              className="w-full border rounded-md px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+              style={{ height: "48px", fontSize: "16px", color: "black" }}
             />
-            <input
-              type="tel"
-              name="mobile"
-              placeholder="Mobile Number"
-              value={formData.mobile}
-              onChange={handleChange}
-              required
-              disabled={isLoading}
-              style={{
-                height: "48px",
-                fontSize: "16px",
-                borderColor: "rgba(0, 0, 0, 0.54)",
-                color: "black",
-                padding: "0 16px",
-                outline: "none",
-                placeholderColor: "rgba(109, 109, 109, 1)",
-              }}
-              className="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
-            />
+
+            {/* Country Code + Mobile */}
+            <div className="flex gap-2">
+              <select
+                name="countryCode"
+                value={formData.countryCode}
+                onChange={handleChange}
+                disabled={isLoading}
+                className="w-1/3 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+                style={{ height: "48px", fontSize: "16px", color: "black" }}
+                required
+              >
+                <option value="IN">🇮🇳 India +91</option>
+                <option value="US">🇺🇸 US +1</option>
+                <option value="CA">🇨🇦 Canada +1</option>
+                <option value="GB">🇬🇧 UK +44</option>
+                <option value="AU">🇦🇺 Australia +61</option>
+              </select>
+
+              <input
+                type="tel"
+                name="mobile"
+                placeholder="Mobile Number"
+                value={formData.mobile}
+                onChange={handleChange}
+                required
+                disabled={isLoading}
+                className="w-2/3 border rounded-md px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+                style={{ height: "48px", fontSize: "16px", color: "black" }}
+              />
+            </div>
+
             <input
               type="text"
               name="zipCode"
@@ -232,16 +231,8 @@ const EnterDetailsForm = () => {
               value={formData.zipCode}
               onChange={handleChange}
               disabled={isLoading}
-              style={{
-                height: "48px",
-                fontSize: "16px",
-                borderColor: "rgba(0, 0, 0, 0.54)",
-                color: "black",
-                padding: "0 16px",
-                outline: "none",
-                placeholderColor: "rgba(109, 109, 109, 1)",
-              }}
-              className="w-full border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+              className="w-full border rounded-md px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-not-allowed"
+              style={{ height: "48px", fontSize: "16px", color: "black" }}
             />
 
             <button

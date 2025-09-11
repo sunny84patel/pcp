@@ -18,6 +18,7 @@ import nearestLowesStoreReducer from "../Reducers/lowesstore";
 import compareReducer from "../Reducers/CompareSlice";
 import locationreducer from "../Reducers/LocationSlice";
 import wishlistReducer from "../Reducers/WishlistSlice";
+import userReducer from "../Reducers/userSlice"; // Import user slice
 
 // Persist configuration
 const persistConfig = {
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   compare: compareReducer,
   location: locationreducer,
   wishlist: wishlistReducer,
+  user: userReducer, // Add user slice here
 });
 
 // Create persisted reducer

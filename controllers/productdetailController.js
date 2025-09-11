@@ -4,7 +4,7 @@ import fetch from 'node-fetch'; // Assuming node-fetch is installed for API call
 // Environment variables - Set API_KEY in .env
 const API_BASE_URL = 'https://data.unwrangle.com/api/getter/';
 const API_KEY = process.env.UNWRANGLE_API_KEY;
-
+console.log("🔑 Using API Key:", API_KEY ) ;
 // Map to track active requests to prevent duplicates
 const activeRequests = new Map();
 

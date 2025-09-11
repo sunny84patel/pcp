@@ -1,19 +1,15 @@
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import { mkdir, writeFile } from 'fs/promises';
-import path from 'path';
-import { searchHomeDepot } from '../lib/homeDepotApi.js';
-import { searchLowes } from '../lib/lowesApi.js';
-import { Product, Store, Inventory, Image } from '../models/Product.js';
-
+import dotenv from "dotenv";
 dotenv.config();
 
-const apiKey = process.env.UNWRANGLE_API_KEY;
-const mongoUri = process.env.MONGO_URI;
-console.log('MONGODB_URI:', mongoUri);
+import { Product, Inventory, Image } from "../models/Product.js";
+import fetch from "node-fetch";
 
-const searchTerms = ['Bolts'];
+const API_BASE_URL = "https://data.unwrangle.com/api/getter/";
+const API_KEY = process.env.UNWRANGLE_API_KEY;
 
+console.log("🔑 Using API Key (productController):", API_KEY || "❌ MISSING!");
+
+// --- Normalizers ---
 const normalizeHomeDepot = (item) => {
   const productId = item.id;
   return {
@@ -22,11 +18,11 @@ const normalizeHomeDepot = (item) => {
       name: item.name,
       modelNo: item.model_no,
       brand: item.brand || null,
-      category: item.category || null
+      category: item.category || null,
     },
     inventory: {
       productId,
-      storeId: 'homedepot',
+      storeId: "homedepot",
       price: item.price,
       listPrice: item.price,
       priceReduced: item.price_reduced,
@@ -38,9 +34,9 @@ const normalizeHomeDepot = (item) => {
       itemNumber: null,
       vendorNumber: null,
       upc: null,
-      saleEndDate: null
+      saleEndDate: null,
     },
-    images: (item.thumbnails || []).map((url) => ({ url, productId }))
+    images: (item.thumbnails || []).map((url) => ({ url, productId })),
   };
 };
 
@@ -52,11 +48,11 @@ const normalizeLowes = (item) => {
       name: item.name,
       modelNo: item.model_no,
       brand: item.brand || null,
-      category: item.category || null
+      category: item.category || null,
     },
     inventory: {
       productId,
-      storeId: 'lowes',
+      storeId: "lowes",
       price: item.price,
       listPrice: item.list_price,
       priceReduced: item.price_reduced,
@@ -68,126 +64,235 @@ const normalizeLowes = (item) => {
       itemNumber: item.item_number || null,
       vendorNumber: item.vendor_number || null,
       upc: item.upc || null,
-      saleEndDate: item.sale_end_date || null
+      saleEndDate: item.sale_end_date || null,
     },
-    images: (item.images || []).map((url) => ({ url, productId }))
+    images: (item.images || []).map((url) => ({ url, productId })),
   };
 };
 
-const insertNormalizedData = async (data, storeName) => {
-  const storeId = storeName.toLowerCase().replace(/[^a-z0-9]/gi, '');
-
-  await Store.updateOne(
-    { _id: storeId },
-    { $set: { name: storeName } },
-    { upsert: true }
-  );
-
-  for (const { product, inventory, images } of data) {
-    await Product.updateOne(
-      { productId: product.productId },
-      { $set: product },
-      { upsert: true }
-    );
-
-    await Inventory.updateOne(
-      { productId: inventory.productId, storeId: inventory.storeId },
-      { $set: inventory },
-      { upsert: true }
-    );
-
-    for (const image of images) {
-      await Image.updateOne(
-        { url: image.url },
-        { $setOnInsert: image },
-        { upsert: true }
-      );
-    }
-  }
-};
-
-const run = async () => {
+// ---------------------
+// Search Products Controller
+// ---------------------
+export const searchProducts = async (req, res) => {
   try {
-    await mongoose.connect(mongoUri);
-    console.log('✅ Connected to MongoDB');
+    const {
+      query,
+      stores,
+      page = 1,
+      limit = 20,
+      inStockOnly = false,
+      sortBy = "name",
+      sortOrder = "asc",
+    } = req.query;
 
-    // Ensure output directory exists
-    await mkdir('./output', { recursive: true });
-
-    for (const term of searchTerms) {
-      console.log(`🔍 Searching for: ${term}`);
-      const [hdResults, lowesResults] = await Promise.all([
-        searchHomeDepot(term, apiKey),
-        searchLowes(term, apiKey)
-      ]);
-
-      const normalizedHD = (hdResults.results || []).map(normalizeHomeDepot);
-      const normalizedLowes = (lowesResults.results || []).map(normalizeLowes);
-
-      // Save Home Depot results
-      const safeTerm = term.replace(/\s+/g, '_').toLowerCase();
-      const hdFilePath = path.join('./output', `${safeTerm}_homedepot.json`);
-      await writeFile(hdFilePath, JSON.stringify(normalizedHD, null, 2));
-      console.log(`📁 Saved Home Depot results to ${hdFilePath}`);
-
-      // Save Lowe’s results
-      const lowesFilePath = path.join('./output', `${safeTerm}_lowes.json`);
-      await writeFile(lowesFilePath, JSON.stringify(normalizedLowes, null, 2));
-      console.log(`📁 Saved Lowe's results to ${lowesFilePath}`);
-
-      // Insert into MongoDB
-      await insertNormalizedData(normalizedHD, 'Home Depot');
-      await insertNormalizedData(normalizedLowes, 'Lowe\'s');
-
-      console.log(`✅ Finished importing category: ${term}`);
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
     }
-  } catch (err) {
-    console.error('❌ Error:', err.message);
-  } finally {
-    await mongoose.disconnect();
-    console.log('🔌 MongoDB disconnected');
+
+    const storeMap = {
+      lowes: "lowe's",
+      "lowe's": "lowe's",
+      homedepot: "homedepot",
+      "home depot": "homedepot",
+    };
+
+    const storeIds = stores
+      ? stores
+          .split(",")
+          .map(
+            (s) => storeMap[s.trim().toLowerCase()] || s.trim().toLowerCase()
+          )
+      : null;
+
+    const isNumericQuery = /^\d+$/.test(query.trim());
+
+    // Step 1: Search products in local DB
+    const productFilter = {
+      $or: [
+        { $text: { $search: query } },
+        { modelNo: { $regex: query, $options: "i" } },
+        ...(isNumericQuery ? [{ productId: query.trim() }] : []),
+      ],
+    };
+
+    const matchedProducts = await Product.find(productFilter)
+      .lean()
+      .select("productId name modelNo brand category");
+
+    const productIds = matchedProducts.map((p) => p.productId);
+
+    if (productIds.length > 0) {
+      // ✅ Found products in DB → continue with existing logic
+      const inventoryFilter = {
+        productId: { $in: productIds },
+        ...(storeIds ? { storeId: { $in: storeIds } } : {}),
+        ...(inStockOnly === "true" || inStockOnly === true
+          ? { inventoryQuantity: { $gt: 0 } }
+          : {}),
+      };
+
+      const totalInventoryCount = await Inventory.countDocuments(
+        inventoryFilter
+      );
+
+      const skip = (Number(page) - 1) * Number(limit);
+      const inventoryDocs = await Inventory.find(inventoryFilter)
+        .skip(skip)
+        .limit(Number(limit) + 1)
+        .lean();
+
+      const hasNextPage = inventoryDocs.length > limit;
+      const limitedInventory = hasNextPage
+        ? inventoryDocs.slice(0, limit)
+        : inventoryDocs;
+
+      const images = await Image.find({
+        productId: { $in: productIds },
+      }).lean();
+
+      const productMap = Object.fromEntries(
+        matchedProducts.map((p) => [p.productId, p])
+      );
+
+      const resultMap = {};
+      limitedInventory.forEach((inv) => {
+        const prod = productMap[inv.productId] || {};
+        const imgUrls = images
+          .filter((img) => img.productId === inv.productId)
+          .map((i) => i.url);
+
+        if (!resultMap[inv.productId]) {
+          resultMap[inv.productId] = {
+            productId: inv.productId,
+            name: prod.name || "Unknown Product",
+            modelNo: prod.modelNo || "",
+            brand: prod.brand || "",
+            category: prod.category || "",
+            minPrice: inv.price || 0,
+            rating: inv.rating || 0,
+            totalReviews: inv.totalReviews || 0,
+            stores: [],
+          };
+        }
+
+        resultMap[inv.productId].stores.push({
+          ...inv,
+          images: imgUrls,
+        });
+      });
+
+      let results = Object.values(resultMap);
+
+      // Sorting logic
+      if (sortBy === "price") {
+        results.sort((a, b) =>
+          sortOrder === "asc" ? a.minPrice - b.minPrice : b.minPrice - a.minPrice
+        );
+      } else if (sortBy === "reviews") {
+        results.sort((a, b) =>
+          sortOrder === "asc" ? a.rating - b.rating : b.rating - a.rating
+        );
+      } else if (sortBy === "popularity") {
+        results.sort((a, b) =>
+          sortOrder === "asc"
+            ? a.totalReviews - b.totalReviews
+            : b.totalReviews - a.totalReviews
+        );
+      } else if (sortBy === "name") {
+        results.sort((a, b) =>
+          sortOrder === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name)
+        );
+      }
+
+      return res.status(200).json({
+        results,
+        totalResults: totalInventoryCount,
+        totalProducts: results.length,
+        pagination: {
+          currentPage: Number(page),
+          hasNextPage,
+          totalResults: totalInventoryCount,
+          totalPages: Math.ceil(totalInventoryCount / Number(limit)),
+          limit: Number(limit),
+        },
+        searchMethod: "text-index",
+        searchedStores: storeIds || ["all stores"],
+      });
+    }
+
+    // ---------------------
+    // No DB results → Fallback to Unwrangle API
+    // ---------------------
+    if (!API_KEY) {
+      console.error("❌ Missing API key. Cannot fetch from Unwrangle.");
+      return res.status(500).json({ error: "Server misconfiguration: Missing API key" });
+    }
+
+    const platform = storeIds?.includes("lowe's")
+      ? "lowes_search"
+      : "homedepot_search";
+
+    const apiUrl = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(
+      query
+    )}&page=${page}&api_key=${API_KEY}`;
+
+    console.log("🌐 Fallback: Fetching from third-party API:", apiUrl);
+
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      console.error(
+        `❌ Error fetching from third-party API: ${response.status} ${response.statusText}`
+      );
+      return res.status(502).json({ error: "Failed to fetch external data" });
+    }
+
+    const apiData = await response.json();
+    const normalizer = platform === "lowes_search" ? normalizeLowes : normalizeHomeDepot;
+
+    const normalizedResults = (apiData.data || []).map(normalizer);
+
+    // Merge normalized results to match local DB structure
+    const resultMap = {};
+    normalizedResults.forEach(({ product, inventory, images }) => {
+      if (!resultMap[product.productId]) {
+        resultMap[product.productId] = {
+          productId: product.productId,
+          name: product.name,
+          modelNo: product.modelNo,
+          brand: product.brand,
+          category: product.category,
+          minPrice: inventory.price || 0,
+          rating: inventory.rating || 0,
+          totalReviews: inventory.totalReviews || 0,
+          stores: [],
+        };
+      }
+      resultMap[product.productId].stores.push({
+        ...inventory,
+        images: images.map((img) => img.url),
+      });
+    });
+
+    const results = Object.values(resultMap);
+
+    return res.status(200).json({
+      results,
+      totalResults: results.length,
+      totalProducts: results.length,
+      pagination: {
+        currentPage: Number(page),
+        hasNextPage: false, // external API may not provide total count
+        totalResults: results.length,
+        totalPages: 1,
+        limit: Number(limit),
+      },
+      searchMethod: "external-api",
+      searchedStores: [platform],
+    });
+  } catch (error) {
+    console.error("❌ Error in search API:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-
-run();
-
-
-
-// import mongoose from 'mongoose';
-// import dotenv from 'dotenv';
-// dotenv.config();
-
-// const mongoUri = process.env.MONGO_URI;
-
-// const runFix = async () => {
-//   try {
-//     await mongoose.connect(mongoUri);
-//     const db = mongoose.connection.db;
-
-//     // Delete bad store
-//     await db.collection('stores').deleteOne({ _id: "lowe's" });
-
-//     // Insert correct store
-//     await db.collection('stores').insertOne({
-//       _id: "lowes",
-//       name: "Lowe's",
-//       createdAt: new Date(),
-//       updatedAt: new Date()
-//     });
-
-//     // Update inventories
-//     const res = await db.collection('inventories').updateMany(
-//       { storeId: "lowe's" },
-//       { $set: { storeId: "lowes" } }
-//     );
-
-//     console.log(`✅ Updated ${res.modifiedCount} inventory records.`);
-//   } catch (err) {
-//     console.error('❌ Fix failed:', err);
-//   } finally {
-//     await mongoose.disconnect();
-//     console.log('🔌 MongoDB disconnected');
-//   }
-// };
-
-// runFix();

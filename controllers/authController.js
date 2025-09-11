@@ -9,6 +9,8 @@ import dotenv from "dotenv";
 import admin from "firebase-admin";
 import path from "path";
 import { fileURLToPath } from "url";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+
 dotenv.config();
 
 const accountSid = process.env.TWILIO_SID;
@@ -16,128 +18,167 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const verifySid = process.env.TWILIO_VERIFY_SID;
 
 const client = twilio(accountSid, authToken);
+
 // 🔧 Generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-
-// 🔧 Helper function to normalize phone numbers
-const normalizePhoneNumber = (phone) => {
-  // Remove all non-digit characters
-  const cleaned = phone.replace(/\D/g, '');
-
-  // If it starts with country code, return with +
-  if (cleaned.startsWith('91') && cleaned.length === 12) {
-    return `+${cleaned}`;
-  }
-
-  // If it's 10 digits, assume India and add +91
-  if (cleaned.length === 10) {
-    return `+91${cleaned}`;
-  }
-
-  // If it already has +, return as is
-  if (phone.startsWith('+')) {
-    return phone;
-  }
-
-  return `+91${cleaned}`; // Default to India
-};
-
-// 🔹 SIGNUP
-export const signup = async (req, res) => {
-  const { fullName, email, mobile, zipCode, role } = req.body;
-
-  if (!email || !mobile || !fullName) {
-    return res.status(400).json({ msg: 'Full name, email, and mobile are required.' });
-  }
-
-  // Normalize mobile number for storage
-  const normalizedMobile = normalizePhoneNumber(mobile);
-  const cleanedMobile = mobile.replace(/\D/g, '');
-
-  // Check for existing user with any mobile format
-  const existing = await User.findOne({
-    $or: [
-      { email },
-      { mobile: normalizedMobile },
-      { mobile },
-      { mobile: cleanedMobile },
-      { mobile: { $regex: cleanedMobile, $options: 'i' } }
-    ]
-  });
-
-  if (existing) return res.status(400).json({ msg: 'User already exists.' });
-
-  const newUser = new User({
-    fullName,
-    email,
-    mobile: normalizedMobile, // Store normalized version
-    zipCode,
-    isVerified: false,
-    role: role || 'user',
-  });
-
-  await newUser.save();
-
-  console.log('✅ New user created with mobile:', normalizedMobile);
-
-  res.status(201).json({
-    msg: `Account created as '${newUser.role}'. Please login to continue.`,
-    user: newUser
-  });
-};
-
-// 🔹 LOGIN
-export const login = async (req, res) => {
-  const { identifier } = req.body;
-
-  if (!identifier) return res.status(400).json({ msg: 'Email or mobile required.' });
-
+// 🔧 Normalize phone numbers (E.164)
+const normalizePhoneNumber = (phone, countryCode) => {
   try {
-    let user;
+    const phoneNumber = parsePhoneNumberFromString(phone, countryCode);
+    if (phoneNumber && phoneNumber.isValid()) {
+      return phoneNumber.number; // Always returns E.164 (+14155552671)
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
 
-    // 📧 Email flow
+/**
+ * Try to find a user when input may be a local number (no country code).
+ * Strategy:
+ * 1. If input starts with '+', try exact match.
+ * 2. Match users whose stored mobile ends with the cleaned digits (suffix match).
+ * 3. Exact match on cleaned digits.
+ * 4. Fallback: contains cleaned digits.
+ *
+ * Note: cleaned is digits-only, so regex is safe.
+ */
+const findUserByPhoneInput = async (input) => {
+  if (!input) return null;
+  const trimmed = String(input).trim();
+  const cleaned = trimmed.replace(/\D/g, '');
+  if (!cleaned) return null;
+
+  // 1) If it's already E.164-like (starts with +), try exact match first
+  if (trimmed.startsWith('+')) {
+    const exact = await User.findOne({ mobile: trimmed });
+    if (exact) return exact;
+  }
+
+  // 2) Suffix match: stored E.164 ends with cleaned digits (best for local input)
+  const suffixMatch = await User.findOne({
+    mobile: { $regex: `${cleaned}$`, $options: 'i' }
+  });
+  if (suffixMatch) return suffixMatch;
+
+  // 3) Exact match on cleaned (in case DB stored without +)
+  const exactClean = await User.findOne({ mobile: cleaned });
+  if (exactClean) return exactClean;
+
+  // 4) Fallback: contains cleaned anywhere
+  const containsMatch = await User.findOne({
+    mobile: { $regex: cleaned, $options: 'i' }
+  });
+  return containsMatch;
+};
+
+// ---------------- SIGNUP ----------------
+export const signup = async (req, res) => {
+  try {
+    const { fullName, email, mobile, zipCode, role, countryCode } = req.body;
+
+    if (!email || !mobile || !fullName || !countryCode) {
+      return res.status(400).json({ msg: 'Full name, email, mobile, and country code are required.' });
+    }
+
+    const normalizedMobile = normalizePhoneNumber(mobile, countryCode);
+    if (!normalizedMobile) {
+      return res.status(400).json({ msg: 'Invalid phone number format. Please include a valid country code.' });
+    }
+
+    // Check for existing user
+    const existing = await User.findOne({
+      $or: [
+        { email },
+        { mobile: normalizedMobile }
+      ]
+    });
+
+    if (existing) return res.status(400).json({ msg: 'User already exists.' });
+
+    const newUser = new User({
+      fullName,
+      email,
+      mobile: normalizedMobile,
+      zipCode,
+      isVerified: false,
+      role: role || 'user',
+    });
+
+    await newUser.save();
+
+    console.log('✅ New user created with mobile:', normalizedMobile);
+
+    res.status(201).json({
+      msg: `Account created as '${newUser.role}'. Please login to continue.`,
+      user: newUser
+    });
+  } catch (err) {
+    console.error('❌ Signup error:', err);
+    res.status(500).json({ msg: 'Server error during signup.', error: err.message });
+  }
+};
+
+// ---------------- LOGIN ----------------
+export const login = async (req, res) => {
+  try {
+    const { identifier, countryCode } = req.body;
+
+    if (!identifier) return res.status(400).json({ msg: 'Email or mobile required.' });
+
+    // Email flow unchanged
     if (validator.isEmail(identifier)) {
-      user = await User.findOne({ email: identifier });
+      const user = await User.findOne({ email: identifier });
       if (!user) return res.status(404).json({ msg: 'User not found.' });
 
-      const otp = generateOTP(); // now 6-digit
-      setEmailOTP(identifier, otp);  // store in memory
-
+      const otp = generateOTP();
+      setEmailOTP(identifier, otp);
       await sendEmailOTP(identifier, otp);
       return res.status(200).json({ msg: 'OTP sent to registered email.' });
     }
 
-    // 📱 Mobile flow
-    if (validator.isMobilePhone(identifier.replace(/\D/g, ''), 'any', { strictMode: false })) {
-      const normalizedIdentifier = normalizePhoneNumber(identifier);
+    // Mobile flow: countryCode optional now.
+    let user;
+    let toSend; // E.164 number to send OTP to (Twilio expects E.164)
 
-      // Find user with normalized mobile number
-      user = await User.findOne({
-        $or: [
-          { mobile: normalizedIdentifier },
-          { mobile: identifier },
-          { mobile: identifier.replace(/\D/g, '') }
-        ]
-      });
+    if (countryCode) {
+      // If frontend provided countryCode, normalize strictly
+      const normalizedIdentifier = normalizePhoneNumber(identifier, countryCode);
+      if (!normalizedIdentifier) {
+        return res.status(400).json({ msg: 'Invalid phone number. Use international format with country code.' });
+      }
 
+      user = await User.findOne({ mobile: normalizedIdentifier });
       if (!user) return res.status(404).json({ msg: 'User not found.' });
 
-      console.log('📱 Sending SMS OTP to:', normalizedIdentifier);
-
-      await client.verify.v2.services(verifySid).verifications.create({
-        to: normalizedIdentifier,
-        channel: 'sms',
-      });
-
-      return res.status(200).json({
-        msg: 'OTP sent to registered mobile number.',
-        normalizedIdentifier // Send back for verification
-      });
+      toSend = normalizedIdentifier;
+    } else {
+      // countryCode not provided — try to find user by local number heuristics
+      user = await findUserByPhoneInput(identifier);
+      if (!user) {
+        // helpful debug: return searched digits so frontend can show hint
+        const cleaned = String(identifier).replace(/\D/g, '');
+        return res.status(404).json({
+          msg: 'User not found. Please provide the phone number used during signup (country code optional).',
+          searchedDigits: cleaned
+        });
+      }
+      toSend = user.mobile; // stored E.164
     }
 
-    return res.status(400).json({ msg: 'Invalid email or mobile number format.' });
+    console.log('📱 Sending SMS OTP to:', toSend);
 
+    await client.verify.v2.services(verifySid).verifications.create({
+      to: toSend,
+      channel: 'sms',
+    });
+
+    return res.status(200).json({
+      msg: 'OTP sent to registered mobile number.',
+      normalizedIdentifier: toSend
+    });
   } catch (error) {
     console.error('❌ OTP Sending Failed:', error);
     res.status(500).json({
@@ -147,7 +188,7 @@ export const login = async (req, res) => {
   }
 };
 
-// 🔹 VERIFY OTP
+// ---------------- VERIFY OTP ----------------
 export const verifyOTP = async (req, res) => {
   try {
     const { otp, identifier } = req.body;
@@ -159,56 +200,27 @@ export const verifyOTP = async (req, res) => {
 
     let user;
 
-    // 📧 Email flow → DB OTP check
+    // 📧 Email flow
     if (validator.isEmail(identifier)) {
       const result = verifyEmailOTP(identifier, otp);
       if (!result.success) {
         return res.status(400).json({ msg: result.msg });
       }
-
       user = await User.findOne({ email: identifier });
-    }
-    // 📱 Phone flow → Twilio Verify
+    } 
+    // 📱 Phone flow
     else {
-      const normalizedIdentifier = normalizePhoneNumber(identifier);
+      const normalizedIdentifier = identifier; // frontend already sends E.164
 
-      console.log('📱 Verifying with Twilio:', normalizedIdentifier);
-
-      // First, let's find the user with ALL possible mobile formats
-      const cleanedIdentifier = identifier.replace(/\D/g, '');
-      const possibleFormats = [
-        identifier,                          // Original format
-        normalizedIdentifier,                // +91xxxxxxxxxx
-        cleanedIdentifier,                   // xxxxxxxxxx
-        `+91${cleanedIdentifier}`,          // +91xxxxxxxxxx
-        `91${cleanedIdentifier}`,           // 91xxxxxxxxxx
-      ];
-
-      console.log('🔍 Searching user with mobile formats:', possibleFormats);
-
-      user = await User.findOne({
-        mobile: { $in: possibleFormats }
-      });
-
+      user = await User.findOne({ mobile: normalizedIdentifier });
       if (!user) {
-        // Additional search with regex for any mobile containing the digits
-        user = await User.findOne({
-          mobile: { $regex: cleanedIdentifier, $options: 'i' }
-        });
-      }
-
-      if (!user) {
-        console.error('❌ User not found with any mobile format. Searched formats:', possibleFormats);
-        // Let's also check what users exist for debugging
-        const allUsers = await User.find({}, { mobile: 1, email: 1, fullName: 1 });
-        console.log('📋 All users in database:', allUsers);
+        console.error('❌ User not found for mobile:', normalizedIdentifier);
         return res.status(404).json({
-          msg: "User not found. Please ensure you're using the same mobile number used during signup.",
-          searchedFormats: possibleFormats
+          msg: "User not found. Please ensure you're using the same mobile number used during signup."
         });
       }
 
-      console.log('✅ User found:', { mobile: user.mobile, email: user.email });
+      console.log('✅ User found for verification:', { mobile: user.mobile, email: user.email });
 
       try {
         const verificationCheck = await client.verify.v2
@@ -226,7 +238,6 @@ export const verifyOTP = async (req, res) => {
             twilioStatus: verificationCheck.status
           });
         }
-
       } catch (twilioError) {
         console.error('❌ Twilio verification error:', twilioError);
         return res.status(400).json({
@@ -237,15 +248,11 @@ export const verifyOTP = async (req, res) => {
     }
 
     if (!user) {
-      console.error('❌ User not found for identifier:', identifier);
       return res.status(404).json({ msg: "User not found." });
     }
 
-    // ✅ Mark verified and update mobile format if needed
+    // ✅ Mark verified
     user.isVerified = true;
-    if (!validator.isEmail(identifier)) {
-      user.mobile = normalizePhoneNumber(identifier); // Ensure consistent format
-    }
     await user.save();
 
     // ✅ Generate JWT
@@ -278,7 +285,7 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
-
+// ---------------- GOOGLE LOGIN ----------------
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 if (!admin.apps.length) {
@@ -291,7 +298,6 @@ if (!admin.apps.length) {
   });
 }
 
-// 🔹 Verify Firebase token → issue your own JWT
 export const googleLogin = async (req, res) => {
   try {
     const { firebaseToken } = req.body;
@@ -299,13 +305,10 @@ export const googleLogin = async (req, res) => {
       return res.status(400).json({ msg: "Firebase token is required" });
     }
 
-    // ✅ Verify Firebase token
     const decoded = await admin.auth().verifyIdToken(firebaseToken);
 
-    // Check if user exists in DB
     let user = await User.findOne({ email: decoded.email });
 
-    // If new user → create entry
     if (!user) {
       user = new User({
         fullName: decoded.name || "Google User",
@@ -314,18 +317,16 @@ export const googleLogin = async (req, res) => {
         zipCode: "",
         isVerified: true,
         role: "user",
-        image: decoded.picture || "", // ✅ Save Google profile picture
+        image: decoded.picture || "",
       });
       await user.save();
     } else {
-      // ✅ Update user image if changed
       if (decoded.picture && user.image !== decoded.picture) {
         user.image = decoded.picture;
         await user.save();
       }
     }
 
-    // ✅ Issue your JWT
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -340,7 +341,7 @@ export const googleLogin = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        image: user.image, // ✅ Send profile image in response
+        image: user.image,
       },
     });
   } catch (err) {

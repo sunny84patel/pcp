@@ -11,12 +11,8 @@ import lowes from "../assets/images/lowes.png";
 import offericon from "../assets/images/offericon.png";
 
 // Import Redux actions
-import {
-  fetchWishlist,
-  removeFromWishlist,
-} from "../Redux/Reducers/WishlistSlice";
+import { fetchWishlist, removeFromWishlist } from "../Redux/Reducers/WishlistSlice";
 import { toggleCompare } from "../Redux/Reducers/CompareSlice";
-import { useNavigate } from "react-router-dom";
 
 // ===== small pieces =====
 const Stars = ({ value }) => (
@@ -37,17 +33,11 @@ const PriceTile = ({ product }) => {
     storeId === "lowe's" ||
     storeId === "lowes" ||
     storeId === "lowe" ||
-    storeId === "lowe's" ||
-    storeId === "lowes" ||
-    storeId === "lowe" ||
     storeData.storeId?.toLowerCase().includes("lowe")
   ) {
     storeLogo = lowes;
     storeDisplayName = "Lowe's";
   } else if (
-    storeId === "homedepot" ||
-    storeId === "home depot" ||
-    storeId === "home_depot" ||
     storeId === "homedepot" ||
     storeId === "home depot" ||
     storeId === "home_depot" ||
@@ -103,7 +93,6 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
         </div>
       )}
 
-
       <div className="flex items-center gap-4">
         {/* Clickable product area */}
         <Link
@@ -148,11 +137,11 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
         {/* Actions */}
         <div className="flex flex-col items-end gap-6 ml-4">
           <div className="flex gap-2">
-            <button className="rounded-full p-2 hover:bg-gray-100 cursor-pointer" title="Share">
+            <button className="rounded-full p-2 hover:bg-gray-100" title="Share">
               <Share2 className="h-4 w-4" />
             </button>
             <button
-              className="rounded-full p-2 hover:bg-gray-100 disabled:opacity-50 cursor-pointer"
+              className="rounded-full p-2 hover:bg-gray-100 disabled:opacity-50"
               title="Delete"
               onClick={onDelete}
               disabled={isDeleting}
@@ -160,15 +149,15 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <button className="flex items-center gap-1 text-sm font-semibold text-gray-800 hover:text-black cursor-pointer">
+          <button className="flex items-center gap-1 text-sm font-semibold text-gray-800 hover:text-black">
             <span>Set Price Alert</span>
             <Clock3 className="h-4 w-4" />
           </button>
-          <label className="flex items-center gap-2 text-sm font-semibold text-gray-800 cursor-pointer cursor-pointer">
+          <label className="flex items-center gap-2 text-sm font-semibold text-gray-800 cursor-pointer">
             <span>Add to Compare</span>
             <input
               type="checkbox"
-              className="h-4 w-4 accent-[#5F43B2] cursor-pointer"
+              className="h-4 w-4 accent-[#5F43B2]"
               checked={selected.includes(item.productId)}
               onChange={() => dispatch(toggleCompare(item.productId))}
             />
@@ -187,7 +176,6 @@ export default function WishlistPage() {
   );
   const [deletingItems, setDeletingItems] = useState(new Set());
   const [clearingAll, setClearingAll] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchWishlist());
@@ -200,7 +188,6 @@ export default function WishlistPage() {
     } catch (error) {
       console.error("Failed to remove item:", error);
     } finally {
-      setDeletingItems((prev) => {
       setDeletingItems((prev) => {
         const newSet = new Set(prev);
         newSet.delete(productId);
@@ -247,11 +234,7 @@ export default function WishlistPage() {
             <div className="text-lg font-semibold mb-2">
               Error loading wishlist
             </div>
-            <div className="text-lg font-semibold mb-2">
-              Error loading wishlist
-            </div>
             <div className="text-sm">{error.message || error}</div>
-            <button
             <button
               className="mt-4 px-4 py-2 bg-[#5F43B2] text-white rounded-lg hover:bg-[#4F33A2] transition-colors"
               onClick={() => dispatch(fetchWishlist())}
@@ -274,24 +257,13 @@ export default function WishlistPage() {
           className="flex justify-between items-end pb-3 mb-8"
           style={{ borderBottom: "1px solid #ABA9A980" }}
         >
-          <div className="flex items-center gap-3 text-[18px] font-semibold">
-            <button
-              onClick={() => navigate(-1)} // go back one step in history
-              className="flex items-center gap-1 text-black-600 cursor-pointer"
-            >
-              <ArrowLeft className="h-5 w-5" />
-              <span className="text-sm font-medium ">Back</span>
-            </button>
-
-            <div>
-              My Wishlist
-              <span className="ml-2 text-sm font-normal text-gray-500">
-                {wishlistProducts.length} products in your wishlist
-              </span>
-            </div>
+          <div className="text-[18px] font-semibold">
+            My Wishlist
+            <span className="ml-2 text-sm font-normal text-gray-500">
+              {wishlistProducts.length} products in your wishlist
+            </span>
           </div>
           <div className="flex items-center gap-6 text-sm">
-            <button
             <button
               className="text-gray-700 hover:text-black disabled:opacity-50 flex items-center gap-2"
               onClick={handleClearAll}
@@ -331,9 +303,6 @@ export default function WishlistPage() {
                 <WishlistRow
                   key={item.productId}
                   item={item}
-                <WishlistRow
-                  key={item.productId}
-                  item={item}
                   onDelete={() => handleRemove(item.productId)}
                   isDeleting={deletingItems.has(item.productId)}
                 />
@@ -349,9 +318,6 @@ export default function WishlistPage() {
                   <button
                     key={n}
                     className={`h-8 w-8 rounded-full text-sm ${
-                      n === 1
-                        ? "bg-[#5F43B2] text-white"
-                        : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                       n === 1
                         ? "bg-[#5F43B2] text-white"
                         : "border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -373,4 +339,3 @@ export default function WishlistPage() {
     </>
   );
 }
-

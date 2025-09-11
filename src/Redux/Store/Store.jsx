@@ -23,7 +23,7 @@ import wishlistReducer from "../Reducers/WishlistSlice";
 const persistConfig = {
   key: 'buildScout', // unique key for your app
   storage,
-  whitelist: ['otp'], // Only persist otp slice (user authentication data)
+  whitelist: ['otp','wishlist'], // Only persist otp slice (user authentication data)
   // blacklist: ['search', 'login'], // Don't persist these (optional)
 };
 

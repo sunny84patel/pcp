@@ -29,7 +29,7 @@ const SortBar = ({
           <span className="font-semibold mr-2">Sort By</span>
           <select
             className="border rounded-md px-3 py-1 cursor-pointer"
-            value={sortValues.price || ""}
+            value={sortValues.sortBy === "price" ? (sortValues.sortOrder === "asc" ? "low-high" : "high-low") : ""}
             onChange={(e) => onSortChange("price", e.target.value)}
             style={{ border: "1px solid #5F43B2" }}
           >
@@ -39,7 +39,7 @@ const SortBar = ({
           </select>
           <select
             className="border rounded-md px-3 py-1 cursor-pointer"
-            value={sortValues.ratings || ""}
+            value={sortValues.sortBy === "reviews" ? (sortValues.sortOrder === "asc" ? "low-high" : "high-low") : ""}
             onChange={(e) => onSortChange("ratings", e.target.value)}
             style={{ border: "1px solid #5F43B2" }}
           >
@@ -49,7 +49,7 @@ const SortBar = ({
           </select>
           <select
             className="border rounded-md px-3 py-1 cursor-pointer"
-            value={sortValues.popularity || ""}
+            value={sortValues.sortBy === "popularity" ? (sortValues.sortOrder === "asc" ? "low-high" : "high-low") : ""}
             onChange={(e) => onSortChange("popularity", e.target.value)}
             style={{ border: "1px solid #5F43B2" }}
           >

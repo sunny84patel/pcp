@@ -2,12 +2,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import API from '../../api';
 
-// Async thunk to fetch similar products
+// 🔹 In-memory cache for similar products
+const similarProductsCache = {};
+
 export const fetchSimilarProducts = createAsyncThunk(
   'similarProducts/fetchSimilarProducts',
   async (productId, { rejectWithValue }) => {
     try {
-      const response = await API.get(`/products/${productId}/similar`); // ✅ use API instance
+      // ✅ Check if we already cached for this productId
+      if (similarProductsCache[productId]) {
+        return similarProductsCache[productId];
+      }
+
+      const response = await API.get(`/products/${productId}/similar`);
+
+      // ✅ Save in cache
+      similarProductsCache[productId] = response.data;
+
       return response.data;
     } catch (error) {
       console.error('Error fetching similar products:', error);
@@ -23,7 +34,14 @@ const similarProductsSlice = createSlice({
     loading: false,
     error: null
   },
-  reducers: {},
+  reducers: {
+    // ✅ Optional: clear cache
+    clearSimilarProductsCache: () => {
+      for (const key in similarProductsCache) {
+        delete similarProductsCache[key];
+      }
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSimilarProducts.pending, (state) => {
@@ -41,4 +59,5 @@ const similarProductsSlice = createSlice({
   }
 });
 
+export const { clearSimilarProductsCache } = similarProductsSlice.actions;
 export default similarProductsSlice.reducer;

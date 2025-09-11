@@ -640,6 +640,7 @@ const ProductDetails = memo(({ product }) => (
 
 // Extracted and memoized RelatedSearches component
 const RelatedSearches = memo(() => {
+  const navigate = useNavigate();
   const searchTerms = useMemo(
     () => [
       "Tools",
@@ -654,6 +655,10 @@ const RelatedSearches = memo(() => {
     ],
     []
   );
+  const handleCategoryClick = (category) => {
+    // Navigate to search page with category as query param
+    navigate(`/filter?query=${encodeURIComponent(category)}`);
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 mt-10">
@@ -664,6 +669,7 @@ const RelatedSearches = memo(() => {
         {searchTerms.map((term) => (
           <button
             key={term}
+            onClick={() => handleCategoryClick(term)}
             className="px-4 py-2 border border-black rounded-full text-sm text-black hover:bg-gray-100 transition-colors cursor-pointer"
           >
             {term}

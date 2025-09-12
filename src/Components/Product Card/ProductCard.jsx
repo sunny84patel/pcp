@@ -70,11 +70,13 @@ const ProductCard = ({ product }) => {
             </h3>
 
             <div style={{ color: "#0000008A" }} className="text-xs mb-1">
-              Model #DE6702{product.model}
+              {product.
+                modelNo
+              }
             </div>
 
             <div className="text-xs text-gray-600">
-              ⭐ {firstStore?.rating || 0}/5
+              ⭐ {product?.rating || 0}/5
             </div>
 
             <div className="mt-2">

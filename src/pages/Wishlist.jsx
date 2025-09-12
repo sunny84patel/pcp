@@ -5,6 +5,7 @@ import Footer from "../Components/Footer/Footer";
 import { Star, Share2, Trash2, Clock3 } from "lucide-react";
 import { ClipLoader } from "react-spinners";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import homedepot from "../assets/images/homedepot.png";
 import lowes from "../assets/images/lowes.png";
@@ -137,11 +138,11 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
         {/* Actions */}
         <div className="flex flex-col items-end gap-6 ml-4">
           <div className="flex gap-2">
-            <button className="rounded-full p-2 hover:bg-gray-100" title="Share">
+            <button className="rounded-full p-2 hover:bg-gray-100 cursor-pointer" title="Share">
               <Share2 className="h-4 w-4" />
             </button>
             <button
-              className="rounded-full p-2 hover:bg-gray-100 disabled:opacity-50"
+              className="rounded-full p-2 hover:bg-gray-100 disabled:opacity-50 cursor-pointer"
               title="Delete"
               onClick={onDelete}
               disabled={isDeleting}
@@ -149,7 +150,7 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <button className="flex items-center gap-1 text-sm font-semibold text-gray-800 hover:text-black">
+          <button className="flex items-center gap-1 text-sm font-semibold text-gray-800 hover:text-black cursor-pointer">
             <span>Set Price Alert</span>
             <Clock3 className="h-4 w-4" />
           </button>
@@ -157,7 +158,7 @@ const WishlistRow = ({ item, onDelete, isDeleting }) => {
             <span>Add to Compare</span>
             <input
               type="checkbox"
-              className="h-4 w-4 accent-[#5F43B2]"
+              className="h-4 w-4 accent-[#5F43B2] cursor-pointer"
               checked={selected.includes(item.productId)}
               onChange={() => dispatch(toggleCompare(item.productId))}
             />
@@ -176,6 +177,7 @@ export default function WishlistPage() {
   );
   const [deletingItems, setDeletingItems] = useState(new Set());
   const [clearingAll, setClearingAll] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchWishlist());
@@ -292,7 +294,8 @@ export default function WishlistPage() {
             <div className="text-gray-400 mb-6">
               Start adding products you love!
             </div>
-            <button className="px-6 py-3 bg-[#5F43B2] text-white rounded-lg hover:bg-[#4F33A2] transition-colors">
+            <button className="px-6 py-3 bg-[#5F43B2] text-white rounded-lg hover:bg-[#4F33A2] transition-colors cursor-pointer"
+            onClick={() => navigate("/")}>
               Browse Products
             </button>
           </div>

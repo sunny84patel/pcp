@@ -1,214 +1,229 @@
-
 import { Product, Inventory, Image } from "../models/Product.js";
 import fetch from "node-fetch";
+import esClient from "../config/elasticsearch.js";
+import { PRODUCT_INDEX } from "../utils/elasticsearchSync.js";
 
 const API_BASE_URL = "https://data.unwrangle.com/api/getter/";
 const API_KEY = process.env.UNWRANGLE_API_KEY;
 
 // ========================
-// HELPER: Normalize Title
+// HELPER: Extract Core Search Terms
 // ========================
-const normalizeProductTitle = (title = "") => {
-  return title
-    .toLowerCase()
-    .trim()
-    // remove fractions/dimensions like "1-1/2-in" or "3/4-in"
-    .replace(/\b\d+([-/]\d+)?\s?-?\s?(in|ft|mm|cm|inch|in\.|ft\.)\b/g, "")
-    // remove numbers followed by units e.g. "10 in.", "20 ft"
-    .replace(/\b\d+(\.\d+)?\s?(in|ft|mm|cm|inch|in\.|ft\.)\b/g, "")
-    // clean non-alphanumeric (but keep spaces)
-    .replace(/[^\w\s]/g, " ")
-    .replace(/\s+/g, " ")
+const extractSearchTerms = (productName) => {
+  if (!productName) return "";
+  
+  // Remove measurements and dimensions
+  let cleaned = productName
+    .replace(/\b\d+[-/]?\d*\s*(in|ft|mm|cm|inch|oz|lb|gal)\.?\b/gi, "")
+    .replace(/\b\d+\s*x\s*\d+\b/gi, "")
     .trim();
+  
+  // Split and remove common filler words
+  const fillerWords = ["the", "and", "or", "with", "for", "in", "of", "a", "an"];
+  const words = cleaned.split(/\s+/).filter(word => 
+    word.length > 2 && !fillerWords.includes(word.toLowerCase())
+  );
+  
+  return words.join(" ");
 };
 
 // ========================
-// HELPER: Call Store API with retry logic
+// STEP 1: Search Similar Products in Elasticsearch
 // ========================
-const searchStoreApi = async (platform, searchTerm, page = 1, maxRetries = 2) => {
-  const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(
-    searchTerm
-  )}&page=${page}&api_key=${API_KEY}`;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
-    try {
-      const response = await fetch(url, { signal: controller.signal });
-
-      if (!response.ok) throw new Error(`Server error ${response.status}`);
-
-      const data = await response.json();
-      clearTimeout(timeout);
-
-      if (data.success && data.results?.length) {
-        return data.results;
-      }
-    } catch (err) {
-      clearTimeout(timeout);
-
-      const retryable = err.name === "AbortError" || err.message.includes("Server error 5");
-      if (attempt === maxRetries || !retryable) return [];
-      await new Promise((res) => setTimeout(res, attempt * 2000)); // 2s, 4s
-    }
-  }
-
-  return [];
-};
-
-
-// ========================
-// HELPER: Create Search Variations
-// ========================
-const createSearchVariations = (title) => {
-  const normalized = normalizeProductTitle(title);
-  const words = normalized.split(" ").filter(Boolean);
-
-  const variations = [];
-  variations.push(normalized); // full first
-
-  // successively shorten title
-  for (let i = words.length - 1; i >= 2; i--) {
-    variations.push(words.slice(0, i).join(" "));
-  }
-
-  return [...new Set(variations)];
-};
-
-// ========================
-// HELPER: API with fast fail for user experience
-// ========================
-const searchStoreApiWithFastFail = async (platform, searchTerm, page = 1) => {
-  const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(
-    searchTerm
-  )}&page=${page}&api_key=${API_KEY}`;
-
-  // First attempt
-  const controller1 = new AbortController();
-  const timeout1 = setTimeout(() => controller1.abort(), 5000);
-
+const searchSimilarInElasticsearch = async (productName, category, storeId, currentProductId, limit = 10) => {
   try {
-    const response = await fetch(url, { signal: controller1.signal });
+    const searchTerms = extractSearchTerms(productName);
+    if (!searchTerms || searchTerms.length < 2) return [];
+    
+    console.log(`🔍 Searching ES for: "${searchTerms}" in store: ${storeId}`);
+    
+    // Build filter clauses
+    const filterClauses = [];
+    const shouldClauses = [];
+    
+    // Multi-field text search with boosting (similar to your product search)
+    shouldClauses.push(
+      { match: { name: { query: searchTerms, boost: 3, fuzziness: "AUTO" } } },
+      { match_phrase: { name: { query: searchTerms, boost: 5 } } },
+      { match: { "name.raw": { query: searchTerms, boost: 4 } } },
+      { match: { brand: { query: searchTerms, boost: 2 } } },
+      { match: { category: { query: searchTerms, boost: 1.5 } } }
+    );
+
+    // Filter by store (nested query to match your index structure)
+    filterClauses.push({
+      nested: {
+        path: "stores",
+        query: {
+          term: { "stores.storeId": storeId }
+        }
+      }
+    });
+
+    // Exclude current product
+    filterClauses.push({
+      bool: {
+        must_not: [
+          { term: { "productId.keyword": currentProductId } }
+        ]
+      }
+    });
+
+    // Category boost (optional)
+    const categoryBoost = [];
+    if (category && category.trim()) {
+      categoryBoost.push({ term: { "category.keyword": { value: category, boost: 2 } } });
+    }
+
+    const esQuery = {
+      index: PRODUCT_INDEX,
+      body: {
+        size: limit,
+        query: {
+          bool: {
+            must: [
+              {
+                bool: { should: shouldClauses, minimum_should_match: 1 }
+              }
+            ],
+            filter: filterClauses,
+            should: categoryBoost
+          }
+        },
+        sort: [
+          { _score: { order: "desc" } },
+          { avgRating: { order: "desc", missing: "_last" } },
+          { totalReviews: { order: "desc", missing: "_last" } }
+        ],
+        track_total_hits: true
+      }
+    };
+
+    const response = await esClient.search(esQuery);
+    
+    if (response.hits.hits.length > 0) {
+      const productIds = response.hits.hits.map(hit => hit._source.productId);
+      console.log(`✅ Found ${productIds.length} similar products in ES`);
+      return productIds;
+    }
+    
+    console.log("⚠️ No results from Elasticsearch");
+    return [];
+  } catch (error) {
+    console.error("❌ Elasticsearch search error:", error.message);
+    return [];
+  }
+};
+
+// ========================
+// STEP 2: Fetch Product Details from DB
+// ========================
+const fetchProductDetails = async (productIds, storeId) => {
+  try {
+    const products = await Product.find({
+      productId: { $in: productIds }
+    }).lean();
+
+    const inventories = await Inventory.find({
+      productId: { $in: productIds },
+      storeId: storeId
+    }).lean();
+
+    const images = await Image.find({
+      productId: { $in: productIds }
+    }).lean();
+
+    // Map products with their inventory and images
+    const results = products.map(product => {
+      const productInventories = inventories.filter(
+        inv => inv.productId === product.productId
+      );
+      
+      const productImages = images
+        .filter(img => img.productId === product.productId)
+        .map(img => img.url);
+
+      const inventory = productInventories[0] || {};
+
+      return {
+        productId: product.productId,
+        name: product.name || "Unknown Product",
+        modelNo: product.modelNo || "",
+        brand: product.brand || "",
+        category: product.category || "",
+        minPrice: inventory.price || 0,
+        avgRating: inventory.rating || 0,
+        totalReviews: inventory.totalReviews || 0,
+        stores: productInventories.map(inv => ({
+          storeId: inv.storeId,
+          price: inv.price,
+          listPrice: inv.listPrice,
+          priceReduced: inv.priceReduced,
+          currency: inv.currency || "USD",
+          inventoryQuantity: inv.inventoryQuantity,
+          rating: inv.rating,
+          totalReviews: inv.totalReviews,
+          url: inv.url,
+          itemNumber: inv.itemNumber,
+          vendorNumber: inv.vendorNumber,
+          upc: inv.upc,
+          saleEndDate: inv.saleEndDate,
+          images: productImages
+        }))
+      };
+    });
+
+    return results;
+  } catch (error) {
+    console.error("❌ Error fetching product details:", error);
+    return [];
+  }
+};
+
+// ========================
+// STEP 3: Third-Party API Fallback
+// ========================
+const searchThirdPartyApi = async (productName, storeId) => {
+  try {
+    const searchTerms = extractSearchTerms(productName);
+    if (!searchTerms || searchTerms.length < 3) return [];
+
+    console.log(`🌐 Fallback: Searching third-party API for: "${searchTerms}"`);
+
+    // Determine API platform
+    let platform = "";
+    if (storeId === "lowe's" || storeId === "lowes") {
+      platform = "lowes_search";
+    } else if (storeId === "homedepot" || storeId === "home depot") {
+      platform = "homedepot_search";
+    } else {
+      return [];
+    }
+
+    const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(searchTerms)}&page=1&api_key=${API_KEY}`;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
 
     if (!response.ok) {
-      throw new Error(`Server error ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
-    clearTimeout(timeout1);
-    return { success: true, data: data.success && data.results ? data.results : [] };
-  } catch (err) {
-    clearTimeout(timeout1);
-    const isRetryableError = err.name === 'AbortError' ||
-      err.message.includes('Server error 5') ||
-      err.message.includes('timeout');
-
-    if (!isRetryableError) {
-      return { success: false, data: [] };
+    
+    if (data.success && data.results?.length) {
+      console.log(`✅ Found ${data.results.length} results from third-party API`);
+      return data.results.slice(0, 10);
     }
 
-    // Second attempt with 2s wait
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    const controller2 = new AbortController();
-    const timeout2 = setTimeout(() => controller2.abort(), 5000);
-
-    try {
-      const response = await fetch(url, { signal: controller2.signal });
-
-      if (!response.ok) {
-        throw new Error(`Server error ${response.status}`);
-      }
-
-      const data = await response.json();
-      clearTimeout(timeout2);
-      return { success: true, data: data.success && data.results ? data.results : [] };
-    } catch (err2) {
-      clearTimeout(timeout2);
-
-      // Start background retries (don't await)
-      backgroundRetryApi(platform, searchTerm, page).catch(() => {});
-
-      return { success: false, data: [] };
-    }
-  }
-};
-
-// ========================
-// HELPER: Try variations sequentially
-// ========================
-const searchWithVariations = async (platform, title) => {
-  const variations = createSearchVariations(title).filter(term => term && term.length >= 3);
-
-  if (!variations.length) return [];
-
-  // Fire all searches in parallel
-  const searchPromises = variations.map(term =>
-    searchStoreApi(platform, term).then(results => ({ term, results }))
-  );
-
-  // Resolve as soon as one variation gets results
-  for await (const { results } of searchPromises) {
-    if (results?.length) {
-      return results;
-    }
-  }
-
-  return [];
-};
-// ========================
-// HELPER: Background retry for remaining attempts
-// ========================
-const backgroundRetryApi = async (platform, searchTerm, page = 1) => {
-  const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(
-    searchTerm
-  )}&page=${page}&api_key=${API_KEY}`;
-
-  // Retry 2 (4s wait)
-  await new Promise(resolve => setTimeout(resolve, 4000));
-
-  const controller3 = new AbortController();
-  const timeout3 = setTimeout(() => controller3.abort(), 5000);
-
-  try {
-    const response = await fetch(url, { signal: controller3.signal });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.success && data.results?.length) {
-        // Could save to cache/DB here if needed
-        return;
-      }
-    }
-    throw new Error(`Server error ${response.status}`);
-  } catch (err) {
-    // Error handled silently
-  } finally {
-    clearTimeout(timeout3);
-  }
-
-  // Retry 3 (8s wait) - final attempt
-  await new Promise(resolve => setTimeout(resolve, 8000));
-
-  const controller4 = new AbortController();
-  const timeout4 = setTimeout(() => controller4.abort(), 5000);
-
-  try {
-    const response = await fetch(url, { signal: controller4.signal });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (data.success && data.results?.length) {
-        // Could save to cache/DB here if needed
-        return;
-      }
-    }
-    throw new Error(`Server error ${response.status}`);
-  } catch (err) {
-    // Final error handled silently
-  } finally {
-    clearTimeout(timeout4);
+    console.log("⚠️ No results from third-party API");
+    return [];
+  } catch (error) {
+    console.error("❌ Third-party API error:", error.message);
+    return [];
   }
 };
 
@@ -221,30 +236,27 @@ const normalizeHomeDepot = (item) => {
     product: {
       productId,
       name: item.name,
-      modelNo: item.model_no,
-      brand: item.brand || null,
-      category: item.category || null
+      modelNo: item.model_no || "",
+      brand: item.brand || "",
+      category: item.category || ""
     },
     inventory: {
       productId,
-      storeId: 'homedepot',
-      price: item.price,
-      listPrice: item.price,
-      priceReduced: item.price_reduced,
-      currency: item.currency,
-      inventoryQuantity: item.inventory_quantity,
-      rating: item.rating,
-      totalReviews: item.total_reviews,
-      url: item.url,
+      storeId: "homedepot",
+      price: item.price || 0,
+      listPrice: item.price || 0,
+      priceReduced: item.price_reduced || false,
+      currency: item.currency || "USD",
+      inventoryQuantity: item.inventory_quantity || 0,
+      rating: item.rating || 0,
+      totalReviews: item.total_reviews || 0,
+      url: item.url || "",
       itemNumber: null,
       vendorNumber: null,
       upc: null,
       saleEndDate: null
     },
-    images: (item.thumbnails || []).map((url) => ({
-      url: url.trim(),
-      productId
-    }))
+    images: (item.thumbnails || []).map(url => ({ url, productId }))
   };
 };
 
@@ -257,99 +269,123 @@ const normalizeLowes = (item) => {
     product: {
       productId,
       name: item.name,
-      modelNo: item.model_no,
-      brand: item.brand || null,
-      category: item.category || null
+      modelNo: item.model_no || "",
+      brand: item.brand || "",
+      category: item.category || ""
     },
     inventory: {
       productId,
       storeId: "lowe's",
-      price: item.price,
-      listPrice: item.list_price,
-      priceReduced: item.price_reduced,
-      currency: item.currency,
-      inventoryQuantity: item.inventory?.total_quantity || null,
-      rating: item.rating,
-      totalReviews: item.total_ratings,
-      url: item.url,
+      price: item.price || 0,
+      listPrice: item.list_price || 0,
+      priceReduced: item.price_reduced || false,
+      currency: item.currency || "USD",
+      inventoryQuantity: item.inventory?.total_quantity || 0,
+      rating: item.rating || 0,
+      totalReviews: item.total_ratings || 0,
+      url: item.url || "",
       itemNumber: item.item_number || null,
       vendorNumber: item.vendor_number || null,
       upc: item.upc || null,
       saleEndDate: item.sale_end_date || null
     },
-    images: (item.images || []).map((url) => ({
-      url: url.trim(),
-      productId
-    }))
+    images: (item.images || []).map(url => ({ url, productId }))
   };
 };
 
 // ========================
-// HELPER: Save API Products to DB (background)
+// HELPER: Normalize API Results
 // ========================
-const saveApiProductsToDb = async (apiResults, storeId, category) => {
-  try {
-    for (const item of apiResults) {
-      const productId = item.id || item.product_id;
-      if (!productId) continue;
-
-      // Normalize based on store
-      let normalizedData;
-      if (storeId === 'homedepot') {
-        normalizedData = normalizeHomeDepot(item);
-      } else if (storeId === "lowe's" || storeId === "lowes") {
-        normalizedData = normalizeLowes(item);
-      } else {
-        // Fallback to old structure
-        normalizedData = {
-          product: {
-            productId,
-            name: item.name || item.title || "Unknown Product",
-            modelNo: item.model_no || item.model || "",
-            brand: item.brand || "",
-            category: category || "General"
-          },
-          inventory: {
-            productId,
-            storeId,
-            price: item.price || item.current_price || 0,
-            currency: "USD",
-            inventoryQuantity: item.inventory_quantity || (item.in_stock ? 1 : 0),
-            rating: item.rating || 0,
-            totalReviews: item.total_reviews || item.review_count || 0,
-            url: item.url || item.product_url || ""
-          },
-          images: (item.images || []).map((url) => ({ productId, url }))
-        };
-      }
-
-      // 1. Upsert Product
-      await Product.updateOne(
-        { productId: normalizedData.product.productId },
-        {
-          $setOnInsert: {
-            ...normalizedData.product,
-            category: normalizedData.product.category || category || "General"
-          },
-        },
-        { upsert: true }
-      );
-
-      // 2. Upsert Inventory
-      await Inventory.updateOne(
-        { productId: normalizedData.inventory.productId, storeId: normalizedData.inventory.storeId },
-        { $set: normalizedData.inventory },
-        { upsert: true }
-      );
-
-      // 3. Upsert Images
-      if (normalizedData.images?.length) {
-        await Image.insertMany(normalizedData.images, { ordered: false }).catch(() => { });
-      }
+const normalizeApiResults = (apiResults, storeId) => {
+  return apiResults.map(item => {
+    const productId = item.id || item.product_id;
+    
+    let normalizedData;
+    if (storeId === "homedepot" || storeId === "home depot") {
+      normalizedData = normalizeHomeDepot(item);
+    } else {
+      normalizedData = normalizeLowes(item);
     }
-  } catch (err) {
-    // Error handled silently
-  }
+
+    return {
+      productId: normalizedData.product.productId,
+      name: normalizedData.product.name,
+      modelNo: normalizedData.product.modelNo,
+      brand: normalizedData.product.brand,
+      category: normalizedData.product.category,
+      minPrice: normalizedData.inventory.price,
+      avgRating: normalizedData.inventory.rating,
+      totalReviews: normalizedData.inventory.totalReviews,
+      stores: [{
+        storeId: normalizedData.inventory.storeId,
+        price: normalizedData.inventory.price,
+        listPrice: normalizedData.inventory.listPrice,
+        priceReduced: normalizedData.inventory.priceReduced,
+        currency: normalizedData.inventory.currency,
+        inventoryQuantity: normalizedData.inventory.inventoryQuantity,
+        rating: normalizedData.inventory.rating,
+        totalReviews: normalizedData.inventory.totalReviews,
+        url: normalizedData.inventory.url,
+        itemNumber: normalizedData.inventory.itemNumber,
+        vendorNumber: normalizedData.inventory.vendorNumber,
+        upc: normalizedData.inventory.upc,
+        saleEndDate: normalizedData.inventory.saleEndDate,
+        images: normalizedData.images.map(img => img.url)
+      }]
+    };
+  });
+};
+
+// ========================
+// HELPER: Save API Results to DB (Background)
+// ========================
+const saveApiResultsToDb = async (apiResults, storeId, category) => {
+  setImmediate(async () => {
+    try {
+      console.log(`💾 Background save: Saving ${apiResults.length} products to DB`);
+      
+      for (const result of apiResults) {
+        const { productId, name, modelNo, brand, stores } = result;
+
+        // Upsert Product
+        await Product.updateOne(
+          { productId },
+          {
+            $setOnInsert: {
+              productId,
+              name,
+              modelNo,
+              brand,
+              category: category || "General"
+            }
+          },
+          { upsert: true }
+        );
+
+        // Upsert Inventory
+        for (const store of stores) {
+          await Inventory.updateOne(
+            { productId, storeId: store.storeId },
+            { $set: { ...store, productId } },
+            { upsert: true }
+          );
+
+          // Insert Images
+          if (store.images?.length) {
+            const imageDocuments = store.images.map(url => ({
+              productId,
+              url
+            }));
+            await Image.insertMany(imageDocuments, { ordered: false }).catch(() => {});
+          }
+        }
+      }
+      
+      console.log("✅ Background save completed");
+    } catch (error) {
+      console.error("❌ Background save error:", error);
+    }
+  });
 };
 
 // ========================
@@ -358,172 +394,78 @@ const saveApiProductsToDb = async (apiResults, storeId, category) => {
 export const getSimilarProducts = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(`\n🔎 Getting similar products for ID: ${id}`);
 
-    // 1. Find current product
+    // 1. Find the clicked product
     const currentProduct = await Product.findOne({ productId: id }).lean();
     if (!currentProduct) {
+      console.log("❌ Product not found");
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // 2. Get base store from current product's inventory
+    console.log(`📦 Current product: ${currentProduct.name}`);
+
+    // 2. Get store ID from product's inventory
     const baseInventory = await Inventory.findOne({ productId: id }).lean();
-    const baseStoreId = baseInventory?.storeId?.toLowerCase() || "lowe's";
-
-    // 3. PRIMARY: API search for more accurate results (with fast fail)
-    let apiResults = [];
-    let apiPlatform = "";
-
-    if (baseStoreId === "lowe's" || baseStoreId === "lowes") {
-      apiPlatform = "lowes_search";
-      apiResults = await searchWithVariations("lowes_search", currentProduct.name);
-    } else if (baseStoreId === "homedepot" || baseStoreId === "home depot") {
-      apiPlatform = "homedepot_search";
-      apiResults = await searchWithVariations("homedepot_search", currentProduct.name);
+    if (!baseInventory) {
+      console.log("❌ Product inventory not found");
+      return res.status(404).json({ message: "Product inventory not found" });
     }
 
-    // 4. If API has results → return them
-    if (apiResults.length) {
-      // Transform API results to DB-like format using proper normalization
-      const mappedResults = apiResults.slice(0, 10).map((item) => {
-        let normalizedData;
-        if (baseStoreId === 'homedepot') {
-          normalizedData = normalizeHomeDepot(item);
-        } else if (baseStoreId === "lowe's" || baseStoreId === "lowes") {
-          normalizedData = normalizeLowes(item);
-        } else {
-          // Fallback normalization
-          normalizedData = {
-            product: {
-              productId: item.id || item.product_id,
-              name: item.name || item.title || "Unknown Product",
-              modelNo: item.model_no || item.model || "",
-              brand: item.brand || "",
-              category: currentProduct.category || "General"
-            },
-            inventory: {
-              productId: item.id || item.product_id,
-              storeId: baseStoreId,
-              price: item.price || item.current_price || 0,
-              currency: "USD",
-              inventoryQuantity: item.inventory_quantity || (item.in_stock ? 1 : 0),
-              rating: item.rating || 0,
-              totalReviews: item.total_reviews || item.review_count || 0,
-              url: item.url || item.product_url || ""
-            },
-            images: (item.images || []).map((url) => ({ url, productId: item.id || item.product_id }))
-          };
-        }
+    const storeId = baseInventory.storeId.toLowerCase();
+    console.log(`🏪 Store: ${storeId}`);
 
-        return {
-          productId: normalizedData.product.productId,
-          name: normalizedData.product.name || "Unknown Product",
-          modelNo: normalizedData.product.modelNo || "",
-          brand: normalizedData.product.brand || "",
-          category: normalizedData.product.category || currentProduct.category || "General",
-          minPrice: normalizedData.inventory.price || 0,
-          rating: normalizedData.inventory.rating || 0,
-          totalReviews: normalizedData.inventory.totalReviews || 0,
-          stores: [
-            {
-              storeId: normalizedData.inventory.storeId,
-              price: normalizedData.inventory.price,
-              listPrice: normalizedData.inventory.listPrice,
-              priceReduced: normalizedData.inventory.priceReduced,
-              currency: normalizedData.inventory.currency || "USD",
-              inventoryQuantity: normalizedData.inventory.inventoryQuantity,
-              rating: normalizedData.inventory.rating,
-              totalReviews: normalizedData.inventory.totalReviews,
-              url: normalizedData.inventory.url,
-              itemNumber: normalizedData.inventory.itemNumber,
-              vendorNumber: normalizedData.inventory.vendorNumber,
-              upc: normalizedData.inventory.upc,
-              saleEndDate: normalizedData.inventory.saleEndDate,
-              images: normalizedData.images.map(img => img.url),
-            },
-          ],
-        };
+    // 3. Search similar products in Elasticsearch (PRIMARY)
+    const similarProductIds = await searchSimilarInElasticsearch(
+      currentProduct.name,
+      currentProduct.category,
+      storeId,
+      id,
+      10
+    );
+
+    // 4. If Elasticsearch found results, fetch full details from DB
+    if (similarProductIds.length > 0) {
+      const results = await fetchProductDetails(similarProductIds, storeId);
+      
+      if (results.length > 0) {
+        console.log(`✅ Returning ${results.length} products from database\n`);
+        return res.json({
+          results,
+          count: results.length,
+          source: "elasticsearch"
+        });
+      }
+    }
+
+    // 5. FALLBACK: Search third-party API
+    console.log("⚠️ No results from Elasticsearch, trying third-party API...");
+    const apiResults = await searchThirdPartyApi(currentProduct.name, storeId);
+
+    if (apiResults.length > 0) {
+      const normalizedResults = normalizeApiResults(apiResults, storeId);
+      
+      // Save to DB in background
+      saveApiResultsToDb(normalizedResults, storeId, currentProduct.category);
+
+      console.log(`✅ Returning ${normalizedResults.length} products from third-party API\n`);
+      return res.json({
+        results: normalizedResults,
+        count: normalizedResults.length,
+        source: "third_party_api"
       });
-
-      // Save API results in background for the SAME store
-      saveApiProductsToDb(
-        apiResults.slice(0, 10),
-        baseStoreId,
-        currentProduct.category
-      );
-
-      return res.json({ results: mappedResults, count: mappedResults.length });
     }
 
-    // 5. FALLBACK: Search DB if API fails
-    const storeInventories = await Inventory.find({
-      storeId: baseStoreId,
-      productId: { $ne: id },
-    }).lean();
-    const productIds = [...new Set(storeInventories.map((inv) => inv.productId))];
+    // 6. No results found
+    console.log("❌ No similar products found from any source\n");
+    return res.json({
+      results: [],
+      count: 0,
+      message: "No similar products found"
+    });
 
-    let similarProducts = [];
-    if (productIds.length) {
-      similarProducts = await Product.find({
-        productId: { $in: productIds },
-        category: currentProduct.category,
-      })
-        .limit(10)
-        .lean();
-    }
-
-    // 6. If DB has results → return them
-    if (similarProducts.length) {
-      const finalProductIds = similarProducts.map((p) => p.productId);
-      const inventories = storeInventories.filter((inv) =>
-        finalProductIds.includes(inv.productId)
-      );
-      const images = await Image.find({
-        productId: { $in: finalProductIds },
-      }).lean();
-
-      const results = similarProducts.map((product) => {
-        const productInventories = inventories.filter(
-          (inv) => inv.productId === product.productId
-        );
-        const productImages = images
-          .filter((img) => img.productId === product.productId)
-          .map((img) => img.url);
-
-        return {
-          productId: product.productId,
-          name: product.name || "Unknown Product",
-          modelNo: product.modelNo || "",
-          brand: product.brand || "",
-          category: product.category || "",
-          minPrice: productInventories.length
-            ? Math.min(...productInventories.map((inv) => inv.price))
-            : 0,
-          rating: productInventories.length
-            ? Math.max(...productInventories.map((inv) => inv.rating || 0))
-            : 0,
-          totalReviews: productInventories.reduce(
-            (sum, inv) => sum + (inv.totalReviews || 0),
-            0
-          ),
-          stores: productInventories.map((inv) => ({
-            storeId: inv.storeId,
-            price: inv.price,
-            currency: inv.currency,
-            inventoryQuantity: inv.inventoryQuantity,
-            rating: inv.rating,
-            totalReviews: inv.totalReviews,
-            url: inv.url,
-            images: productImages,
-          })),
-        };
-      });
-
-      return res.json({ results, count: results.length });
-    }
-
-    // 7. No results from both API and DB
-    return res.json({ results: [], count: 0 });
   } catch (error) {
+    console.error("❌ getSimilarProducts error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };

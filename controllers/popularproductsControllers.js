@@ -6,45 +6,59 @@ export const getPopularProducts = async (req, res) => {
   try {
     const { storeId = 'homedepot', limit = 10 } = req.query;
 
-    // Randomly sample inventory items for the store
-    const inventory = await Inventory.aggregate([
-      { $match: { storeId } },
-      { $sample: { size: Number(limit) } } // Random selection
-    ]);
+    const parsedLimit = Number(limit) > 0 ? Number(limit) : 10;
+
+    // Get most popular inventory for this store
+    const inventory = await Inventory.find({ storeId })
+      .sort({ totalReviews: -1 }) // highest reviews first
+      .limit(parsedLimit)
+      .lean();
+
+    if (!inventory || inventory.length === 0) {
+      return res.status(200).json({ results: [] });
+    }
 
     const productIds = inventory.map(i => i.productId);
 
-    // Get matching products and images
+    // Get products and images
     const products = await Product.find({ productId: { $in: productIds } }).lean();
     const images = await Image.find({ productId: { $in: productIds } }).lean();
 
-    // Merge data into final result
-    const results = products.map(product => {
-      const inv = inventory.find(i => i.productId === product.productId);
-      const productImages = images
-        .filter(img => img.productId === product.productId)
-        .map(img => img.url);
+    // Maps for fast lookup
+    const productMap = new Map(products.map(p => [p.productId, p]));
+    const imagesMap = images.reduce((acc, img) => {
+      if (!acc.has(img.productId)) acc.set(img.productId, []);
+      acc.get(img.productId).push(img.url);
+      return acc;
+    }, new Map());
+
+    // Build results in the same popularity order
+    const results = inventory.map(inv => {
+      const product = productMap.get(inv.productId) || {};
 
       return {
-        productId: product.productId,
-        name: product.name,
-        modelNo: product.modelNo,
-        rating: inv?.rating || null,
-        price: inv?.price || null,
-        listPrice: inv?.listPrice || null,
-        currency: inv?.currency || 'USD',
-        storeId: inv?.storeId,
-        storeUrl: inv?.url,
-        images: productImages
+        productId: inv.productId,
+        name: product.name || null,
+        modelNo: product.modelNo || null,
+        rating: inv.rating ?? null,
+        totalReviews: inv.totalReviews ?? null,
+        price: inv.price ?? null,
+        listPrice: inv.listPrice ?? null,
+        priceReduced: inv.priceReduced ?? null,
+        currency: inv.currency ?? 'USD',
+        storeId: inv.storeId,
+        storeUrl: inv.url,
+        images: imagesMap.get(inv.productId) || []
       };
     });
 
     res.status(200).json({ results });
   } catch (err) {
-    console.error('❌ Random products error:', err.message);
+    console.error('❌ Popular products error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 export const getProductsByIds = async (req, res) => {
   try {

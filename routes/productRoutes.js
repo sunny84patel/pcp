@@ -82,6 +82,7 @@ import { getPopularProducts, getProductsByIds } from '../controllers/popularprod
 import { unifiedProductSearch } from '../controllers/typesenseController.js';
 import {Product} from "../models/Product.js";
 import { getPriceDroppedProducts } from '../controllers/pricedroppedControllers.js';
+import { getExploreProducts } from '../controllers/popularproductsControllers.js';
 const router = express.Router();
 
 // Search endpoint
@@ -90,6 +91,7 @@ router.get('/fast/search', unifiedProductSearch);
 router.get('/popular', getPopularProducts);
 router.get('/recent', getProductsByIds);
 router.get('/price-drops', getPriceDroppedProducts);
+router.get('/explore', getExploreProducts);
 
 
 router.get("/suggestions", async (req, res) => {

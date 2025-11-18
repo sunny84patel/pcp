@@ -95,3 +95,65 @@ export const getProductsByIds = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+export const getExploreProducts = async (req, res) => {
+  try {
+    const stores = (req.query.stores || "homedepot,lowe's")
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const perStore = Math.max(1, Math.min(Number(req.query.perStore) || 6, 50)); // clamp 1..50
+
+    // Sample per store in parallel
+    const inventoriesByStore = await Promise.all(
+      stores.map(storeId =>
+        Inventory.aggregate([
+          { $match: { storeId } },
+          { $sample: { size: perStore } }
+        ])
+      )
+    );
+
+    // flatten inventories to an array of inventory docs (preserves per-store samples)
+    const inventories = inventoriesByStore.flat();
+
+    // gather unique productIds to fetch product & images
+    const productIds = [...new Set(inventories.map(i => i.productId))];
+
+    const [products, images] = await Promise.all([
+      Product.find({ productId: { $in: productIds } }).lean(),
+      Image.find({ productId: { $in: productIds } }).lean()
+    ]);
+
+    // Map inventories -> response entries (one entry per inventory, so 6 per store ideally)
+    const results = inventories
+      .map(inv => {
+        const product = products.find(p => p.productId === inv.productId);
+        if (!product) return null; // skip if product metadata missing
+
+        const productImages = images
+          .filter(img => img.productId === inv.productId)
+          .map(img => img.url);
+
+        return {
+          productId: product.productId,
+          name: product.name,
+          modelNo: product.modelNo,
+          rating: inv?.rating ?? null,
+          price: inv?.price ?? null,
+          listPrice: inv?.listPrice ?? null,
+          currency: inv?.currency ?? 'USD',
+          storeId: inv?.storeId,
+          storeUrl: inv?.url,
+          images: productImages
+        };
+      })
+      .filter(Boolean);
+
+    res.status(200).json({ results });
+  } catch (err) {
+    console.error('❌ getExploreProducts error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

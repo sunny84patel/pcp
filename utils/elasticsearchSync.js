@@ -1,13 +1,14 @@
-import esClient from '../config/elasticsearch.js';
-import { Product, Inventory, Image } from '../models/Product.js';
 
-const PRODUCT_INDEX = 'products';
+import esClient from "../config/elasticsearch.js";
+import { Product, Inventory, Image } from "../models/Product.js";
 
-// Create index with optimized mappings including completion suggester
+export const PRODUCT_INDEX = "products";
+
+// Create index with optimized mappings (no completion suggester)
 export const createProductIndex = async () => {
   try {
     const exists = await esClient.indices.exists({ index: PRODUCT_INDEX });
-    
+
     if (exists) {
       console.log(`Index ${PRODUCT_INDEX} already exists`);
       return;
@@ -22,83 +23,81 @@ export const createProductIndex = async () => {
           analysis: {
             analyzer: {
               product_analyzer: {
-                type: 'custom',
-                tokenizer: 'standard',
-                filter: ['lowercase', 'asciifolding', 'edge_ngram_filter']
+                type: "custom",
+                tokenizer: "standard",
+                filter: ["lowercase", "asciifolding", "edge_ngram_filter"],
               },
               search_analyzer: {
-                type: 'custom',
-                tokenizer: 'standard',
-                filter: ['lowercase', 'asciifolding']
-              }
+                type: "custom",
+                tokenizer: "standard",
+                filter: ["lowercase", "asciifolding"],
+              },
             },
             filter: {
               edge_ngram_filter: {
-                type: 'edge_ngram',
+                type: "edge_ngram",
                 min_gram: 2,
-                max_gram: 20
-              }
-            }
-          }
+                max_gram: 20,
+              },
+            },
+          },
         },
         mappings: {
           properties: {
-            productId: { type: 'keyword' },
+            productId: { type: "keyword" },
+
             name: {
-              type: 'text',
-              analyzer: 'product_analyzer',
-              search_analyzer: 'search_analyzer',
+              type: "text",
+              analyzer: "product_analyzer",
+              search_analyzer: "search_analyzer",
               fields: {
-                keyword: { type: 'keyword' },
-                raw: { type: 'text', analyzer: 'standard' },
-                // Add completion suggester field
-                suggest: {
-                  type: 'completion',
-                  analyzer: 'simple',
-                  preserve_separators: true,
-                  preserve_position_increments: true,
-                  max_input_length: 50
-                }
-              }
+                keyword: { type: "keyword" },
+                raw: { type: "text", analyzer: "standard" },
+              },
             },
+
             modelNo: {
-              type: 'text',
-              analyzer: 'keyword',
-              fields: { keyword: { type: 'keyword' } }
+              type: "text",
+              analyzer: "keyword",
+              fields: { keyword: { type: "keyword" } },
             },
+
             brand: {
-              type: 'text',
-              fields: { keyword: { type: 'keyword' } }
+              type: "text",
+              fields: { keyword: { type: "keyword" } },
             },
+
             category: {
-              type: 'text',
-              fields: { keyword: { type: 'keyword' } }
+              type: "text",
+              fields: { keyword: { type: "keyword" } },
             },
+
             stores: {
-              type: 'nested',
+              type: "nested",
               properties: {
-                storeId: { type: 'keyword' },
-                price: { type: 'float' },
-                inventoryQuantity: { type: 'integer' },
-                rating: { type: 'float' },
-                totalReviews: { type: 'integer' },
-                images: { type: 'keyword' }
-              }
+                storeId: { type: "keyword" },
+                price: { type: "float" },
+                inventoryQuantity: { type: "integer" },
+                rating: { type: "float" },
+                totalReviews: { type: "integer" },
+                images: { type: "keyword" },
+              },
             },
-            minPrice: { type: 'float' },
-            maxPrice: { type: 'float' },
-            avgRating: { type: 'float' },
-            totalReviews: { type: 'integer' },
-            inStock: { type: 'boolean' },
-            lastUpdated: { type: 'date' }
-          }
-        }
-      }
+
+            minPrice: { type: "float" },
+            maxPrice: { type: "float" },
+            avgRating: { type: "float" },
+            totalReviews: { type: "integer" },
+            inStock: { type: "boolean" },
+            lastUpdated: { type: "date" },
+          },
+        },
+      },
     });
 
     console.log(`✅ Created index: ${PRODUCT_INDEX}`);
   } catch (error) {
-    console.error('❌ Error creating index:', error.message);
+    console.error("❌ Error creating index:", error.message);
     throw error;
   }
 };
@@ -112,47 +111,45 @@ export const indexProduct = async (productId) => {
     const inventory = await Inventory.find({ productId }).lean();
     const images = await Image.find({ productId }).lean();
 
-    const stores = inventory.map(inv => ({
+    const stores = inventory.map((inv) => ({
       storeId: inv.storeId,
       price: inv.price || 0,
       inventoryQuantity: inv.inventoryQuantity || 0,
       rating: inv.rating || 0,
       totalReviews: inv.totalReviews || 0,
-      images: images.filter(img => img.productId === productId).map(i => i.url)
+      images: images
+        .filter((img) => img.productId === productId)
+        .map((i) => i.url),
     }));
 
-    const prices = stores.map(s => s.price).filter(p => p > 0);
-    const ratings = stores.map(s => s.rating).filter(r => r > 0);
+    const prices = stores.map((s) => s.price).filter((p) => p > 0);
+    const ratings = stores.map((s) => s.rating).filter((r) => r > 0);
 
     const doc = {
       productId: product.productId,
-      name: product.name || '',
-      // Add completion suggester input
-      'name.suggest': {
-        input: [
-          product.name || '',
-          ...(product.brand ? [product.brand] : []),
-          ...(product.modelNo ? [product.modelNo] : [])
-        ].filter(Boolean),
-        weight: stores.some(s => s.inventoryQuantity > 0) ? 2 : 1 // Boost in-stock items
-      },
-      modelNo: product.modelNo || '',
-      brand: product.brand || '',
-      category: product.category || '',
+      name: product.name || "",
+      modelNo: product.modelNo || "",
+      brand: product.brand || "",
+      category: product.category || "",
       stores,
       minPrice: prices.length ? Math.min(...prices) : 0,
       maxPrice: prices.length ? Math.max(...prices) : 0,
-      avgRating: ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0,
-      totalReviews: stores.reduce((sum, s) => sum + (s.totalReviews || 0), 0),
-      inStock: stores.some(s => s.inventoryQuantity > 0),
-      lastUpdated: new Date()
+      avgRating: ratings.length
+        ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+        : 0,
+      totalReviews: stores.reduce(
+        (sum, s) => sum + (s.totalReviews || 0),
+        0
+      ),
+      inStock: stores.some((s) => s.inventoryQuantity > 0),
+      lastUpdated: new Date(),
     };
 
     await esClient.index({
       index: PRODUCT_INDEX,
       id: productId,
       body: doc,
-      refresh: true
+      refresh: true,
     });
 
     console.log(`✅ Indexed product: ${productId}`);
@@ -168,47 +165,49 @@ export const bulkSyncProducts = async () => {
     console.log(`📦 Starting bulk sync of ${products.length} products...`);
 
     const bulkOps = [];
-    
-    for (const product of products) {
-      const inventory = await Inventory.find({ productId: product.productId }).lean();
-      const images = await Image.find({ productId: product.productId }).lean();
 
-      const stores = inventory.map(inv => ({
+    for (const product of products) {
+      const inventory = await Inventory.find({
+        productId: product.productId,
+      }).lean();
+      const images = await Image.find({
+        productId: product.productId,
+      }).lean();
+
+      const stores = inventory.map((inv) => ({
         storeId: inv.storeId,
         price: inv.price || 0,
         inventoryQuantity: inv.inventoryQuantity || 0,
         rating: inv.rating || 0,
         totalReviews: inv.totalReviews || 0,
-        images: images.filter(img => img.productId === product.productId).map(i => i.url)
+        images: images
+          .filter((img) => img.productId === product.productId)
+          .map((i) => i.url),
       }));
 
-      const prices = stores.map(s => s.price).filter(p => p > 0);
-      const ratings = stores.map(s => s.rating).filter(r => r > 0);
+      const prices = stores.map((s) => s.price).filter((p) => p > 0);
+      const ratings = stores.map((s) => s.rating).filter((r) => r > 0);
 
       bulkOps.push(
         { index: { _index: PRODUCT_INDEX, _id: product.productId } },
         {
           productId: product.productId,
-          name: product.name || '',
-          // Add completion suggester input
-          'name.suggest': {
-            input: [
-              product.name || '',
-              ...(product.brand ? [product.brand] : []),
-              ...(product.modelNo ? [product.modelNo] : [])
-            ].filter(Boolean),
-            weight: stores.some(s => s.inventoryQuantity > 0) ? 2 : 1
-          },
-          modelNo: product.modelNo || '',
-          brand: product.brand || '',
-          category: product.category || '',
+          name: product.name || "",
+          modelNo: product.modelNo || "",
+          brand: product.brand || "",
+          category: product.category || "",
           stores,
           minPrice: prices.length ? Math.min(...prices) : 0,
           maxPrice: prices.length ? Math.max(...prices) : 0,
-          avgRating: ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0,
-          totalReviews: stores.reduce((sum, s) => sum + (s.totalReviews || 0), 0),
-          inStock: stores.some(s => s.inventoryQuantity > 0),
-          lastUpdated: new Date()
+          avgRating: ratings.length
+            ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+            : 0,
+          totalReviews: stores.reduce(
+            (sum, s) => sum + (s.totalReviews || 0),
+            0
+          ),
+          inStock: stores.some((s) => s.inventoryQuantity > 0),
+          lastUpdated: new Date(),
         }
       );
 
@@ -224,11 +223,16 @@ export const bulkSyncProducts = async () => {
       console.log(`✅ Synced remaining ${bulkOps.length / 2} products`);
     }
 
-    console.log('✅ Bulk sync completed');
+    console.log("✅ Bulk sync completed");
   } catch (error) {
-    console.error('❌ Error during bulk sync:', error.message);
+    console.error("❌ Error during bulk sync:", error.message);
     throw error;
   }
 };
 
-export { PRODUCT_INDEX };
+export default {
+  PRODUCT_INDEX,
+  createProductIndex,
+  indexProduct,
+  bulkSyncProducts,
+};

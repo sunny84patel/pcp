@@ -95,7 +95,6 @@ router.get('/recent', getProductsByIds);
 router.get('/price-drops', getPriceDroppedProducts);
 router.get('/explore', getExploreProducts);
 
-
 router.get("/suggestions", async (req, res) => {
   const query = req.query.q?.trim();
   if (!query) return res.json([]);
@@ -104,23 +103,8 @@ router.get("/suggestions", async (req, res) => {
     const response = await esClient.search({
       index: PRODUCT_INDEX,
       body: {
-        // Use completion suggester for fast prefix matching
-        suggest: {
-          product_suggest: {
-            prefix: query,
-            completion: {
-              field: 'name.suggest',
-              size: 15,
-              skip_duplicates: true,
-              fuzzy: {
-                fuzziness: query.length > 4 ? 1 : 0 // Allow typos for longer queries
-              }
-            }
-          }
-        },
-        // Fallback search query if suggester returns no results
-        size: 15,
-        _source: ['name', 'brand', 'modelNo', 'inStock'],
+        size: 25, // get a few more docs, we'll dedupe in code
+        _source: ["name", "brand", "modelNo", "inStock"],
         query: {
           bool: {
             should: [
@@ -128,101 +112,86 @@ router.get("/suggestions", async (req, res) => {
               {
                 match_phrase_prefix: {
                   name: {
-                    query: query,
+                    query,
                     boost: 10,
-                    slop: 2
-                  }
-                }
+                    slop: 2,
+                  },
+                },
               },
-              // Edge ngram match (catches partial words)
+              // Edge ngram match (partial words, thanks to product_analyzer)
               {
                 match: {
                   name: {
-                    query: query,
+                    query,
                     boost: 5,
-                    operator: 'and'
-                  }
-                }
+                    operator: "and",
+                  },
+                },
               },
-              // General match (broader coverage)
+              // General fuzzy match
               {
                 match: {
                   name: {
-                    query: query,
+                    query,
                     boost: 2,
-                    operator: 'or',
-                    fuzziness: query.length > 4 ? 'AUTO' : 0
-                  }
-                }
+                    operator: "or",
+                    fuzziness: query.length > 4 ? "AUTO" : 0,
+                  },
+                },
               },
-              // Brand match
+              // Brand prefix
               {
                 match_phrase_prefix: {
                   brand: {
-                    query: query,
-                    boost: 3
-                  }
-                }
+                    query,
+                    boost: 3,
+                  },
+                },
               },
-              // Model number match
+              // Exact model number match
               {
                 term: {
-                  'modelNo.keyword': {
+                  "modelNo.keyword": {
                     value: query,
-                    boost: 4
-                  }
-                }
-              }
+                    boost: 4,
+                  },
+                },
+              },
             ],
-            minimum_should_match: 1
-          }
+            minimum_should_match: 1,
+          },
         },
         sort: [
-          { _score: { order: 'desc' } },
-          { inStock: { order: 'desc' } },
-          { avgRating: { order: 'desc' } }
-        ]
-      }
+          { _score: { order: "desc" } },
+          { inStock: { order: "desc" } },
+          { avgRating: { order: "desc" } },
+        ],
+      },
     });
 
     const suggestions = [];
     const seen = new Set();
 
-    // First, try to get results from completion suggester
-    if (response.suggest?.product_suggest?.[0]?.options?.length > 0) {
-      for (const option of response.suggest.product_suggest[0].options) {
-        const name = option.text;
-        const normalizedName = name.toLowerCase().trim();
-        
-        if (!seen.has(normalizedName)) {
-          seen.add(normalizedName);
-          suggestions.push(name);
-        }
-        
-        if (suggestions.length >= 10) break;
-      }
-    }
-
-    // If suggester didn't return enough results, use search results
-    if (suggestions.length < 10 && response.hits?.hits?.length > 0) {
+    if (response.hits?.hits?.length > 0) {
       for (const hit of response.hits.hits) {
-        const name = hit._source.name;
+        const source = hit._source || {};
+        const name = source.name;
+        if (!name) continue;
+
         const normalizedName = name.toLowerCase().trim();
-        
-        if (!seen.has(normalizedName)) {
-          seen.add(normalizedName);
-          suggestions.push(name);
-        }
-        
+        if (seen.has(normalizedName)) continue;
+
+        seen.add(normalizedName);
+        suggestions.push(name);
+
         if (suggestions.length >= 10) break;
       }
     }
 
-    res.json(suggestions);
-    
+    return res.json(suggestions);
   } catch (error) {
     console.error("Error fetching suggestions:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

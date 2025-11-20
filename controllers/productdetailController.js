@@ -1,323 +1,340 @@
 import { Product, Inventory, Image } from '../models/Product.js';
-import fetch from 'node-fetch'; // Assuming node-fetch is installed for API calls
+import esClient from '../config/elasticsearch.js';
+import { PRODUCT_INDEX } from '../utils/elasticsearchSync.js';
 
-// Environment variables - Set API_KEY in .env
-const API_BASE_URL = 'https://data.unwrangle.com/api/getter/';
-const API_KEY = process.env.UNWRANGLE_API_KEY;
-console.log("🔑 Using API Key:", API_KEY ) ;
-// Map to track active requests to prevent duplicates
 const activeRequests = new Map();
 
 // =====================================================
-// HELPER: SINGLE API CALL ONLY
+// HELPER: Extract Core Search Terms
+// =====================================================
+const extractSearchTerms = (productName) => {
+  if (!productName) return "";
+  
+  // Remove measurements, dimensions, and SKU/item numbers
+  let cleaned = productName
+    .replace(/\b#\s*\d+\b/g, '') // Remove item numbers
+    .replace(/\b(sku|item|model)[:\-]?\s*\w+/gi, '') // Remove SKU/item refs
+    .replace(/\b\d+[-/]?\d*\s*(in|ft|mm|cm|inch|oz|lb|gal)\.?\b/gi, "") // Remove measurements
+    .replace(/\b\d+\s*x\s*\d+\b/gi, "") // Remove dimensions
+    .trim();
+  
+  // Split and remove common filler words
+  const fillerWords = ["the", "and", "or", "with", "for", "in", "of", "a", "an"];
+  const words = cleaned.split(/\s+/).filter(word => 
+    word.length > 2 && !fillerWords.includes(word.toLowerCase())
+  );
+  
+  return words.join(" ");
+};
+
+// =====================================================
+// ELASTICSEARCH SEARCH FOR OPPOSITE STORE MATCH
 // =====================================================
 
 /**
- * Makes ONE API call with timeout - no retries, no variations
- * @param {string} platform - 'homedepot_search' or 'lowes_search'
- * @param {string} searchTerm - Single search term to try
- * @param {string} requestId - Request ID for logging
- * @returns {Promise<array>} Array of product results or empty array
- */
-const makeSingleApiCall = async (platform, searchTerm, requestId) => {
-  if (!API_KEY) {
-    console.error(`❌ [${requestId}] API_KEY is not set in environment variables`);
-    return [];
-  }
-
-  const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(searchTerm)}&api_key=${API_KEY}`;
-
-  try {
-    console.log(`🔍 [${requestId}] Making SINGLE API call to ${platform} for: "${searchTerm}"`);
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; ProductComparison/1.0)',
-      }
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      console.log(`❌ [${requestId}] API returned ${response.status} - CALL FAILED`);
-      return [];
-    }
-
-    const data = await response.json();
-
-    if (!data.success || !data.results || data.results.length === 0) {
-      console.log(`❌ [${requestId}] No results found - CALL FAILED`);
-      return [];
-    }
-
-    console.log(`✅ [${requestId}] SUCCESS: Found ${data.results.length} products - CALL SUCCEEDED`);
-    return data.results;
-
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      console.log(`❌ [${requestId}] API call timeout - CALL FAILED`);
-    } else {
-      console.error(`❌ [${requestId}] API call error: ${error.message} - CALL FAILED`);
-    }
-    return [];
-  }
-};
-
-const getDeliveryDateString = (daysToAdd = 2) => {
-  const today = new Date();
-  today.setDate(today.getDate() + daysToAdd);
-
-  const options = { weekday: "long", day: "numeric", month: "long" };
-  return today.toLocaleDateString("en-US", options);
-};
-/**
- * Creates the BEST single search term from product info
- * @param {object} baseProduct - Product from database
- * @returns {string} Single optimized search term
- */
-const createBestSearchTerm = (baseProduct) => {
-  const { name, brand, modelNo } = baseProduct;
-
-
-  // Priority 1: Clean up product name and take first 4 meaningful words
-  if (name) {
-    const cleanName = name
-      .toLowerCase()
-      .trim()
-      .replace(/\b#\s*\d+\b/g, '') // Remove item numbers
-      .replace(/\bsku\s*[:\-]?\s*\w+/gi, '') // Remove SKU
-      .replace(/\bitem\s*[:\-]?\s*\w+/gi, '') // Remove item refs
-      .replace(/[\s\-:;,./#()]+/g, ' ') // Replace punctuation with space
-      .replace(/\s+/g, ' ') // Collapse spaces
-      .trim();
-
-    const words = cleanName
-      .split(' ')
-      .filter(word => word.length > 2)
-      .slice(0, 8) // Take only first 4 words
-      .join(' ');
-
-    if (words.length > 0) {
-      console.log(`🎯 Using cleaned product name: "${words}"`);
-      return words;
-    }
-  }
-
-  // Priority 2: Brand + Model (most specific)
-  if (brand && modelNo) {
-    console.log(`🎯 Using Brand + Model: "${brand} ${modelNo}"`);
-    return `${brand} ${modelNo}`;
-  }
-
-
-  // Priority 3: Just brand if available
-  if (brand) {
-    console.log(`🎯 Using brand only: "${brand}"`);
-    return brand;
-  }
-
-  console.log(`⚠️ No good search term found, using generic fallback`);
-  return 'product';
-};
-
-/**
- * Attempts to find ONE matching product with SINGLE API call
- * Only calls second store if first call fails
+ * Search for best matching product in opposite store using Elasticsearch
  * @param {object} baseProduct - Base product from database
  * @param {string} baseStoreId - 'homedepot' or 'lowes'
- * @param {string} requestId - Request ID for tracking
- * @returns {Promise<object|null>} Single match or null
+ * @param {string} requestId - Request ID for logging
+ * @returns {Promise<object|null>} Best match or null
  */
-const findSingleMatch = async (baseProduct, baseStoreId, requestId) => {
-  const otherPlatform = baseStoreId === 'homedepot' ? 'lowes_search' : 'homedepot_search';
-  const otherStoreId = baseStoreId === 'homedepot' ? 'lowes' : 'homedepot';
+const findMatchInElasticsearch = async (baseProduct, baseStoreId, requestId) => {
+  try {
+    // Normalize store IDs and determine opposite store
+    const normalizedBaseStore = baseStoreId.toLowerCase().replace(/['\s]/g, '');
+    const oppositeStore = normalizedBaseStore === 'homedepot' ? "lowe's" : 'homedepot';
+    console.log(`🔍 [${requestId}] Searching for match in ${oppositeStore} using Elasticsearch...`);
 
-  // Create the BEST search term (only one)
-  const searchTerm = createBestSearchTerm(baseProduct);
+    // Extract clean search terms
+    const searchTerms = extractSearchTerms(baseProduct.name);
+    if (!searchTerms || searchTerms.length < 2) {
+      console.log(`❌ [${requestId}] Search terms too short: "${searchTerms}"`);
+      return null;
+    }
 
-  console.log(`🚀 [${requestId}] Will make SINGLE API call to ${otherStoreId}`);
-  console.log(`🎯 [${requestId}] Search term: "${searchTerm}"`);
+    console.log(`🎯 [${requestId}] Search terms: "${searchTerms}"`);
 
-  // Make ONLY ONE API call
-  const results = await makeSingleApiCall(otherPlatform, searchTerm, requestId);
+    // Build Elasticsearch query
+    const shouldClauses = [
+      // Name matching with different boost levels
+      { match: { name: { query: searchTerms, boost: 3, fuzziness: "AUTO" } } },
+      { match_phrase: { name: { query: searchTerms, boost: 5 } } },
+      { match: { "name.raw": { query: searchTerms, boost: 4 } } },
+      
+      // Brand matching
+      { match: { brand: { query: baseProduct.brand || searchTerms, boost: 2 } } },
+      
+      // Model number matching (if available)
+      ...(baseProduct.modelNo ? [
+        { match: { modelNo: { query: baseProduct.modelNo, boost: 3 } } }
+      ] : []),
+      
+      // Category matching
+      { match: { category: { query: baseProduct.category || searchTerms, boost: 1.5 } } }
+    ];
 
-  if (!results || results.length === 0) {
-    console.log(`❌ [${requestId}] SINGLE API call failed - No match found in ${otherStoreId}`);
+    // Filter by opposite store
+    const filterClauses = [
+      {
+        nested: {
+          path: "stores",
+          query: {
+            term: { "stores.storeId": oppositeStore }
+          }
+        }
+      }
+    ];
+
+    console.log(`🔎 [${requestId}] Elasticsearch filter: stores.storeId = "${oppositeStore}"`);
+
+    // Optional category boost
+    const categoryBoost = [];
+    if (baseProduct.category && baseProduct.category.trim()) {
+      categoryBoost.push({ 
+        term: { "category.keyword": { value: baseProduct.category, boost: 2 } } 
+      });
+    }
+
+    const esQuery = {
+      index: PRODUCT_INDEX,
+      body: {
+        size: 5, // Get top 5 matches
+        query: {
+          bool: {
+            must: [
+              {
+                bool: { 
+                  should: shouldClauses, 
+                  minimum_should_match: 1 
+                }
+              }
+            ],
+            filter: filterClauses,
+            should: categoryBoost
+          }
+        },
+        sort: [
+          { _score: { order: "desc" } },
+          { avgRating: { order: "desc", missing: "_last" } },
+          { totalReviews: { order: "desc", missing: "_last" } }
+        ],
+        track_total_hits: true
+      }
+    };
+
+    const response = await esClient.search(esQuery);
+    
+    console.log(`📊 [${requestId}] Elasticsearch returned ${response.hits.hits.length} results (total: ${response.hits.total.value})`);
+    
+    if (!response.hits.hits.length) {
+      console.log(`❌ [${requestId}] No matches found in Elasticsearch`);
+      return null;
+    }
+
+    // Get the best match (highest score)
+    const bestHit = response.hits.hits[0];
+    const maxScore = response.hits.max_score || 1; // Prevent division by zero
+    const matchScore = maxScore > 0 ? Math.round((bestHit._score / maxScore) * 100) : 0;
+    
+    console.log(`✅ [${requestId}] Found ${response.hits.hits.length} potential matches`);
+    console.log(`🎯 [${requestId}] Best match score: ${matchScore}% (ES score: ${bestHit._score.toFixed(2)} / ${maxScore.toFixed(2)})`);
+    console.log(`   Product: ${bestHit._source.name.substring(0, 60)}...`);
+
+    // Only return if score is reasonable (>40%)
+    if (matchScore < 40) {
+      console.log(`⚠️ [${requestId}] Match score too low (${matchScore}%), skipping`);
+      return null;
+    }
+
+    return {
+      productId: bestHit._source.productId,
+      matchScore,
+      esScore: bestHit._score,
+      sourceData: bestHit._source
+    };
+
+  } catch (error) {
+    console.error(`❌ [${requestId}] Elasticsearch error:`, error.message);
     return null;
   }
-
-  // Take first result as match
-  const firstResult = results[0];
-  console.log(`✅ [${requestId}] SINGLE API call succeeded - Match found: ${firstResult.name || firstResult.title}`);
-
-  return {
-    product: {
-      productId: firstResult.id || firstResult.product_id || `${otherStoreId}_${Date.now()}`,
-      name: firstResult.name || firstResult.title || 'Product Name Not Available',
-      modelNo: firstResult.model_no || firstResult.model || baseProduct.modelNo || 'N/A',
-      brand: firstResult.brand || baseProduct.brand || 'N/A',
-    },
-    inventory: {
-      storeId: otherStoreId,
-      price: parseFloat(firstResult.price || firstResult.current_price || 0),
-      listPrice: parseFloat(
-        firstResult.list_price ||
-        firstResult.original_price ||
-        firstResult.price ||
-        firstResult.current_price ||
-        0
-      ),
-      rating: parseFloat(firstResult.rating || 0),
-      totalReviews: parseInt(firstResult.total_reviews || firstResult.review_count || 0),
-      inventoryQuantity: firstResult.inventory_quantity || (firstResult.in_stock ? 1 : 0),
-      url: firstResult.url || firstResult.product_url || '',
-    },
-    matchScore: 100,
-    matchType: 'single_api_call',
-  };
 };
 
 // =====================================================
-// MAIN CONTROLLER - SINGLE API CALL STRATEGY
+// FETCH FULL PRODUCT DETAILS FROM DATABASE
 // =====================================================
 
 /**
- * Controller to get product details with SINGLE API call approach
- * Makes only ONE API call to other store, stops immediately
+ * Fetch complete product and inventory details from MongoDB
+ * @param {string} productId - Product ID to fetch
+ * @param {string} storeId - Store ID to filter inventory
+ * @returns {Promise<object|null>} Complete product details or null
+ */
+const fetchProductFromDatabase = async (productId, storeId) => {
+  try {
+    const [product, inventory, images] = await Promise.all([
+      Product.findOne({ productId }).lean(),
+      Inventory.findOne({ productId, storeId }).lean(),
+      Image.find({ productId }).lean()
+    ]);
+
+    if (!product || !inventory) {
+      return null;
+    }
+
+    return {
+      product,
+      inventory,
+      images: images.map(img => img.url)
+    };
+  } catch (error) {
+    console.error(`❌ Error fetching product ${productId}:`, error.message);
+    return null;
+  }
+};
+
+// =====================================================
+// UTILITY FUNCTIONS
+// =====================================================
+
+const getDeliveryDateString = (daysToAdd = 2) => {
+  const date = new Date();
+  date.setDate(date.getDate() + daysToAdd);
+  return date.toLocaleDateString("en-US", { 
+    weekday: "long", 
+    day: "numeric", 
+    month: "long" 
+  });
+};
+
+const buildRetailerObject = (product, inventory, matchInfo = null) => {
+  const retailer = {
+    store: inventory.storeId.toLowerCase() === "homedepot" ? "Home Depot" : "Lowe's",
+    productTitle: product.name || "Product Name Not Available",
+    price: parseFloat(inventory.price || 0),
+    listPrice: parseFloat(inventory.listPrice || inventory.price || 0),
+    savings: Math.max(0, (inventory.listPrice || inventory.price || 0) - (inventory.price || 0)).toFixed(2),
+    isLowest: false, // Calculated later
+    offers: 3,
+    reviewScore: parseFloat(inventory.rating || 0),
+    reviewCount: parseInt(inventory.totalReviews || 0),
+    stockStatus: (inventory.inventoryQuantity || 0) > 0 ? "In stock for Pickup" : "Out of stock",
+    url: inventory.url || "",
+    storeLocation: "Niagara Falls #1287",
+    distance: "0.1 mi",
+    delivery: `Delivery in 2-3 Days, ${getDeliveryDateString(2)}`,
+    productId: product.productId,
+    isBaseProduct: matchInfo === null
+  };
+
+  // Add match metadata if this is a matched product
+  if (matchInfo) {
+    retailer.matchScore = matchInfo.matchScore;
+    retailer.esScore = matchInfo.esScore;
+    retailer.matchSource = "elasticsearch";
+  }
+
+  return retailer;
+};
+
+// =====================================================
+// MAIN CONTROLLER
+// =====================================================
+
+/**
+ * Get product details with cross-store matching using Elasticsearch
  * @param {object} req - Express request object
  * @param {object} res - Express response object
  */
 export const getProductDetails = async (req, res) => {
-  const requestId = `${req.params.id}-${Date.now()}`;
-  console.log(`🚀 [${requestId}] Starting getProductDetails for product: ${req.params.id}`);
+  const { id } = req.params;
+  const requestId = `${id}-${Date.now()}`;
+  console.log(`\n🚀 [${requestId}] Starting getProductDetails for product: ${id}`);
 
   try {
-    const { id } = req.params;
-
-    // Prevent duplicate concurrent requests for same product
+    // Prevent duplicate concurrent requests
     if (activeRequests.has(id)) {
-      console.log(`⚠️ [${requestId}] Request already in progress for product ${id} - returning early`);
+      console.log(`⚠️ [${requestId}] Request already in progress`);
       return res.status(409).json({ error: "Request already in progress for this product" });
     }
-
-    if (res.headersSent) {
-      console.log(`⚠️ [${requestId}] Response already sent - skipping`);
-      return;
-    }
-
-    // Mark this product as being processed
     activeRequests.set(id, requestId);
 
     // ==========================
-    // Fetch product + inventory from DB
+    // STEP 1: Fetch base product from database
     // ==========================
-    console.log(`📊 [${requestId}] Fetching product data from database...`);
-    const baseProduct = await Product.findOne({ productId: id });
-    const baseInventory = await Inventory.findOne({ productId: id });
+    console.log(`📊 [${requestId}] Fetching base product from database...`);
+    const [baseProduct, baseInventory] = await Promise.all([
+      Product.findOne({ productId: id }).lean(),
+      Inventory.findOne({ productId: id }).lean()
+    ]);
 
     if (!baseProduct || !baseInventory) {
       console.log(`❌ [${requestId}] Product not found in database`);
       return res.status(404).json({ error: "Product not found" });
     }
 
-    const baseStoreId = baseInventory.storeId;
-    console.log(`🏪 [${requestId}] Base store: ${baseStoreId}`);
+    const baseStoreId = baseInventory.storeId; // Keep original (might be "lowe's" with apostrophe)
+    const normalizedBaseStore = baseStoreId.toLowerCase().replace(/['\s]/g, ''); // Normalize for comparison
+    console.log(`🏪 [${requestId}] Base store: ${baseStoreId} (normalized: ${normalizedBaseStore})`);
+    console.log(`📦 [${requestId}] Base product: ${baseProduct.name}`);
+
+    // Fetch base product images
+    const baseImages = await Image.find({ productId: id }).lean();
 
     // ==========================
-    // Build base retailer (we always have this)
+    // STEP 2: Build base retailer
     // ==========================
-    const baseRetailer = {
-      store: baseStoreId === "homedepot" ? "Home Depot" : "Lowe's",
-      productTitle: baseProduct.name || "Product Name Not Available",
-      price: parseFloat(baseInventory.price || 0),
-      listPrice: parseFloat(baseInventory.listPrice || baseInventory.price || 0),
-      savings: ((baseInventory.listPrice || baseInventory.price || 0) - (baseInventory.price || 0)).toFixed(2),
-      isLowest: true, // Will be recalculated if we find a match
-      offers: 3,
-      reviewScore: parseFloat(baseInventory.rating || 0),
-      reviewCount: parseInt(baseInventory.totalReviews || 0),
-      stockStatus: (baseInventory.inventoryQuantity || 0) > 0 ? "In stock for Pickup" : "Out of stock",
-      url: baseInventory.url || "",
-      storeLocation: "Niagara Falls #1287",
-      distance: "0.1 mi",
-     delivery: `Delivery in 2-3 Days, ${getDeliveryDateString(2)}`,
-      matchScore: 100,
-      productId: baseProduct.productId,
-      isBaseProduct: true
-    };
-
-    const retailers = [baseRetailer];
-    console.log(`✅ [${requestId}] Added base retailer: ${baseRetailer.store}`);
+    const retailers = [buildRetailerObject(baseProduct, baseInventory)];
+    console.log(`✅ [${requestId}] Added base retailer: ${retailers[0].store}`);
 
     // ==========================
-    // Make SINGLE API call for match
+    // STEP 3: Search for match in opposite store using Elasticsearch
     // ==========================
-    console.log(`🔍 [${requestId}] Making SINGLE API call to find match...`);
+    const matchResult = await findMatchInElasticsearch(baseProduct, baseStoreId, requestId);
 
-    let matchResult = null;
+    if (matchResult) {
+      // Fetch full details from database
+      console.log(`📊 [${requestId}] Fetching matched product details from database...`);
+      const normalizedBaseStore = baseStoreId.toLowerCase().replace(/['\s]/g, '');
+      const oppositeStore = normalizedBaseStore === 'homedepot' ? "lowe's" : 'homedepot';
+      const matchDetails = await fetchProductFromDatabase(matchResult.productId, oppositeStore);
 
-    try {
-      // ONLY ONE API CALL - no timeout wrapper, no race conditions
-      matchResult = await findSingleMatch(baseProduct, baseStoreId, requestId);
-    } catch (error) {
-      console.error(`❌ [${requestId}] Error in single API call:`, error.message);
-      matchResult = null;
-    }
+      if (matchDetails) {
+        const matchRetailer = buildRetailerObject(
+          matchDetails.product,
+          matchDetails.inventory,
+          {
+            matchScore: matchResult.matchScore,
+            esScore: matchResult.esScore
+          }
+        );
 
-    // ==========================
-    // Add match to retailers if found
-    // ==========================
-    if (matchResult && matchResult.product && matchResult.inventory) {
-      const matchPrice = parseFloat(matchResult.inventory.price || 0);
-      const matchListPrice = parseFloat(matchResult.inventory.listPrice || matchPrice);
-
-      retailers.push({
-        store: matchResult.inventory.storeId === "homedepot" ? "Home Depot" : "Lowe's",
-        productTitle: matchResult.product.name || "Product Name Not Available",
-        price: matchPrice,
-        listPrice: matchListPrice,
-        savings: Math.max(0, matchListPrice - matchPrice).toFixed(2),
-        isLowest: false, // Will be recalculated below
-        offers: 3,
-        reviewScore: parseFloat(matchResult.inventory.rating || 0),
-        reviewCount: parseInt(matchResult.inventory.totalReviews || 0),
-        stockStatus: (matchResult.inventory.inventoryQuantity || 0) > 0 ? "In stock for Pickup" : "Out of stock",
-        url: matchResult.inventory.url || "",
-        storeLocation: "Niagara Falls #1287",
-        distance: "0.1 mi",
-        delivery: `Delivery in 2-3 Days, ${getDeliveryDateString(2)}`,
-        matchScore: matchResult.matchScore || 0,
-        productId: matchResult.product.productId,
-        isBaseProduct: false,
-        matchType: matchResult.matchType || "single_api_call"
-      });
-
-      console.log(`✅ [${requestId}] Added match retailer: ${retailers[1].store}`);
-      console.log(`🎯 [${requestId}] COMPLETE - 2 retailers found with SINGLE API call`);
+        retailers.push(matchRetailer);
+        console.log(`✅ [${requestId}] Added match retailer: ${matchRetailer.store}`);
+        console.log(`   Match score: ${matchResult.matchScore}%, Product: ${matchDetails.product.name}`);
+      } else {
+        console.log(`⚠️ [${requestId}] Could not fetch full details for matched product`);
+      }
     } else {
-      console.log(`ℹ️ [${requestId}] No match found - proceeding with 1 retailer only`);
+      console.log(`ℹ️ [${requestId}] No suitable match found - proceeding with 1 retailer only`);
     }
 
     // ==========================
-    // Finalize pricing and response
+    // STEP 4: Calculate lowest price and finalize
     // ==========================
     const prices = retailers.map(r => r.price).filter(p => p > 0);
     const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0;
-    retailers.forEach(r => { r.isLowest = r.price === lowestPrice && r.price > 0; });
+    retailers.forEach(r => { 
+      r.isLowest = r.price === lowestPrice && r.price > 0; 
+    });
 
-    // Fetch product images
-    const imageDocs = await Image.find({ productId: id });
-    const images = imageDocs.map(img => img.url);
-
+    // ==========================
+    // STEP 5: Build final response
+    // ==========================
     const response = {
       productId: baseProduct.productId,
       title: baseProduct.name || "Product Name Not Available",
       model: `#${baseProduct.modelNo || "N/A"}`,
-      images,
+      images: baseImages.map(img => img.url),
       rating: parseFloat(baseInventory.rating || 0),
       reviewCount: parseInt(baseInventory.totalReviews || 0),
       lowestPrice,
@@ -329,26 +346,25 @@ export const getProductDetails = async (req, res) => {
         ReturnPolicy: "30 Days Return"
       },
       matchFound: retailers.length > 1,
-      apiCallsMade: 1 // Always exactly 1 call
+      matchScore: matchResult?.matchScore || 0,
+      searchSource: "elasticsearch"
     };
 
     console.log(`✅ [${requestId}] Response ready with ${retailers.length} retailers`);
-    console.log(`🚀 [${requestId}] DONE - Made exactly 1 API call, no background processes`);
+    console.log(`🚀 [${requestId}] DONE - Elasticsearch search completed\n`);
 
     res.json(response);
 
   } catch (err) {
-    const errorMessage = err?.message || "Unknown error occurred";
-    console.error(`❌ [${requestId}] Controller Error:`, errorMessage);
-
+    console.error(`❌ [${requestId}] Controller Error:`, err.message);
     res.status(500).json({
       error: "Internal server error",
-      message: errorMessage,
+      message: err.message,
       productFound: false
     });
   } finally {
-    // Always clean up the active request tracking
-    activeRequests.delete(req.params.id);
+    // Clean up active request tracking
+    activeRequests.delete(id);
     console.log(`🧹 [${requestId}] Cleaned up active request tracking`);
   }
 };

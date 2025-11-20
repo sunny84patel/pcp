@@ -3,7 +3,7 @@ import { Product, Inventory, Image } from '../models/Product.js';
 
 const PRODUCT_INDEX = 'products';
 
-// Create index with optimized mappings
+// Create index with optimized mappings including completion suggester
 export const createProductIndex = async () => {
   try {
     const exists = await esClient.indices.exists({ index: PRODUCT_INDEX });
@@ -50,7 +50,15 @@ export const createProductIndex = async () => {
               search_analyzer: 'search_analyzer',
               fields: {
                 keyword: { type: 'keyword' },
-                raw: { type: 'text', analyzer: 'standard' }
+                raw: { type: 'text', analyzer: 'standard' },
+                // Add completion suggester field
+                suggest: {
+                  type: 'completion',
+                  analyzer: 'simple',
+                  preserve_separators: true,
+                  preserve_position_increments: true,
+                  max_input_length: 50
+                }
               }
             },
             modelNo: {
@@ -119,6 +127,15 @@ export const indexProduct = async (productId) => {
     const doc = {
       productId: product.productId,
       name: product.name || '',
+      // Add completion suggester input
+      'name.suggest': {
+        input: [
+          product.name || '',
+          ...(product.brand ? [product.brand] : []),
+          ...(product.modelNo ? [product.modelNo] : [])
+        ].filter(Boolean),
+        weight: stores.some(s => s.inventoryQuantity > 0) ? 2 : 1 // Boost in-stock items
+      },
       modelNo: product.modelNo || '',
       brand: product.brand || '',
       category: product.category || '',
@@ -173,6 +190,15 @@ export const bulkSyncProducts = async () => {
         {
           productId: product.productId,
           name: product.name || '',
+          // Add completion suggester input
+          'name.suggest': {
+            input: [
+              product.name || '',
+              ...(product.brand ? [product.brand] : []),
+              ...(product.modelNo ? [product.modelNo] : [])
+            ].filter(Boolean),
+            weight: stores.some(s => s.inventoryQuantity > 0) ? 2 : 1
+          },
           modelNo: product.modelNo || '',
           brand: product.brand || '',
           category: product.category || '',

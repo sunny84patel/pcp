@@ -43,7 +43,7 @@ const allowedOrigins = [
   'http://localhost:5173',          // Vite dev
   'http://localhost:3000',          // CRA dev (optional, just in case)
   'https://pcp-pied.vercel.app',     // Production frontend
-  'https://pcp-new-three.vercel.app/'
+  'https://pcp-new-three.vercel.app'
 ];
 
 app.use(

@@ -20,7 +20,9 @@ export const searchProducts = async (req, res) => {
       minPrice,
       maxPrice,
       brand,
-      category
+      category,
+      minRating, // NEW: Minimum rating filter
+      minReviews, // NEW: Minimum review count filter
     } = req.query;
 
     if (!query) {
@@ -49,7 +51,7 @@ export const searchProducts = async (req, res) => {
       const shouldClauses = [];
       const filterClauses = [];
 
-      // Text search with boosting
+      // Improved text search strategy
       if (isNumericQuery) {
         // Exact match for product ID or model number
         shouldClauses.push(
@@ -57,22 +59,123 @@ export const searchProducts = async (req, res) => {
           { term: { "modelNo.keyword": { value: query.trim(), boost: 8 } } }
         );
       } else {
-        // Multi-field search with different boost levels
-        shouldClauses.push(
-          { match: { name: { query, boost: 3, fuzziness: "AUTO" } } },
-          { match_phrase: { name: { query, boost: 5 } } },
-          { match: { "name.raw": { query, boost: 4 } } },
-          { match: { brand: { query, boost: 2 } } },
-          { match: { category: { query, boost: 1.5 } } },
-          { wildcard: { "modelNo.keyword": { value: `*${query.toLowerCase()}*`, boost: 3 } } }
-        );
+        // Normalize query for better matching
+        const normalizedQuery = query.trim().toLowerCase();
+        const queryTokens = normalizedQuery.split(/\s+/);
+        
+        // Strategy 1: Exact phrase match (highest priority)
+        shouldClauses.push({
+          match_phrase: { 
+            name: { 
+              query: query, 
+              boost: 100,
+              slop: 0 
+            } 
+          }
+        });
+
+        // Strategy 2: Exact keyword match (case-insensitive)
+        shouldClauses.push({
+          match: { 
+            "name.keyword": { 
+              query: query, 
+              boost: 80 
+            } 
+          }
+        });
+
+        // Strategy 3: All terms must match (using operator AND)
+        shouldClauses.push({
+          match: { 
+            name: { 
+              query: query, 
+              operator: "and",
+              boost: 50
+            } 
+          }
+        });
+
+        // Strategy 4: Multi-word queries - each word should match as complete word
+        if (queryTokens.length > 1) {
+          shouldClauses.push({
+            bool: {
+              must: queryTokens.map(token => ({
+                match: {
+                  name: {
+                    query: token,
+                    operator: "and",
+                    boost: 30
+                  }
+                }
+              })),
+              boost: 40
+            }
+          });
+        }
+
+        // Strategy 5: Single or multi-word with fuzzy (lower priority, controlled fuzziness)
+        shouldClauses.push({
+          match: { 
+            name: { 
+              query: query, 
+              fuzziness: "AUTO",
+              prefix_length: 2, // Prevent matching if first 2 chars differ
+              max_expansions: 10, // Limit fuzzy expansions
+              operator: "and",
+              boost: 20
+            } 
+          }
+        });
+
+        // Strategy 6: Brand exact match
+        shouldClauses.push({
+          match_phrase: { 
+            brand: { 
+              query: query, 
+              boost: 30 
+            } 
+          }
+        });
+
+        // Strategy 7: Category match (lower priority)
+        shouldClauses.push({
+          match: { 
+            category: { 
+              query: query, 
+              boost: 10 
+            } 
+          }
+        });
+
+        // Strategy 8: Model number wildcard (only if query is alphanumeric)
+        if (/^[a-zA-Z0-9\-]+$/.test(normalizedQuery)) {
+          shouldClauses.push({
+            wildcard: { 
+              "modelNo.keyword": { 
+                value: `*${normalizedQuery}*`, 
+                boost: 25,
+                case_insensitive: true
+              } 
+            }
+          });
+        }
       }
 
       mustClauses.push({
-        bool: { should: shouldClauses, minimum_should_match: 1 }
+        bool: { 
+          should: shouldClauses, 
+          minimum_should_match: 1 
+        }
       });
 
-      // Filter by stores (nested query)
+      // Add minimum score threshold to filter out irrelevant results
+      const minScore = isNumericQuery ? 5 : 15;
+
+      // ========================================
+      // APPLY ALL FILTERS CUMULATIVELY
+      // ========================================
+
+      // Filter 1: Store filter (nested query)
       if (storeIds && storeIds.length > 0) {
         filterClauses.push({
           nested: {
@@ -84,12 +187,12 @@ export const searchProducts = async (req, res) => {
         });
       }
 
-      // Filter by in-stock
+      // Filter 2: In-stock filter
       if (inStockOnly === "true" || inStockOnly === true) {
         filterClauses.push({ term: { inStock: true } });
       }
 
-      // Price range filter
+      // Filter 3: Price range filter
       if (minPrice || maxPrice) {
         const priceFilter = {};
         if (minPrice) priceFilter.gte = Number(minPrice);
@@ -97,34 +200,86 @@ export const searchProducts = async (req, res) => {
         filterClauses.push({ range: { minPrice: priceFilter } });
       }
 
-      // Brand filter
+      // Filter 4: Brand filter
       if (brand) {
-        filterClauses.push({ term: { "brand.keyword": brand } });
+        const brandList = brand.split(",").map(b => b.trim());
+        if (brandList.length === 1) {
+          filterClauses.push({ term: { "brand.keyword": brandList[0] } });
+        } else {
+          filterClauses.push({ terms: { "brand.keyword": brandList } });
+        }
       }
 
-      // Category filter
+      // Filter 5: Category filter
       if (category) {
-        filterClauses.push({ term: { "category.keyword": category } });
+        const categoryList = category.split(",").map(c => c.trim());
+        if (categoryList.length === 1) {
+          filterClauses.push({ term: { "category.keyword": categoryList[0] } });
+        } else {
+          filterClauses.push({ terms: { "category.keyword": categoryList } });
+        }
       }
 
-      // Build sort
+      // Filter 6: Minimum rating filter (NEW)
+      if (minRating) {
+        filterClauses.push({ 
+          range: { 
+            avgRating: { 
+              gte: Number(minRating) 
+            } 
+          } 
+        });
+      }
+
+      // Filter 7: Minimum review count filter (NEW)
+      if (minReviews) {
+        filterClauses.push({ 
+          range: { 
+            totalReviews: { 
+              gte: Number(minReviews) 
+            } 
+          } 
+        });
+      }
+
+      // ========================================
+      // BUILD SORT ORDER
+      // ========================================
       let sort = [];
       switch (sortBy) {
         case "price":
-          sort = [{ minPrice: { order: sortOrder } }];
+          sort = [
+            { minPrice: { order: sortOrder } },
+            { _score: { order: "desc" } } // Secondary: relevance
+          ];
           break;
         case "reviews":
-          sort = [{ avgRating: { order: sortOrder } }];
+        case "rating":
+          sort = [
+            { avgRating: { order: sortOrder } },
+            { totalReviews: { order: "desc" } }, // Secondary: review count
+            { _score: { order: "desc" } } // Tertiary: relevance
+          ];
           break;
         case "popularity":
-          sort = [{ totalReviews: { order: sortOrder } }];
+          sort = [
+            { totalReviews: { order: sortOrder } },
+            { avgRating: { order: "desc" } }, // Secondary: rating
+            { _score: { order: "desc" } } // Tertiary: relevance
+          ];
           break;
         case "name":
-          sort = [{ "name.keyword": { order: sortOrder } }];
+          sort = [
+            { "name.keyword": { order: sortOrder } },
+            { _score: { order: "desc" } } // Secondary: relevance
+          ];
           break;
         case "relevance":
         default:
-          sort = ["_score"];
+          sort = [
+            { _score: { order: "desc" } },
+            { minPrice: { order: "asc" } } // Secondary: lowest price
+          ];
           break;
       }
 
@@ -141,6 +296,7 @@ export const searchProducts = async (req, res) => {
               filter: filterClauses
             }
           },
+          min_score: minScore,
           sort,
           track_total_hits: true
         }
@@ -177,6 +333,23 @@ export const searchProducts = async (req, res) => {
           };
         });
 
+        // Build active filters object for frontend
+        const activeFilters = {
+          query,
+          stores: storeIds,
+          inStockOnly: inStockOnly === "true" || inStockOnly === true,
+          priceRange: {
+            min: minPrice ? Number(minPrice) : null,
+            max: maxPrice ? Number(maxPrice) : null
+          },
+          brand: brand ? brand.split(",").map(b => b.trim()) : null,
+          category: category ? category.split(",").map(c => c.trim()) : null,
+          minRating: minRating ? Number(minRating) : null,
+          minReviews: minReviews ? Number(minReviews) : null,
+          sortBy,
+          sortOrder
+        };
+
         return res.status(200).json({
           results,
           totalResults,
@@ -188,6 +361,7 @@ export const searchProducts = async (req, res) => {
             totalPages: Math.ceil(totalResults / Number(limit)),
             limit: Number(limit),
           },
+          activeFilters, // Return current filters to frontend
           searchMethod: "elasticsearch",
           searchedStores: storeIds || ["all stores"],
           executionTime: esResponse.took + "ms"
@@ -217,7 +391,8 @@ export const searchProducts = async (req, res) => {
       const { data } = await axios.get(url);
       const apiResults = data?.results || [];
 
-      const normalizedResults = apiResults.map((item, index) => ({
+      // Apply filters to API results as well
+      let filteredApiResults = apiResults.map((item, index) => ({
         productId: item.id || `api-${page}-${index}`,
         name: item.name || item.title || "Unknown Product",
         modelNo: item.modelNo || "",
@@ -234,17 +409,74 @@ export const searchProducts = async (req, res) => {
         }],
       }));
 
+      // Apply filters to API results
+      if (minPrice) {
+        filteredApiResults = filteredApiResults.filter(p => p.minPrice >= Number(minPrice));
+      }
+      if (maxPrice) {
+        filteredApiResults = filteredApiResults.filter(p => p.minPrice <= Number(maxPrice));
+      }
+      if (minRating) {
+        filteredApiResults = filteredApiResults.filter(p => p.rating >= Number(minRating));
+      }
+      if (minReviews) {
+        filteredApiResults = filteredApiResults.filter(p => p.totalReviews >= Number(minReviews));
+      }
+      if (brand) {
+        const brandList = brand.split(",").map(b => b.trim().toLowerCase());
+        filteredApiResults = filteredApiResults.filter(p => 
+          brandList.includes(p.brand.toLowerCase())
+        );
+      }
+      if (inStockOnly === "true" || inStockOnly === true) {
+        filteredApiResults = filteredApiResults.filter(p => 
+          p.stores.some(s => s.inventoryQuantity > 0)
+        );
+      }
+
+      // Apply sorting to API results
+      if (sortBy === "price") {
+        filteredApiResults.sort((a, b) => 
+          sortOrder === "asc" ? a.minPrice - b.minPrice : b.minPrice - a.minPrice
+        );
+      } else if (sortBy === "reviews" || sortBy === "rating") {
+        filteredApiResults.sort((a, b) => 
+          sortOrder === "asc" ? a.rating - b.rating : b.rating - a.rating
+        );
+      } else if (sortBy === "popularity") {
+        filteredApiResults.sort((a, b) => 
+          sortOrder === "asc" ? a.totalReviews - b.totalReviews : b.totalReviews - a.totalReviews
+        );
+      }
+
+      const activeFilters = {
+        query,
+        stores: storeIds,
+        inStockOnly: inStockOnly === "true" || inStockOnly === true,
+        priceRange: {
+          min: minPrice ? Number(minPrice) : null,
+          max: maxPrice ? Number(maxPrice) : null
+        },
+        brand: brand ? brand.split(",").map(b => b.trim()) : null,
+        category: category ? category.split(",").map(c => c.trim()) : null,
+        minRating: minRating ? Number(minRating) : null,
+        minReviews: minReviews ? Number(minReviews) : null,
+        sortBy,
+        sortOrder
+      };
+
       return res.status(200).json({
-        results: normalizedResults,
-        totalResults: data.totalResults || normalizedResults.length,
-        totalProducts: normalizedResults.length,
+        results: filteredApiResults,
+        totalResults: filteredApiResults.length,
+        totalProducts: filteredApiResults.length,
         pagination: {
           currentPage: Number(page),
-          hasNextPage: data.hasNextPage ?? normalizedResults.length === Number(limit),
-          totalResults: data.totalResults || normalizedResults.length,
-          totalPages: data.totalPages || Math.ceil((data.totalResults || normalizedResults.length) / Number(limit)),
+          hasNextPage: false,
+          totalResults: filteredApiResults.length,
+          totalPages: 1,
           limit: Number(limit),
         },
+        activeFilters,
         searchMethod: "third-party-api",
         searchedStores: storeIds || ["all stores"],
       });
@@ -260,6 +492,7 @@ export const searchProducts = async (req, res) => {
           totalPages: 0,
           limit: Number(limit),
         },
+        activeFilters: {},
         searchMethod: "fallback-error",
         searchedStores: storeIds || ["all stores"],
       });

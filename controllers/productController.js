@@ -15,15 +15,25 @@ export const searchProducts = async (req, res) => {
       page = 1,
       limit = 20,
       inStockOnly = false,
-      sortBy = "relevance",
-      sortOrder = "desc",
+      sortByRating,      // "asc" | "desc" | undefined
+      sortByPopularity,  // "asc" | "desc" | undefined
       minPrice,
       maxPrice,
       brand,
       category,
-      minRating, // NEW: Minimum rating filter
-      minReviews, // NEW: Minimum review count filter
+      minRating,
+      minReviews,
     } = req.query;
+
+    console.log("🔍 Backend received query params:", {
+      query,
+      stores,
+      page,
+      sortByRating,
+      sortByPopularity,
+      minPrice,
+      maxPrice
+    });
 
     if (!query) {
       return res.status(400).json({ error: "Query parameter is required" });
@@ -53,17 +63,14 @@ export const searchProducts = async (req, res) => {
 
       // Improved text search strategy
       if (isNumericQuery) {
-        // Exact match for product ID or model number
         shouldClauses.push(
           { term: { productId: { value: query.trim(), boost: 10 } } },
           { term: { "modelNo.keyword": { value: query.trim(), boost: 8 } } }
         );
       } else {
-        // Normalize query for better matching
         const normalizedQuery = query.trim().toLowerCase();
         const queryTokens = normalizedQuery.split(/\s+/);
         
-        // Strategy 1: Exact phrase match (highest priority)
         shouldClauses.push({
           match_phrase: { 
             name: { 
@@ -74,7 +81,6 @@ export const searchProducts = async (req, res) => {
           }
         });
 
-        // Strategy 2: Exact keyword match (case-insensitive)
         shouldClauses.push({
           match: { 
             "name.keyword": { 
@@ -84,7 +90,6 @@ export const searchProducts = async (req, res) => {
           }
         });
 
-        // Strategy 3: All terms must match (using operator AND)
         shouldClauses.push({
           match: { 
             name: { 
@@ -95,7 +100,6 @@ export const searchProducts = async (req, res) => {
           }
         });
 
-        // Strategy 4: Multi-word queries - each word should match as complete word
         if (queryTokens.length > 1) {
           shouldClauses.push({
             bool: {
@@ -113,21 +117,19 @@ export const searchProducts = async (req, res) => {
           });
         }
 
-        // Strategy 5: Single or multi-word with fuzzy (lower priority, controlled fuzziness)
         shouldClauses.push({
           match: { 
             name: { 
               query: query, 
               fuzziness: "AUTO",
-              prefix_length: 2, // Prevent matching if first 2 chars differ
-              max_expansions: 10, // Limit fuzzy expansions
+              prefix_length: 2,
+              max_expansions: 10,
               operator: "and",
               boost: 20
             } 
           }
         });
 
-        // Strategy 6: Brand exact match
         shouldClauses.push({
           match_phrase: { 
             brand: { 
@@ -137,7 +139,6 @@ export const searchProducts = async (req, res) => {
           }
         });
 
-        // Strategy 7: Category match (lower priority)
         shouldClauses.push({
           match: { 
             category: { 
@@ -147,7 +148,6 @@ export const searchProducts = async (req, res) => {
           }
         });
 
-        // Strategy 8: Model number wildcard (only if query is alphanumeric)
         if (/^[a-zA-Z0-9\-]+$/.test(normalizedQuery)) {
           shouldClauses.push({
             wildcard: { 
@@ -168,14 +168,12 @@ export const searchProducts = async (req, res) => {
         }
       });
 
-      // Add minimum score threshold to filter out irrelevant results
       const minScore = isNumericQuery ? 5 : 15;
 
       // ========================================
       // APPLY ALL FILTERS CUMULATIVELY
       // ========================================
 
-      // Filter 1: Store filter (nested query)
       if (storeIds && storeIds.length > 0) {
         filterClauses.push({
           nested: {
@@ -187,12 +185,10 @@ export const searchProducts = async (req, res) => {
         });
       }
 
-      // Filter 2: In-stock filter
       if (inStockOnly === "true" || inStockOnly === true) {
         filterClauses.push({ term: { inStock: true } });
       }
 
-      // Filter 3: Price range filter
       if (minPrice || maxPrice) {
         const priceFilter = {};
         if (minPrice) priceFilter.gte = Number(minPrice);
@@ -200,7 +196,6 @@ export const searchProducts = async (req, res) => {
         filterClauses.push({ range: { minPrice: priceFilter } });
       }
 
-      // Filter 4: Brand filter
       if (brand) {
         const brandList = brand.split(",").map(b => b.trim());
         if (brandList.length === 1) {
@@ -210,7 +205,6 @@ export const searchProducts = async (req, res) => {
         }
       }
 
-      // Filter 5: Category filter
       if (category) {
         const categoryList = category.split(",").map(c => c.trim());
         if (categoryList.length === 1) {
@@ -220,7 +214,6 @@ export const searchProducts = async (req, res) => {
         }
       }
 
-      // Filter 6: Minimum rating filter (NEW)
       if (minRating) {
         filterClauses.push({ 
           range: { 
@@ -231,7 +224,6 @@ export const searchProducts = async (req, res) => {
         });
       }
 
-      // Filter 7: Minimum review count filter (NEW)
       if (minReviews) {
         filterClauses.push({ 
           range: { 
@@ -243,45 +235,34 @@ export const searchProducts = async (req, res) => {
       }
 
       // ========================================
-      // BUILD SORT ORDER
+      // BUILD CUMULATIVE SORT ORDER (FIXED)
       // ========================================
       let sort = [];
-      switch (sortBy) {
-        case "price":
-          sort = [
-            { minPrice: { order: sortOrder } },
-            { _score: { order: "desc" } } // Secondary: relevance
-          ];
-          break;
-        case "reviews":
-        case "rating":
-          sort = [
-            { avgRating: { order: sortOrder } },
-            { totalReviews: { order: "desc" } }, // Secondary: review count
-            { _score: { order: "desc" } } // Tertiary: relevance
-          ];
-          break;
-        case "popularity":
-          sort = [
-            { totalReviews: { order: sortOrder } },
-            { avgRating: { order: "desc" } }, // Secondary: rating
-            { _score: { order: "desc" } } // Tertiary: relevance
-          ];
-          break;
-        case "name":
-          sort = [
-            { "name.keyword": { order: sortOrder } },
-            { _score: { order: "desc" } } // Secondary: relevance
-          ];
-          break;
-        case "relevance":
-        default:
-          sort = [
-            { _score: { order: "desc" } },
-            { minPrice: { order: "asc" } } // Secondary: lowest price
-          ];
-          break;
+
+      if (sortByRating || sortByPopularity) {
+        // 1️⃣ Rating first if set
+        if (sortByRating) {
+          sort.push({ avgRating: { order: sortByRating } });
+          console.log("✅ Adding rating sort:", sortByRating);
+        }
+
+        // 2️⃣ Popularity next if set
+        if (sortByPopularity) {
+          sort.push({ totalReviews: { order: sortByPopularity } });
+          console.log("✅ Adding popularity sort:", sortByPopularity);
+        }
+
+        // 3️⃣ Relevance still matters, but after explicit sorts
+        sort.push({ _score: { order: "desc" } });
+      } else {
+        // Default: relevance only
+        sort.push({ _score: { order: "desc" } });
       }
+
+      // 4️⃣ Price as final tie-breaker (always asc)
+      sort.push({ minPrice: { order: "asc" } });
+
+      console.log("📊 Final sort array:", JSON.stringify(sort, null, 2));
 
       // Execute Elasticsearch query
       const from = (Number(page) - 1) * Number(limit);
@@ -306,11 +287,9 @@ export const searchProducts = async (req, res) => {
       const totalResults = esResponse.hits.total.value;
 
       if (hits.length > 0) {
-        // Format results
         const results = hits.map(hit => {
           const source = hit._source;
           
-          // Filter stores if needed
           let filteredStores = source.stores || [];
           if (storeIds && storeIds.length > 0) {
             filteredStores = filteredStores.filter(s => storeIds.includes(s.storeId));
@@ -333,7 +312,6 @@ export const searchProducts = async (req, res) => {
           };
         });
 
-        // Build active filters object for frontend
         const activeFilters = {
           query,
           stores: storeIds,
@@ -346,8 +324,8 @@ export const searchProducts = async (req, res) => {
           category: category ? category.split(",").map(c => c.trim()) : null,
           minRating: minRating ? Number(minRating) : null,
           minReviews: minReviews ? Number(minReviews) : null,
-          sortBy,
-          sortOrder
+          sortByRating,
+          sortByPopularity
         };
 
         return res.status(200).json({
@@ -361,7 +339,7 @@ export const searchProducts = async (req, res) => {
             totalPages: Math.ceil(totalResults / Number(limit)),
             limit: Number(limit),
           },
-          activeFilters, // Return current filters to frontend
+          activeFilters,
           searchMethod: "elasticsearch",
           searchedStores: storeIds || ["all stores"],
           executionTime: esResponse.took + "ms"
@@ -391,7 +369,6 @@ export const searchProducts = async (req, res) => {
       const { data } = await axios.get(url);
       const apiResults = data?.results || [];
 
-      // Apply filters to API results as well
       let filteredApiResults = apiResults.map((item, index) => ({
         productId: item.id || `api-${page}-${index}`,
         name: item.name || item.title || "Unknown Product",
@@ -425,7 +402,7 @@ export const searchProducts = async (req, res) => {
       if (brand) {
         const brandList = brand.split(",").map(b => b.trim().toLowerCase());
         filteredApiResults = filteredApiResults.filter(p => 
-          brandList.includes(p.brand.toLowerCase())
+          p.brand && brandList.includes(p.brand.toLowerCase())
         );
       }
       if (inStockOnly === "true" || inStockOnly === true) {
@@ -434,20 +411,25 @@ export const searchProducts = async (req, res) => {
         );
       }
 
-      // Apply sorting to API results
-      if (sortBy === "price") {
-        filteredApiResults.sort((a, b) => 
-          sortOrder === "asc" ? a.minPrice - b.minPrice : b.minPrice - a.minPrice
-        );
-      } else if (sortBy === "reviews" || sortBy === "rating") {
-        filteredApiResults.sort((a, b) => 
-          sortOrder === "asc" ? a.rating - b.rating : b.rating - a.rating
-        );
-      } else if (sortBy === "popularity") {
-        filteredApiResults.sort((a, b) => 
-          sortOrder === "asc" ? a.totalReviews - b.totalReviews : b.totalReviews - a.totalReviews
-        );
-      }
+      // ✅ Cumulative sorting for API results (same logic as ES)
+      filteredApiResults.sort((a, b) => {
+        if (sortByRating) {
+          const ratingDiff = sortByRating === "asc"
+            ? a.rating - b.rating
+            : b.rating - a.rating;
+          if (ratingDiff !== 0) return ratingDiff;
+        }
+
+        if (sortByPopularity) {
+          const popularityDiff = sortByPopularity === "asc"
+            ? a.totalReviews - b.totalReviews
+            : b.totalReviews - a.totalReviews;
+          if (popularityDiff !== 0) return popularityDiff;
+        }
+
+        // price ascending as final tiebreaker
+        return a.minPrice - b.minPrice;
+      });
 
       const activeFilters = {
         query,
@@ -461,8 +443,8 @@ export const searchProducts = async (req, res) => {
         category: category ? category.split(",").map(c => c.trim()) : null,
         minRating: minRating ? Number(minRating) : null,
         minReviews: minReviews ? Number(minReviews) : null,
-        sortBy,
-        sortOrder
+        sortByRating,
+        sortByPopularity
       };
 
       return res.status(200).json({
@@ -485,6 +467,7 @@ export const searchProducts = async (req, res) => {
       return res.status(200).json({
         results: [],
         totalResults: 0,
+        totalProducts: 0,
         pagination: {
           currentPage: Number(page),
           hasNextPage: false,

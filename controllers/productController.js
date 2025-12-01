@@ -1,11 +1,206 @@
+// controllers/searchProducts.js
 import axios from "axios";
 import esClient from "../config/elasticsearch.js";
 import { PRODUCT_INDEX } from "../utils/elasticsearchSync.js";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
+import { Product, Store, Inventory, Image } from "../models/Product.js";
+
 dotenv.config();
 
 const API_BASE_URL = "https://data.unwrangle.com/api/getter/";
 const API_KEY = process.env.UNWRANGLE_API_KEY;
+
+/* -------------------------
+   Helpers: store normalization
+   ------------------------- */
+
+// Normalize incoming request store tokens to canonical DB storeId
+// Always return "lowe's" (with apostrophe) for Lowe's, "homedepot" for Home Depot.
+const normalizeStoreId = (s) => {
+  if (!s) return s;
+  const low = s.trim().toLowerCase();
+  if (low.includes("lowe")) return "lowe's";
+  if (low.includes("home")) return "homedepot";
+  return low.replace(/\s+/g, "");
+};
+
+// Convert normalized storeId into third-party platform param
+// e.g. "homedepot" -> "homedepot_search", "lowe's" -> "lowes_search"
+const storeIdToPlatform = (storeId) => {
+  if (!storeId) return "homedepot_search";
+  if (storeId === "homedepot") return "homedepot_search";
+  if (storeId === "lowe's") return "lowes_search";
+  return `${storeId}_search`;
+};
+
+/* -------------------------
+   Normalizers for API items
+   ------------------------- */
+
+const normalizeHomeDepot = (item) => {
+  const productId = item.id?.toString() ?? `api-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  return {
+    product: {
+      productId,
+      name: item.name || item.title || "Unknown Product",
+      modelNo: item.model_no || item.modelNo || null,
+      brand: item.brand || null,
+      category: item.category || null,
+      updatedAt: new Date()
+    },
+    inventory: {
+      productId,
+      storeId: "homedepot",
+      price: Number(item.price ?? item.list_price ?? 0),
+      listPrice: Number(item.list_price ?? item.price ?? 0),
+      priceReduced: item.price_reduced ?? null,
+      currency: item.currency ?? "USD",
+      inventoryQuantity: Number(item.inventory_quantity ?? (item.inStock ? 1 : 0) ?? 0),
+      rating: Number(item.rating ?? 0),
+      totalReviews: Number(item.total_reviews ?? item.totalReviews ?? 0),
+      url: item.url ?? "",
+      itemNumber: item.item_number ?? null,
+      vendorNumber: item.vendor_number ?? null,
+      upc: item.upc ?? null,
+      saleEndDate: item.sale_end_date ? new Date(item.sale_end_date) : null,
+      updatedAt: new Date()
+    },
+    images: (item.thumbnails || item.images || []).map((u) => ({ url: (u || "").trim(), productId }))
+  };
+};
+
+const normalizeLowes = (item) => {
+  const productId = item.id?.toString() ?? `api-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  return {
+    product: {
+      productId,
+      name: item.name || item.title || "Unknown Product",
+      modelNo: item.model_no || item.modelNo || null,
+      brand: item.brand || null,
+      category: item.category || null,
+      updatedAt: new Date()
+    },
+    inventory: {
+      productId,
+      storeId: "lowe's", // <-- canonical storeId with apostrophe
+      price: Number(item.price ?? item.list_price ?? 0),
+      listPrice: Number(item.list_price ?? item.price ?? 0),
+      priceReduced: item.price_reduced ?? null,
+      currency: item.currency ?? "USD",
+      inventoryQuantity: Number(item.inventory?.total_quantity ?? item.inventory_quantity ?? (item.inStock ? 1 : 0) ?? 0),
+      rating: Number(item.rating ?? 0),
+      totalReviews: Number(item.total_ratings ?? item.totalReviews ?? 0),
+      url: item.url ?? "",
+      itemNumber: item.item_number ?? null,
+      vendorNumber: item.vendor_number ?? null,
+      upc: item.upc ?? null,
+      saleEndDate: item.sale_end_date ? new Date(item.sale_end_date) : null,
+      updatedAt: new Date()
+    },
+    images: (item.images || item.thumbnails || []).map((u) => ({ url: (u || "").trim(), productId }))
+  };
+};
+
+/* -------------------------
+   Saver: fire-and-forget DB upsert
+   ------------------------- */
+
+const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_search") => {
+  try {
+    // If no MONGO_URI, skip saving
+    const mongoUri = process.env.MONGO_URI;
+    if (!mongoUri) {
+      console.warn("saveApiResultsToDb: MONGO_URI not set — skipping DB save");
+      return;
+    }
+
+    // Only connect if not connected. If app has a global connection, it will be used.
+    if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+      await mongoose.connect(mongoUri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log("saveApiResultsToDb: Connected to MongoDB");
+    }
+
+    // Decide canonical storeId from platformStr
+    let storeId = "homedepot";
+    const p = String(platformStr || "").toLowerCase();
+    if (p.includes("lowe")) storeId = "lowe's";
+    if (p.includes("home")) storeId = "homedepot";
+
+    const storeName = storeId === "lowe's" ? "Lowe's" : "Home Depot";
+
+    // ensure store doc exists
+    await Store.updateOne(
+      { _id: storeId },
+      { $setOnInsert: { name: storeName, createdAt: new Date() } },
+      { upsert: true }
+    );
+
+    const productOps = [];
+    const inventoryOps = [];
+    const imageOps = [];
+
+    for (const item of apiResults) {
+      // Prefer using the raw item for more complete normalization
+      const raw = item || {};
+      const normalized = storeId === "lowe's" ? normalizeLowes(raw) : normalizeHomeDepot(raw);
+      const { product, inventory, images } = normalized;
+
+      // Product upsert
+      productOps.push({
+        updateOne: {
+          filter: { productId: product.productId },
+          update: { $set: product, $setOnInsert: { createdAt: new Date() } },
+          upsert: true
+        }
+      });
+
+      // Inventory upsert (unique per productId + storeId)
+      inventoryOps.push({
+        updateOne: {
+          filter: { productId: inventory.productId, storeId: inventory.storeId },
+          update: { $set: inventory, $setOnInsert: { createdAt: new Date() } },
+          upsert: true
+        }
+      });
+
+      // Images upserts
+      for (const img of images) {
+        if (!img.url) continue;
+        imageOps.push({
+          updateOne: {
+            filter: { url: img.url, productId: img.productId },
+            update: { $set: img, $setOnInsert: { createdAt: new Date() } },
+            upsert: true
+          }
+        });
+      }
+    }
+
+    if (productOps.length) {
+      await Product.bulkWrite(productOps, { ordered: false });
+    }
+    if (inventoryOps.length) {
+      await Inventory.bulkWrite(inventoryOps, { ordered: false });
+    }
+    if (imageOps.length) {
+      await Image.bulkWrite(imageOps, { ordered: false });
+    }
+
+    console.log(`saveApiResultsToDb: upserted ${productOps.length} products, ${inventoryOps.length} inventories, ${imageOps.length} images for store ${storeId}`);
+  } catch (err) {
+    console.error("saveApiResultsToDb error:", err && err.message ? err.message : err);
+  } finally {
+    // don't disconnect mongoose here (app-level connection preferred)
+  }
+};
+
+/* -------------------------
+   Main controller
+   ------------------------- */
 
 export const searchProducts = async (req, res) => {
   try {
@@ -39,16 +234,9 @@ export const searchProducts = async (req, res) => {
       return res.status(400).json({ error: "Query parameter is required" });
     }
 
-    // Store mapping
-    const storeMap = {
-      lowes: "lowe's",
-      "lowe's": "lowe's",
-      homedepot: "homedepot",
-      "home depot": "homedepot",
-    };
-
+    // Normalize incoming store filters
     const storeIds = stores
-      ? stores.split(",").map(s => storeMap[s.trim().toLowerCase()] || s.trim().toLowerCase())
+      ? stores.split(",").map(s => normalizeStoreId(s))
       : null;
 
     const isNumericQuery = /^\d+$/.test(query.trim());
@@ -61,7 +249,6 @@ export const searchProducts = async (req, res) => {
       const shouldClauses = [];
       const filterClauses = [];
 
-      // Improved text search strategy
       if (isNumericQuery) {
         shouldClauses.push(
           { term: { productId: { value: query.trim(), boost: 10 } } },
@@ -70,33 +257,33 @@ export const searchProducts = async (req, res) => {
       } else {
         const normalizedQuery = query.trim().toLowerCase();
         const queryTokens = normalizedQuery.split(/\s+/);
-        
+
         shouldClauses.push({
-          match_phrase: { 
-            name: { 
-              query: query, 
+          match_phrase: {
+            name: {
+              query: query,
               boost: 100,
-              slop: 0 
-            } 
+              slop: 0
+            }
           }
         });
 
         shouldClauses.push({
-          match: { 
-            "name.keyword": { 
-              query: query, 
-              boost: 80 
-            } 
+          match: {
+            "name.keyword": {
+              query: query,
+              boost: 80
+            }
           }
         });
 
         shouldClauses.push({
-          match: { 
-            name: { 
-              query: query, 
+          match: {
+            name: {
+              query: query,
               operator: "and",
               boost: 50
-            } 
+            }
           }
         });
 
@@ -118,62 +305,59 @@ export const searchProducts = async (req, res) => {
         }
 
         shouldClauses.push({
-          match: { 
-            name: { 
-              query: query, 
+          match: {
+            name: {
+              query: query,
               fuzziness: "AUTO",
               prefix_length: 2,
               max_expansions: 10,
               operator: "and",
               boost: 20
-            } 
+            }
           }
         });
 
         shouldClauses.push({
-          match_phrase: { 
-            brand: { 
-              query: query, 
-              boost: 30 
-            } 
+          match_phrase: {
+            brand: {
+              query: query,
+              boost: 30
+            }
           }
         });
 
         shouldClauses.push({
-          match: { 
-            category: { 
-              query: query, 
-              boost: 10 
-            } 
+          match: {
+            category: {
+              query: query,
+              boost: 10
+            }
           }
         });
 
         if (/^[a-zA-Z0-9\-]+$/.test(normalizedQuery)) {
           shouldClauses.push({
-            wildcard: { 
-              "modelNo.keyword": { 
-                value: `*${normalizedQuery}*`, 
+            wildcard: {
+              "modelNo.keyword": {
+                value: `*${normalizedQuery}*`,
                 boost: 25,
                 case_insensitive: true
-              } 
+              }
             }
           });
         }
       }
 
       mustClauses.push({
-        bool: { 
-          should: shouldClauses, 
-          minimum_should_match: 1 
+        bool: {
+          should: shouldClauses,
+          minimum_should_match: 1
         }
       });
 
       const minScore = isNumericQuery ? 5 : 15;
 
-      // ========================================
-      // APPLY ALL FILTERS CUMULATIVELY
-      // ========================================
-
+      // Filters
       if (storeIds && storeIds.length > 0) {
         filterClauses.push({
           nested: {
@@ -215,51 +399,40 @@ export const searchProducts = async (req, res) => {
       }
 
       if (minRating) {
-        filterClauses.push({ 
-          range: { 
-            avgRating: { 
-              gte: Number(minRating) 
-            } 
-          } 
+        filterClauses.push({
+          range: {
+            avgRating: {
+              gte: Number(minRating)
+            }
+          }
         });
       }
 
       if (minReviews) {
-        filterClauses.push({ 
-          range: { 
-            totalReviews: { 
-              gte: Number(minReviews) 
-            } 
-          } 
+        filterClauses.push({
+          range: {
+            totalReviews: {
+              gte: Number(minReviews)
+            }
+          }
         });
       }
 
-      // ========================================
-      // BUILD CUMULATIVE SORT ORDER (FIXED)
-      // ========================================
+      // Sorting
       let sort = [];
-
       if (sortByRating || sortByPopularity) {
-        // 1️⃣ Rating first if set
         if (sortByRating) {
           sort.push({ avgRating: { order: sortByRating } });
           console.log("✅ Adding rating sort:", sortByRating);
         }
-
-        // 2️⃣ Popularity next if set
         if (sortByPopularity) {
           sort.push({ totalReviews: { order: sortByPopularity } });
           console.log("✅ Adding popularity sort:", sortByPopularity);
         }
-
-        // 3️⃣ Relevance still matters, but after explicit sorts
         sort.push({ _score: { order: "desc" } });
       } else {
-        // Default: relevance only
         sort.push({ _score: { order: "desc" } });
       }
-
-      // 4️⃣ Price as final tie-breaker (always asc)
       sort.push({ minPrice: { order: "asc" } });
 
       console.log("📊 Final sort array:", JSON.stringify(sort, null, 2));
@@ -289,7 +462,7 @@ export const searchProducts = async (req, res) => {
       if (hits.length > 0) {
         const results = hits.map(hit => {
           const source = hit._source;
-          
+
           let filteredStores = source.stores || [];
           if (storeIds && storeIds.length > 0) {
             filteredStores = filteredStores.filter(s => storeIds.includes(s.storeId));
@@ -346,24 +519,18 @@ export const searchProducts = async (req, res) => {
         });
       }
     } catch (esError) {
-      console.error("⚠️ Elasticsearch search failed, falling back:", esError.message);
+      console.error("⚠️ Elasticsearch search failed, falling back:", esError && esError.message ? esError.message : esError);
     }
 
     // ========================================
     // FALLBACK TO THIRD-PARTY API
     // ========================================
-    const platformMap = {
-      homedepot: "homedepot_search",
-      "lowe's": "lowes_search",
-    };
-    const platform = storeIds?.length > 0
-      ? storeIds.map(s => platformMap[s] || s).join(",")
-      : "homedepot_search";
-
     try {
-      const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(
-        query
-      )}&page=${page}&api_key=${API_KEY}`;
+      const platform = storeIds && storeIds.length > 0
+        ? storeIds.map(s => storeIdToPlatform(s)).join(",")
+        : "homedepot_search";
+
+      const url = `${API_BASE_URL}?platform=${platform}&search=${encodeURIComponent(query)}&page=${page}&api_key=${API_KEY}`;
 
       console.log("🌐 Fallback: Fetching from third-party API:", url);
       const { data } = await axios.get(url);
@@ -379,55 +546,37 @@ export const searchProducts = async (req, res) => {
         rating: item.rating || 0,
         totalReviews: item.totalReviews || 0,
         stores: [{
-          storeId: item.store || platform,
+          storeId: normalizeStoreId(item.store || platform.split(",")[0] || "homedepot"),
           price: Number(item.price) || 0,
           inventoryQuantity: item.inStock ? 1 : 0,
-          images: item.thumbnails || [],
+          images: item.thumbnails || item.images || [],
         }],
+        rawItem: item // keep raw if needed for saver normalization
       }));
 
       // Apply filters to API results
-      if (minPrice) {
-        filteredApiResults = filteredApiResults.filter(p => p.minPrice >= Number(minPrice));
-      }
-      if (maxPrice) {
-        filteredApiResults = filteredApiResults.filter(p => p.minPrice <= Number(maxPrice));
-      }
-      if (minRating) {
-        filteredApiResults = filteredApiResults.filter(p => p.rating >= Number(minRating));
-      }
-      if (minReviews) {
-        filteredApiResults = filteredApiResults.filter(p => p.totalReviews >= Number(minReviews));
-      }
+      if (minPrice) filteredApiResults = filteredApiResults.filter(p => p.minPrice >= Number(minPrice));
+      if (maxPrice) filteredApiResults = filteredApiResults.filter(p => p.minPrice <= Number(maxPrice));
+      if (minRating) filteredApiResults = filteredApiResults.filter(p => p.rating >= Number(minRating));
+      if (minReviews) filteredApiResults = filteredApiResults.filter(p => p.totalReviews >= Number(minReviews));
       if (brand) {
         const brandList = brand.split(",").map(b => b.trim().toLowerCase());
-        filteredApiResults = filteredApiResults.filter(p => 
-          p.brand && brandList.includes(p.brand.toLowerCase())
-        );
+        filteredApiResults = filteredApiResults.filter(p => p.brand && brandList.includes(p.brand.toLowerCase()));
       }
       if (inStockOnly === "true" || inStockOnly === true) {
-        filteredApiResults = filteredApiResults.filter(p => 
-          p.stores.some(s => s.inventoryQuantity > 0)
-        );
+        filteredApiResults = filteredApiResults.filter(p => p.stores.some(s => s.inventoryQuantity > 0));
       }
 
-      // ✅ Cumulative sorting for API results (same logic as ES)
+      // Cumulative sorting for API results (same logic as ES)
       filteredApiResults.sort((a, b) => {
         if (sortByRating) {
-          const ratingDiff = sortByRating === "asc"
-            ? a.rating - b.rating
-            : b.rating - a.rating;
+          const ratingDiff = sortByRating === "asc" ? a.rating - b.rating : b.rating - a.rating;
           if (ratingDiff !== 0) return ratingDiff;
         }
-
         if (sortByPopularity) {
-          const popularityDiff = sortByPopularity === "asc"
-            ? a.totalReviews - b.totalReviews
-            : b.totalReviews - a.totalReviews;
+          const popularityDiff = sortByPopularity === "asc" ? a.totalReviews - b.totalReviews : b.totalReviews - a.totalReviews;
           if (popularityDiff !== 0) return popularityDiff;
         }
-
-        // price ascending as final tiebreaker
         return a.minPrice - b.minPrice;
       });
 
@@ -447,6 +596,15 @@ export const searchProducts = async (req, res) => {
         sortByPopularity
       };
 
+      // Fire-and-forget: save original raw API results to DB (normalized inside saver)
+      try {
+        const platformForSaver = platform.split(",")[0] || "homedepot_search";
+        // Note: we pass the raw API array so saver extracts fields correctly per store
+        saveApiResultsToDb(apiResults, platformForSaver).catch(e => console.error("Saver call failed:", e && e.message ? e.message : e));
+      } catch (triggerErr) {
+        console.error("Failed to trigger saver:", triggerErr && triggerErr.message ? triggerErr.message : triggerErr);
+      }
+
       return res.status(200).json({
         results: filteredApiResults,
         totalResults: filteredApiResults.length,
@@ -463,7 +621,7 @@ export const searchProducts = async (req, res) => {
         searchedStores: storeIds || ["all stores"],
       });
     } catch (apiError) {
-      console.error("❌ Error fetching from third-party API:", apiError.message);
+      console.error("❌ Error fetching from third-party API:", apiError && apiError.message ? apiError.message : apiError);
       return res.status(200).json({
         results: [],
         totalResults: 0,
@@ -481,7 +639,7 @@ export const searchProducts = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("❌ Error in search API:", error);
+    console.error("❌ Error in search API:", error && error.message ? error.message : error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -4,71 +4,70 @@ export const getPriceDroppedProducts = async (req, res) => {
   try {
     const { limit = 12 } = req.query;
 
-    // Step 1: Randomly fetch products with price drop from ANY store
+    // 👉 Step 1: Only inventories where there is a real discount:
+    // listPrice (discounted) < price (actual)
     const inventories = await Inventory.aggregate([
       {
         $match: {
-          price_reduced: { $ne: null },
           price: { $ne: null },
-          $expr: { $lt: ["$price", "$price_reduced"] }
+          listPrice: { $ne: null },
+          $expr: { $lt: ["$listPrice", "$price"] }  // listPrice < price
         }
       },
       { $sample: { size: Number(limit) } }
     ]);
 
-    let products = [];
-    let images = [];
-
-    if (inventories.length > 0) {
-      const productIds = inventories.map(inv => inv.productId);
-
-      products = await Product.find({ productId: { $in: productIds } }).lean();
-      images = await Image.find({ productId: { $in: productIds } }).lean();
-    }
-
-    // Step 2: If no price dropped products, fallback to random products from any store
+    // If you truly want *only* discounted products, no fallback:
     if (inventories.length === 0) {
-      const fallbackInventories = await Inventory.aggregate([
-        { $match: { price: { $ne: null } } },
-        { $sample: { size: Number(limit) } }
-      ]);
-
-      const fallbackIds = fallbackInventories.map(inv => inv.productId);
-
-      products = await Product.find({ productId: { $in: fallbackIds } }).lean();
-      images = await Image.find({ productId: { $in: fallbackIds } }).lean();
-
-      inventories.push(...fallbackInventories);
+      return res.json([]);
     }
 
-    // Step 3: Merge data
+    const productIds = inventories.map(inv => inv.productId);
+
+    const [products, images] = await Promise.all([
+      Product.find({ productId: { $in: productIds } }).lean(),
+      Image.find({ productId: { $in: productIds } }).lean()
+    ]);
+
+    // Step 2: Merge data
     const results = inventories.map(inv => {
       const product = products.find(p => p.productId === inv.productId);
       const productImages = images
         .filter(img => img.productId === inv.productId)
         .map(img => img.url);
 
+      // ✅ Your semantics:
+      // price = original/current actual price (higher)
+      // listPrice = discounted price (lower)
+      const hasDiscount =
+        inv?.price != null &&
+        inv?.listPrice != null &&
+        inv.listPrice < inv.price;
+
+      const savings = hasDiscount
+        ? Number((inv.price - inv.listPrice).toFixed(2))
+        : 0;
+
+      // e.g. "you save 20% off original price"
+      const percentageSaved = hasDiscount
+        ? Number(((inv.price - inv.listPrice) / inv.price * 100).toFixed(1))
+        : 0;
+
       return {
         productId: product?.productId,
         name: product?.name,
         modelNo: product?.modelNo,
-        rating: inv?.rating || null,
-        price: inv?.price || null,
-        priceReduced: inv?.price_reduced || null,
-        savings:
-          inv?.price_reduced && inv?.price
-            ? Number((inv.price_reduced - inv.price).toFixed(2))
-            : 0,
-        percentageSaved:
-          inv?.price_reduced && inv?.price
-            ? Number(
-                ((inv.price_reduced - inv.price) / inv.price_reduced * 100).toFixed(1)
-              )
-            : 0,
+        rating: inv?.rating ?? null,
+        // 👇 keep both so frontend can show "Now / Was"
+        price: inv?.price ?? null,        // original/current price
+        listPrice: inv?.listPrice ?? null, // discounted price
+        priceReduced: inv?.priceReduced ?? null, // legacy field if you still use it
+        savings,
+        percentageSaved,
         currency: inv?.currency || "USD",
         storeId: inv?.storeId,
         storeUrl: inv?.url,
-        images: productImages // Full array of URLs
+        images: productImages
       };
     });
 

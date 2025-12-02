@@ -5,8 +5,8 @@ export const compareProducts = async (req, res) => {
   try {
     const { productIds } = req.body; // array of productIds
 
-    if (!productIds || productIds.length < 2) {
-      return res.status(400).json({ message: "Please select at least 2 products to compare." });
+    if (!productIds || productIds.length < 1) {
+      return res.status(400).json({ message: "Please select at least 1 products to compare." });
     }
 
     // Fetch products

@@ -15,8 +15,6 @@ const API_KEY = process.env.UNWRANGLE_API_KEY;
    Helpers: store normalization
    ------------------------- */
 
-// Normalize incoming request store tokens to canonical DB storeId
-// Always return "lowe's" (with apostrophe) for Lowe's, "homedepot" for Home Depot.
 const normalizeStoreId = (s) => {
   if (!s) return s;
   const low = s.trim().toLowerCase();
@@ -25,8 +23,6 @@ const normalizeStoreId = (s) => {
   return low.replace(/\s+/g, "");
 };
 
-// Convert normalized storeId into third-party platform param
-// e.g. "homedepot" -> "homedepot_search", "lowe's" -> "lowes_search"
 const storeIdToPlatform = (storeId) => {
   if (!storeId) return "homedepot_search";
   if (storeId === "homedepot") return "homedepot_search";
@@ -83,7 +79,7 @@ const normalizeLowes = (item) => {
     },
     inventory: {
       productId,
-      storeId: "lowe's", // <-- canonical storeId with apostrophe
+      storeId: "lowe's",
       price: Number(item.price ?? item.list_price ?? 0),
       listPrice: Number(item.list_price ?? item.price ?? 0),
       priceReduced: item.price_reduced ?? null,
@@ -108,14 +104,12 @@ const normalizeLowes = (item) => {
 
 const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_search") => {
   try {
-    // If no MONGO_URI, skip saving
     const mongoUri = process.env.MONGO_URI;
     if (!mongoUri) {
       console.warn("saveApiResultsToDb: MONGO_URI not set — skipping DB save");
       return;
     }
 
-    // Only connect if not connected. If app has a global connection, it will be used.
     if (!mongoose.connection || mongoose.connection.readyState !== 1) {
       await mongoose.connect(mongoUri, {
         useNewUrlParser: true,
@@ -124,7 +118,6 @@ const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_sear
       console.log("saveApiResultsToDb: Connected to MongoDB");
     }
 
-    // Decide canonical storeId from platformStr
     let storeId = "homedepot";
     const p = String(platformStr || "").toLowerCase();
     if (p.includes("lowe")) storeId = "lowe's";
@@ -132,7 +125,6 @@ const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_sear
 
     const storeName = storeId === "lowe's" ? "Lowe's" : "Home Depot";
 
-    // ensure store doc exists
     await Store.updateOne(
       { _id: storeId },
       { $setOnInsert: { name: storeName, createdAt: new Date() } },
@@ -144,12 +136,10 @@ const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_sear
     const imageOps = [];
 
     for (const item of apiResults) {
-      // Prefer using the raw item for more complete normalization
       const raw = item || {};
       const normalized = storeId === "lowe's" ? normalizeLowes(raw) : normalizeHomeDepot(raw);
       const { product, inventory, images } = normalized;
 
-      // Product upsert
       productOps.push({
         updateOne: {
           filter: { productId: product.productId },
@@ -158,7 +148,6 @@ const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_sear
         }
       });
 
-      // Inventory upsert (unique per productId + storeId)
       inventoryOps.push({
         updateOne: {
           filter: { productId: inventory.productId, storeId: inventory.storeId },
@@ -167,7 +156,6 @@ const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_sear
         }
       });
 
-      // Images upserts
       for (const img of images) {
         if (!img.url) continue;
         imageOps.push({
@@ -193,9 +181,195 @@ const saveApiResultsToDb = async (apiResults = [], platformStr = "homedepot_sear
     console.log(`saveApiResultsToDb: upserted ${productOps.length} products, ${inventoryOps.length} inventories, ${imageOps.length} images for store ${storeId}`);
   } catch (err) {
     console.error("saveApiResultsToDb error:", err && err.message ? err.message : err);
-  } finally {
-    // don't disconnect mongoose here (app-level connection preferred)
   }
+};
+
+/* -------------------------
+   BUILD IMPROVED SEARCH QUERY
+   Like Amazon/Flipkart - progressive matching strategy
+   ------------------------- */
+
+const buildSearchQuery = (query, isNumericQuery) => {
+  const shouldClauses = [];
+  const normalizedQuery = query.trim().toLowerCase();
+  const queryTokens = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
+
+  if (isNumericQuery) {
+    // Numeric search - product IDs, model numbers
+    shouldClauses.push(
+      { term: { productId: { value: query.trim(), boost: 100 } } },
+      { term: { "modelNo.keyword": { value: query.trim(), boost: 80 } } },
+      { wildcard: { "modelNo.keyword": { value: `*${query.trim()}*`, boost: 60, case_insensitive: true } } }
+    );
+  } else {
+    // STRATEGY 1: EXACT PHRASE MATCH (Highest Priority)
+    // "hand tools" matches exactly "hand tools"
+    shouldClauses.push({
+      match_phrase: {
+        name: {
+          query: query,
+          boost: 150,
+          slop: 0
+        }
+      }
+    });
+
+    // STRATEGY 2: PHRASE WITH SLOP (Allow words between)
+    // "hand tools" matches "hand power tools", "hand operated tools"
+    shouldClauses.push({
+      match_phrase: {
+        name: {
+          query: query,
+          boost: 100,
+          slop: 2
+        }
+      }
+    });
+
+    // STRATEGY 3: ALL WORDS MUST MATCH (Any order)
+    // "hand tools" matches "tools for hand", "hand-held tools"
+    shouldClauses.push({
+      match: {
+        name: {
+          query: query,
+          operator: "and",
+          boost: 80,
+          fuzziness: "AUTO"
+        }
+      }
+    });
+
+    // STRATEGY 4: MOST WORDS SHOULD MATCH (75% minimum)
+    // "hand tools" should match at least "hand" or "tools"
+    if (queryTokens.length > 1) {
+      shouldClauses.push({
+        match: {
+          name: {
+            query: query,
+            operator: "or",
+            minimum_should_match: "75%",
+            boost: 60
+          }
+        }
+      });
+    }
+
+    // STRATEGY 5: ANY WORD MATCHES (Broadest)
+    // "hand tools" matches "hand", "tools", or any product with either word
+    shouldClauses.push({
+      match: {
+        name: {
+          query: query,
+          operator: "or",
+          boost: 40
+        }
+      }
+    });
+
+    // STRATEGY 6: INDIVIDUAL TOKEN BOOSTING
+    // Give higher weight to each term found
+    queryTokens.forEach((token, idx) => {
+      const positionBoost = queryTokens.length - idx; // First word gets higher boost
+      shouldClauses.push({
+        match: {
+          name: {
+            query: token,
+            boost: 30 + (positionBoost * 5)
+          }
+        }
+      });
+    });
+
+    // STRATEGY 7: PREFIX MATCHING (For autocomplete-like behavior)
+    // "hand to" matches "hand tools"
+    if (queryTokens.length > 0) {
+      const lastToken = queryTokens[queryTokens.length - 1];
+      if (lastToken.length >= 2) {
+        shouldClauses.push({
+          match_phrase_prefix: {
+            name: {
+              query: query,
+              boost: 50,
+              max_expansions: 10
+            }
+          }
+        });
+      }
+    }
+
+    // STRATEGY 8: WILDCARD FOR PARTIAL MATCHES
+    if (/^[a-zA-Z0-9\-\s]+$/.test(normalizedQuery)) {
+      queryTokens.forEach(token => {
+        if (token.length >= 3) {
+          shouldClauses.push({
+            wildcard: {
+              "name.keyword": {
+                value: `*${token}*`,
+                boost: 25,
+                case_insensitive: true
+              }
+            }
+          });
+        }
+      });
+    }
+
+    // STRATEGY 9: BRAND MATCHING
+    // "dewalt drill" should highly rank Dewalt brand drills
+    shouldClauses.push({
+      match_phrase: {
+        brand: {
+          query: query,
+          boost: 70
+        }
+      }
+    });
+
+    shouldClauses.push({
+      match: {
+        brand: {
+          query: query,
+          boost: 50,
+          fuzziness: "AUTO"
+        }
+      }
+    });
+
+    // STRATEGY 10: CATEGORY MATCHING
+    // "power tools" should match category "Power Tools"
+    shouldClauses.push({
+      match_phrase: {
+        category: {
+          query: query,
+          boost: 60
+        }
+      }
+    });
+
+    shouldClauses.push({
+      match: {
+        category: {
+          query: query,
+          boost: 40
+        }
+      }
+    });
+
+    // STRATEGY 11: MODEL NUMBER PARTIAL MATCH
+    if (/^[a-zA-Z0-9\-]+$/.test(normalizedQuery)) {
+      shouldClauses.push({
+        wildcard: {
+          "modelNo.keyword": {
+            value: `*${normalizedQuery}*`,
+            boost: 55,
+            case_insensitive: true
+          }
+        }
+      });
+    }
+  }
+
+  return shouldClauses;
 };
 
 /* -------------------------
@@ -210,8 +384,8 @@ export const searchProducts = async (req, res) => {
       page = 1,
       limit = 20,
       inStockOnly = false,
-      sortByRating,      // "asc" | "desc" | undefined
-      sortByPopularity,  // "asc" | "desc" | undefined
+      sortByRating,
+      sortByPopularity,
       minPrice,
       maxPrice,
       brand,
@@ -234,7 +408,6 @@ export const searchProducts = async (req, res) => {
       return res.status(400).json({ error: "Query parameter is required" });
     }
 
-    // Normalize incoming store filters
     const storeIds = stores
       ? stores.split(",").map(s => normalizeStoreId(s))
       : null;
@@ -242,111 +415,14 @@ export const searchProducts = async (req, res) => {
     const isNumericQuery = /^\d+$/.test(query.trim());
 
     // ========================================
-    // ELASTICSEARCH SEARCH QUERY
+    // IMPROVED ELASTICSEARCH SEARCH QUERY
     // ========================================
     try {
       const mustClauses = [];
-      const shouldClauses = [];
       const filterClauses = [];
 
-      if (isNumericQuery) {
-        shouldClauses.push(
-          { term: { productId: { value: query.trim(), boost: 10 } } },
-          { term: { "modelNo.keyword": { value: query.trim(), boost: 8 } } }
-        );
-      } else {
-        const normalizedQuery = query.trim().toLowerCase();
-        const queryTokens = normalizedQuery.split(/\s+/);
-
-        shouldClauses.push({
-          match_phrase: {
-            name: {
-              query: query,
-              boost: 100,
-              slop: 0
-            }
-          }
-        });
-
-        shouldClauses.push({
-          match: {
-            "name.keyword": {
-              query: query,
-              boost: 80
-            }
-          }
-        });
-
-        shouldClauses.push({
-          match: {
-            name: {
-              query: query,
-              operator: "and",
-              boost: 50
-            }
-          }
-        });
-
-        if (queryTokens.length > 1) {
-          shouldClauses.push({
-            bool: {
-              must: queryTokens.map(token => ({
-                match: {
-                  name: {
-                    query: token,
-                    operator: "and",
-                    boost: 30
-                  }
-                }
-              })),
-              boost: 40
-            }
-          });
-        }
-
-        shouldClauses.push({
-          match: {
-            name: {
-              query: query,
-              fuzziness: "AUTO",
-              prefix_length: 2,
-              max_expansions: 10,
-              operator: "and",
-              boost: 20
-            }
-          }
-        });
-
-        shouldClauses.push({
-          match_phrase: {
-            brand: {
-              query: query,
-              boost: 30
-            }
-          }
-        });
-
-        shouldClauses.push({
-          match: {
-            category: {
-              query: query,
-              boost: 10
-            }
-          }
-        });
-
-        if (/^[a-zA-Z0-9\-]+$/.test(normalizedQuery)) {
-          shouldClauses.push({
-            wildcard: {
-              "modelNo.keyword": {
-                value: `*${normalizedQuery}*`,
-                boost: 25,
-                case_insensitive: true
-              }
-            }
-          });
-        }
-      }
+      // Build smart search query
+      const shouldClauses = buildSearchQuery(query, isNumericQuery);
 
       mustClauses.push({
         bool: {
@@ -355,9 +431,11 @@ export const searchProducts = async (req, res) => {
         }
       });
 
-      const minScore = isNumericQuery ? 5 : 15;
+      // Lower minimum score to allow more results (like Amazon)
+      // Exact matches score high, partial matches score lower but still appear
+      const minScore = isNumericQuery ? 5 : 10;
 
-      // Filters
+      // FILTERS
       if (storeIds && storeIds.length > 0) {
         filterClauses.push({
           nested: {
@@ -418,8 +496,9 @@ export const searchProducts = async (req, res) => {
         });
       }
 
-      // Sorting
+      // SORTING (Relevance first, then custom sorts)
       let sort = [];
+      
       if (sortByRating || sortByPopularity) {
         if (sortByRating) {
           sort.push({ avgRating: { order: sortByRating } });
@@ -429,10 +508,14 @@ export const searchProducts = async (req, res) => {
           sort.push({ totalReviews: { order: sortByPopularity } });
           console.log("✅ Adding popularity sort:", sortByPopularity);
         }
+        // Relevance as secondary sort
         sort.push({ _score: { order: "desc" } });
       } else {
+        // Default: Relevance first (like Amazon)
         sort.push({ _score: { order: "desc" } });
       }
+      
+      // Price as final tiebreaker
       sort.push({ minPrice: { order: "asc" } });
 
       console.log("📊 Final sort array:", JSON.stringify(sort, null, 2));
@@ -458,6 +541,8 @@ export const searchProducts = async (req, res) => {
 
       const hits = esResponse.hits.hits;
       const totalResults = esResponse.hits.total.value;
+
+      console.log(`✅ Elasticsearch returned ${hits.length} results out of ${totalResults} total`);
 
       if (hits.length > 0) {
         const results = hits.map(hit => {
@@ -551,7 +636,7 @@ export const searchProducts = async (req, res) => {
           inventoryQuantity: item.inStock ? 1 : 0,
           images: item.thumbnails || item.images || [],
         }],
-        rawItem: item // keep raw if needed for saver normalization
+        rawItem: item
       }));
 
       // Apply filters to API results
@@ -567,7 +652,7 @@ export const searchProducts = async (req, res) => {
         filteredApiResults = filteredApiResults.filter(p => p.stores.some(s => s.inventoryQuantity > 0));
       }
 
-      // Cumulative sorting for API results (same logic as ES)
+      // Sorting for API results
       filteredApiResults.sort((a, b) => {
         if (sortByRating) {
           const ratingDiff = sortByRating === "asc" ? a.rating - b.rating : b.rating - a.rating;
@@ -596,10 +681,9 @@ export const searchProducts = async (req, res) => {
         sortByPopularity
       };
 
-      // Fire-and-forget: save original raw API results to DB (normalized inside saver)
+      // Fire-and-forget: save API results to DB
       try {
         const platformForSaver = platform.split(",")[0] || "homedepot_search";
-        // Note: we pass the raw API array so saver extracts fields correctly per store
         saveApiResultsToDb(apiResults, platformForSaver).catch(e => console.error("Saver call failed:", e && e.message ? e.message : e));
       } catch (triggerErr) {
         console.error("Failed to trigger saver:", triggerErr && triggerErr.message ? triggerErr.message : triggerErr);

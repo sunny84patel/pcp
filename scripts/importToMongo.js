@@ -175,7 +175,8 @@ const run = async () => {
         await mongoose.connect(mongoUri);
         console.log('✅ Connected to MongoDB');
 
-        const searchTerms = ['Bolts','Brush','Ceiling','Dinning', 'Electrical', 'Hardware', 'Outdoor', 'Plumbing']; // Add more if needed
+        const searchTerms = ['Plumbing','Lawn and Garden','Landscaping','Building Materials','Outdoor Power','Air Conditioners','Cleaning','Pipes & Fittings','Interior Paint','Windows',
+'Toilets','Smart Doors']; // Add more if needed
 
         for (const term of searchTerms) {
             const safeTerm = term.replace(/\s+/g, '_').toLowerCase();
@@ -188,8 +189,9 @@ const run = async () => {
             const hdNormalized = (hdRaw.results || []).map(normalizeHomeDepot);
             const lowesNormalized = (lowesRaw.results || []).map(normalizeLowes);
 
-            await insertNormalizedData(hdNormalized, 'Home Depot');
+            
             await insertNormalizedData(lowesNormalized, "Lowe's");
+            await insertNormalizedData(hdNormalized, 'Home Depot');
         }
 
         console.log('🎉 All raw data normalized and inserted into MongoDB.');

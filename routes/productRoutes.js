@@ -77,83 +77,107 @@
 
 
 import express from 'express';
-import { searchProducts } from '../controllers/productController.js';
+// Use the new production-grade search controller
+import { 
+  searchProducts, 
+  getSearchSuggestions, 
+  getAvailableFilters 
+} from '../controllers/productSearchController.js';
+// Keep old controller for fallback if needed
+// import { searchProducts as searchProductsOld } from '../controllers/productController.js';
 import { getPopularProducts, getProductsByIds } from '../controllers/popularproductsControllers.js';
 import { unifiedProductSearch } from '../controllers/typesenseController.js';
 import {Product} from "../models/Product.js";
 import { getPriceDroppedProducts } from '../controllers/pricedroppedControllers.js';
 import { getExploreProducts } from '../controllers/popularproductsControllers.js';
 import esClient from '../config/elasticsearch.js';
-const router = express.Router();
-const PRODUCT_INDEX = 'products';
+import { PRODUCT_INDEX } from '../utils/elasticsearchSyncV2.js';
 
-// Search endpoint
+const router = express.Router();
+
+// ===============================
+// NEW PRODUCTION SEARCH ENDPOINTS
+// ===============================
+
+// Main search endpoint - uses new optimized search
 router.get('/search', searchProducts);
+
+// Search suggestions/autocomplete
+router.get('/search/suggestions', getSearchSuggestions);
+
+// Get available filters for a search query
+router.get('/search/filters', getAvailableFilters);
+
+// Legacy/alternative search endpoints
 router.get('/fast/search', unifiedProductSearch);
 router.get('/popular', getPopularProducts);
 router.get('/recent', getProductsByIds);
 router.get('/price-drops', getPriceDroppedProducts);
 router.get('/explore', getExploreProducts);
 
+// ===============================
+// IMPROVED SUGGESTIONS ENDPOINT
+// Uses new index with no false positives
+// ===============================
 router.get("/suggestions", async (req, res) => {
   const query = req.query.q?.trim();
-  if (!query) return res.json([]);
+  if (!query || query.length < 2) return res.json([]);
 
   try {
     const response = await esClient.search({
       index: PRODUCT_INDEX,
       body: {
-        size: 25, // get a few more docs, we'll dedupe in code
-        _source: ["name", "brand", "modelNo", "inStock"],
+        size: 25,
+        _source: ["name", "brand", "modelNo", "inStock", "avgRating"],
         query: {
           bool: {
             should: [
-              // Phrase prefix match (best for "starts with" behavior)
+              // Exact phrase prefix match (highest priority)
               {
                 match_phrase_prefix: {
                   name: {
                     query,
-                    boost: 10,
-                    slop: 2,
+                    boost: 20,
+                    slop: 0,  // No words between
                   },
                 },
               },
-              // Edge ngram match (partial words, thanks to product_analyzer)
+              // Autocomplete field match (prefix-based)
               {
                 match: {
-                  name: {
+                  "name.autocomplete": {
                     query,
-                    boost: 5,
+                    boost: 15,
                     operator: "and",
                   },
                 },
               },
-              // General fuzzy match
+              // Standard match (all words must match)
               {
                 match: {
                   name: {
                     query,
-                    boost: 2,
-                    operator: "or",
-                    fuzziness: query.length > 4 ? "AUTO" : 0,
+                    boost: 10,
+                    operator: "and",
+                    // NO FUZZINESS - this is key!
                   },
                 },
               },
-              // Brand prefix
+              // Brand autocomplete
               {
-                match_phrase_prefix: {
-                  brand: {
+                match: {
+                  "brand.autocomplete": {
                     query,
-                    boost: 3,
+                    boost: 8,
                   },
                 },
               },
               // Exact model number match
               {
                 term: {
-                  "modelNo.keyword": {
-                    value: query,
-                    boost: 4,
+                  modelNo: {
+                    value: query.toLowerCase(),
+                    boost: 12,
                   },
                 },
               },
@@ -161,6 +185,8 @@ router.get("/suggestions", async (req, res) => {
             minimum_should_match: 1,
           },
         },
+        // Higher minimum score to filter out irrelevant matches
+        min_score: 5,
         sort: [
           { _score: { order: "desc" } },
           { inStock: { order: "desc" } },
@@ -171,6 +197,7 @@ router.get("/suggestions", async (req, res) => {
 
     const suggestions = [];
     const seen = new Set();
+    const queryLower = query.toLowerCase();
 
     if (response.hits?.hits?.length > 0) {
       for (const hit of response.hits.hits) {
@@ -179,7 +206,21 @@ router.get("/suggestions", async (req, res) => {
         if (!name) continue;
 
         const normalizedName = name.toLowerCase().trim();
+        
+        // Skip if already seen
         if (seen.has(normalizedName)) continue;
+        
+        // Additional check: name should contain at least one query word
+        // This prevents "fridge" matching "bridge"
+        const queryWords = queryLower.split(/\s+/).filter(w => w.length >= 2);
+        const hasMatch = queryWords.some(word => normalizedName.includes(word));
+        
+        if (!hasMatch && queryLower.length >= 3) {
+          // Allow if it starts with the query
+          if (!normalizedName.startsWith(queryLower.slice(0, 3))) {
+            continue;
+          }
+        }
 
         seen.add(normalizedName);
         suggestions.push(name);

@@ -209,7 +209,7 @@ const buildElasticsearchQuery = (queryInfo) => {
   // ===========================================
   // TIER 1: EXACT MATCHES (Highest Priority)
   // ===========================================
-  
+
   if (isNumeric) {
     // Product ID search - exact match only
     shouldClauses.push(
@@ -493,62 +493,199 @@ const buildFilterClauses = (options) => {
    sortBy: 'relevance' | 'price_asc' | 'price_desc' | 'rating' | 'popularity' | 'newest'
    ------------------------- */
 
-const buildSortOptions = (sortBy) => {
-  const sort = [];
+// const buildSortOptions = (sortBy) => {
+//   const sort = [];
 
-  switch (sortBy) {
-    case 'price_asc':
-      // Price: Low to High
-      sort.push({ minPrice: { order: "asc" } });
-      sort.push({ _score: { order: "desc" } }); // Relevance as tiebreaker
-      break;
-      
-    case 'price_desc':
-      // Price: High to Low
-      sort.push({ minPrice: { order: "desc" } });
-      sort.push({ _score: { order: "desc" } });
-      break;
-      
-    case 'rating':
-      // Customer Rating: High to Low
-      sort.push({ avgRating: { order: "desc" } });
-      sort.push({ totalReviews: { order: "desc" } }); // More reviews = more trustworthy
-      sort.push({ _score: { order: "desc" } });
-      break;
-      
-    case 'popularity':
-      // Popularity: Most Reviews First
-      sort.push({ totalReviews: { order: "desc" } });
-      sort.push({ avgRating: { order: "desc" } }); // Higher rated among popular
-      sort.push({ _score: { order: "desc" } });
-      break;
-      
-    case 'newest':
-      // Newest First
-      sort.push({ createdAt: { order: "desc" } });
-      sort.push({ _score: { order: "desc" } });
-      break;
-      
-    case 'relevance':
-    default:
-      // Default: Relevance (search score)
-      sort.push({ _score: { order: "desc" } });
-      sort.push({ totalReviews: { order: "desc" } }); // Popular items as tiebreaker
-      sort.push({ minPrice: { order: "asc" } }); // Lower price as final tiebreaker
-      break;
-  }
+//   switch (sortBy) {
+//     case 'price_asc':
+//       // Price: Low to High
+//       sort.push({ minPrice: { order: "asc" } });
+//       sort.push({ _score: { order: "desc" } }); // Relevance as tiebreaker
+//       break;
 
-  return sort;
-};
+//     case 'price_desc':
+//       // Price: High to Low
+//       sort.push({ minPrice: { order: "desc" } });
+//       sort.push({ _score: { order: "desc" } });
+//       break;
+
+//     case 'rating':
+//       // Customer Rating: High to Low
+//       sort.push({ avgRating: { order: "desc" } });
+//       sort.push({ totalReviews: { order: "desc" } }); // More reviews = more trustworthy
+//       sort.push({ _score: { order: "desc" } });
+//       break;
+
+//     case 'popularity':
+//       // Popularity: Most Reviews First
+//       sort.push({ totalReviews: { order: "desc" } });
+//       sort.push({ avgRating: { order: "desc" } }); // Higher rated among popular
+//       sort.push({ _score: { order: "desc" } });
+//       break;
+
+//     case 'newest':
+//       // Newest First
+//       sort.push({ createdAt: { order: "desc" } });
+//       sort.push({ _score: { order: "desc" } });
+//       break;
+
+//     case 'relevance':
+//     default:
+//       // Default: Relevance (search score)
+//       sort.push({ _score: { order: "desc" } });
+//       sort.push({ totalReviews: { order: "desc" } }); // Popular items as tiebreaker
+//       sort.push({ minPrice: { order: "asc" } }); // Lower price as final tiebreaker
+//       break;
+//   }
+
+//   return sort;
+// };
 
 // Legacy sort option converter (for backward compatibility)
-const convertLegacySortOptions = (sortByRating, sortByPopularity, sortByPrice) => {
-  // Priority: price > rating > popularity (last one applied wins in UI typically)
-  if (sortByPrice === 'asc') return 'price_asc';
-  if (sortByPrice === 'desc') return 'price_desc';
-  if (sortByRating === 'desc' || sortByRating === 'asc') return 'rating';
-  if (sortByPopularity === 'desc' || sortByPopularity === 'asc') return 'popularity';
-  return 'relevance';
+// const convertLegacySortOptions = (sortByRating, sortByPopularity, sortByPrice) => {
+//   // Priority: price > rating > popularity (last one applied wins in UI typically)
+//   if (sortByPrice === 'asc') return 'price_asc';
+//   if (sortByPrice === 'desc') return 'price_desc';
+//   if (sortByRating === 'desc' || sortByRating === 'asc') return 'rating';
+//   if (sortByPopularity === 'desc' || sortByPopularity === 'asc') return 'popularity';
+//   return 'relevance';
+// };
+
+/**
+ * Normalize sort order value to 'asc' or 'desc'
+ * Handles various input formats: 'desc', 'asc', 'high', 'low', 'high_to_low', 'low_to_high', etc.
+ */
+const normalizeSortOrder = (value, defaultForHigh = "desc") => {
+  if (!value) return null;
+  
+  const v = String(value).toLowerCase().trim();
+  
+  // Direct 'desc' or 'asc' values
+  if (v === "desc" || v === "descending") return "desc";
+  if (v === "asc" || v === "ascending") return "asc";
+  
+  // Common UI values like 'high', 'low', 'high_to_low', 'low_to_high'
+  if (v === "high" || v === "high_to_low" || v === "highest" || v === "most") return "desc";
+  if (v === "low" || v === "low_to_high" || v === "lowest" || v === "least") return "asc";
+  
+  // If truthy but not recognized, use the provided default for "high" values
+  return defaultForHigh;
+};
+
+const buildCumulativeSortOptions = (sortByRating, sortByPopularity, sortByPrice) => {
+  const sort = [];
+
+  // Normalize all sort values
+  const normalizedRating = normalizeSortOrder(sortByRating, "desc");
+  const normalizedPopularity = normalizeSortOrder(sortByPopularity, "desc");
+  const normalizedPrice = normalizeSortOrder(sortByPrice, "asc");
+
+  console.log("🔧 Building cumulative sort:", {
+    sortByRating: sortByRating || "none",
+    sortByPopularity: sortByPopularity || "none", 
+    sortByPrice: sortByPrice || "none",
+    normalized: {
+      rating: normalizedRating,
+      popularity: normalizedPopularity,
+      price: normalizedPrice
+    }
+  });
+
+  // ===========================================
+  // COMBINED RATING + POPULARITY SORTING
+  // When both are applied, use a script to combine them
+  // This ensures products are sorted by BOTH factors together
+  // ===========================================
+  if (normalizedRating && normalizedPopularity) {
+    // Use script-based sorting to combine rating and popularity
+    // Normalize both values to 0-1 range and combine them
+    const ratingOrder = normalizedRating === "desc" ? 1 : -1;
+    const popularityOrder = normalizedPopularity === "desc" ? 1 : -1;
+    
+    sort.push({
+      _script: {
+        type: "number",
+        script: {
+          lang: "painless",
+          source: `
+            // Normalize rating (0-5 scale to 0-1)
+            double ratingScore = (doc['avgRating'].size() > 0 ? doc['avgRating'].value : 0) / 5.0;
+            
+            // Normalize totalReviews using log scale (to prevent huge values from dominating)
+            // Using log10(reviews + 1) / log10(10001) to get 0-1 range (max ~10000 reviews)
+            double reviewsRaw = doc['totalReviews'].size() > 0 ? doc['totalReviews'].value : 0;
+            double popularityScore = Math.log10(reviewsRaw + 1) / Math.log10(10001);
+            
+            // Combine scores with equal weight (50% each)
+            // Multiply by order factors to handle asc/desc
+            double combinedScore = (ratingScore * ${ratingOrder} * 0.5) + (popularityScore * ${popularityOrder} * 0.5);
+            
+            return combinedScore;
+          `
+        },
+        order: "desc"  // Higher combined score = better
+      }
+    });
+    console.log("   ✅ Added COMBINED rating+popularity sort (script-based)");
+    
+    // Add price as secondary sort if specified
+    if (normalizedPrice) {
+      sort.push({
+        minPrice: {
+          order: normalizedPrice,
+          missing: "_last"
+        }
+      });
+      console.log("   ✅ Added price sort:", normalizedPrice);
+    }
+  } else {
+    // Single filter mode - use direct field sorting
+    
+    // Priority 1: Rating (if specified alone)
+    if (normalizedRating) {
+      sort.push({
+        avgRating: {
+          order: normalizedRating,
+          missing: "_last"
+        }
+      });
+      console.log("   ✅ Added rating sort:", normalizedRating);
+    }
+
+    // Priority 2: Popularity (if specified alone) - uses totalReviews field
+    if (normalizedPopularity) {
+      sort.push({
+        totalReviews: {
+          order: normalizedPopularity,
+          missing: "_last"
+        }
+      });
+      console.log("   ✅ Added popularity sort (totalReviews):", normalizedPopularity);
+    }
+
+    // Priority 3: Price (if specified)
+    if (normalizedPrice) {
+      sort.push({
+        minPrice: {
+          order: normalizedPrice,
+          missing: "_last"
+        }
+      });
+      console.log("   ✅ Added price sort:", normalizedPrice);
+    }
+  }
+
+  // Always add relevance score as final tiebreaker
+  sort.push({ _score: { order: "desc" } });
+
+  // If no explicit sorts, add default tiebreakers
+  if (!normalizedRating && !normalizedPopularity && !normalizedPrice) {
+    sort.push({ totalReviews: { order: "desc", missing: "_last" } });
+    sort.push({ minPrice: { order: "asc", missing: "_last" } });
+  }
+
+  console.log("✅ Final sort array:", JSON.stringify(sort, null, 2));
+  return sort;
 };
 
 /* -------------------------
@@ -557,7 +694,7 @@ const convertLegacySortOptions = (sortByRating, sortByPopularity, sortByPrice) =
 
 export const searchProducts = async (req, res) => {
   const startTime = Date.now();
-  
+
   try {
     const {
       query,
@@ -566,7 +703,7 @@ export const searchProducts = async (req, res) => {
       limit = 20,
       inStockOnly = false,
       // New unified sort parameter
-      sortBy = 'relevance', // 'relevance' | 'price_asc' | 'price_desc' | 'rating' | 'popularity' | 'newest'
+      // sortBy = 'relevance', // 'relevance' | 'price_asc' | 'price_desc' | 'rating' | 'popularity' | 'newest'
       // Legacy sort parameters (for backward compatibility)
       sortByRating,
       sortByPopularity,
@@ -579,11 +716,19 @@ export const searchProducts = async (req, res) => {
       minReviews,
     } = req.query;
 
-    console.log("🔍 Search request:", { query, stores, page, limit, sortBy });
+    console.log("🔍 Search request:", {
+      query,
+      stores,
+      page,
+      limit,
+      sortByRating,
+      sortByPopularity,
+      sortByPrice
+    });
 
     // Validate query
     if (!query || typeof query !== 'string' || query.trim().length === 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "Query parameter is required",
         message: "Please provide a search term"
       });
@@ -607,11 +752,11 @@ export const searchProducts = async (req, res) => {
     const minScore = calculateMinScore(queryInfo);
 
     // Determine sort option (new unified param takes priority)
-    const effectiveSortBy = sortBy !== 'relevance' 
-      ? sortBy 
-      : convertLegacySortOptions(sortByRating, sortByPopularity, sortByPrice);
+    // const effectiveSortBy = sortBy !== 'relevance'
+    //   ? sortBy
+    //   : convertLegacySortOptions(sortByRating, sortByPopularity, sortByPrice);
 
-    console.log("📊 Sort option:", effectiveSortBy);
+    // console.log("📊 Sort option:", effectiveSortBy);
 
     // ===========================================
     // TRY ELASTICSEARCH FIRST
@@ -633,7 +778,7 @@ export const searchProducts = async (req, res) => {
       });
 
       // Build sort (single sort option, not multiple)
-      const sort = buildSortOptions(effectiveSortBy);
+      const sort = buildCumulativeSortOptions(sortByRating, sortByPopularity, sortByPrice);
 
       // Pagination
       const pageNum = Math.max(1, Number(page));
@@ -730,14 +875,19 @@ export const searchProducts = async (req, res) => {
         return res.status(200).json({
           success: true,
           results,
-          totalResults: results.length,
-          originalTotalResults: totalResults,
+          totalResults: results.length,           // Filtered results count (after post-processing)
+          totalMatchedResults: totalResults,      // Total from Elasticsearch (before post-processing)
           pagination: {
             currentPage: pageNum,
             hasNextPage: from + hits.length < totalResults,
-            totalResults: results.length,
+            totalResults: totalResults,           // Use ES total for pagination calculation
             totalPages: Math.ceil(totalResults / limitNum),
-            limit: limitNum
+            limit: limitNum,
+            showing: {
+              from: from + 1,
+              to: from + results.length,
+              of: totalResults                    // "Showing 1-18 out of 79 products"
+            }
           },
           activeFilters,
           searchMethod: "elasticsearch",
@@ -755,9 +905,9 @@ export const searchProducts = async (req, res) => {
 
       // No results from Elasticsearch - provide suggestions
       const suggestions = getSuggestions(queryInfo);
-      
+
       console.log("⚠️ No Elasticsearch results, trying fallback API");
-      
+
     } catch (esError) {
       console.error("⚠️ Elasticsearch error:", esError?.message || esError);
       // Continue to fallback
@@ -816,24 +966,63 @@ export const searchProducts = async (req, res) => {
       // Filter false positives
       results = results.filter(result => !isFalsePositive(result.name, queryInfo));
 
-      // Apply sorting
+      // Apply sorting using normalized values
+      const normalizedRating = normalizeSortOrder(sortByRating, "desc");
+      const normalizedPopularity = normalizeSortOrder(sortByPopularity, "desc");
+      const normalizedPrice = normalizeSortOrder(sortByPrice, "asc");
+
+      // Helper function to calculate combined score (matches ES script logic)
+      const calculateCombinedScore = (product, ratingOrder, popularityOrder) => {
+        // Normalize rating (0-5 scale to 0-1)
+        const ratingScore = (product.rating || 0) / 5.0;
+        
+        // Normalize totalReviews using log scale
+        const reviewsRaw = product.totalReviews || 0;
+        const popularityScore = Math.log10(reviewsRaw + 1) / Math.log10(10001);
+        
+        // Combine scores with equal weight (50% each)
+        return (ratingScore * ratingOrder * 0.5) + (popularityScore * popularityOrder * 0.5);
+      };
+
       results.sort((a, b) => {
-        if (sortByRating) {
-          const diff = sortByRating === "asc" ? a.rating - b.rating : b.rating - a.rating;
+        // If both rating AND popularity filters are applied, use combined scoring
+        if (normalizedRating && normalizedPopularity) {
+          const ratingOrder = normalizedRating === "desc" ? 1 : -1;
+          const popularityOrder = normalizedPopularity === "desc" ? 1 : -1;
+          
+          const scoreA = calculateCombinedScore(a, ratingOrder, popularityOrder);
+          const scoreB = calculateCombinedScore(b, ratingOrder, popularityOrder);
+          
+          const diff = scoreB - scoreA;  // Higher score first
+          if (diff !== 0) return diff;
+          
+          // Price as tiebreaker
+          if (normalizedPrice) {
+            return normalizedPrice === "desc" 
+              ? (b.minPrice || 0) - (a.minPrice || 0) 
+              : (a.minPrice || 0) - (b.minPrice || 0);
+          }
+          return 0;
+        }
+        
+        // Single filter mode
+        if (normalizedRating) {
+          const diff = normalizedRating === "desc" ? (b.rating || 0) - (a.rating || 0) : (a.rating || 0) - (b.rating || 0);
           if (diff !== 0) return diff;
         }
-        if (sortByPopularity) {
-          const diff = sortByPopularity === "asc" ? a.totalReviews - b.totalReviews : b.totalReviews - a.totalReviews;
+        if (normalizedPopularity) {
+          const diff = normalizedPopularity === "desc" ? (b.totalReviews || 0) - (a.totalReviews || 0) : (a.totalReviews || 0) - (b.totalReviews || 0);
           if (diff !== 0) return diff;
         }
-        if (sortByPrice) {
-          return sortByPrice === "asc" ? a.minPrice - b.minPrice : b.minPrice - a.minPrice;
+        if (normalizedPrice) {
+          const diff = normalizedPrice === "desc" ? (b.minPrice || 0) - (a.minPrice || 0) : (a.minPrice || 0) - (b.minPrice || 0);
+          if (diff !== 0) return diff;
         }
-        return a.minPrice - b.minPrice;
+        return (a.minPrice || 0) - (b.minPrice || 0);
       });
 
       // Save to DB (fire and forget)
-      saveApiResultsToDb(apiResults, platform).catch(e => 
+      saveApiResultsToDb(apiResults, platform).catch(e =>
         console.error("Background save failed:", e?.message)
       );
 
@@ -863,9 +1052,9 @@ export const searchProducts = async (req, res) => {
 
     } catch (apiError) {
       console.error("❌ API fallback error:", apiError?.message || apiError);
-      
+
       const executionTime = Date.now() - startTime;
-      
+
       return res.status(200).json({
         success: false,
         results: [],
@@ -887,7 +1076,7 @@ export const searchProducts = async (req, res) => {
 
   } catch (error) {
     console.error("❌ Search error:", error?.message || error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       success: false,
       error: "Internal server error",
       message: "An error occurred while searching. Please try again."

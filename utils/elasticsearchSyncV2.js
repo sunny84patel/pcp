@@ -322,7 +322,7 @@ export const indexProduct = async (productId) => {
     // Calculate aggregated values
     const prices = stores.map((s) => s.price).filter((p) => p > 0);
     const ratings = stores.map((s) => s.rating).filter((r) => r > 0);
-    const allReviews = stores.reduce((sum, s) => sum + (s.totalReviews || 0), 0);
+    const allReviews = Math.max(...stores.map(s => s.totalReviews || 0), 0);
     const avgRating = ratings.length 
       ? ratings.reduce((a, b) => a + b, 0) / ratings.length 
       : 0;
@@ -397,7 +397,7 @@ export const bulkSyncProducts = async (batchSize = 500) => {
 
         const prices = stores.map((s) => s.price).filter((p) => p > 0);
         const ratings = stores.map((s) => s.rating).filter((r) => r > 0);
-        const allReviews = stores.reduce((sum, s) => sum + (s.totalReviews || 0), 0);
+        const allReviews = Math.max(...stores.map(s => s.totalReviews || 0), 0);
         const avgRating = ratings.length
           ? ratings.reduce((a, b) => a + b, 0) / ratings.length
           : 0;

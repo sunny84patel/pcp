@@ -487,69 +487,6 @@ const buildFilterClauses = (options) => {
   return filters;
 };
 
-/* -------------------------
-   BUILD SORT OPTIONS
-   Only ONE primary sort at a time (like Amazon/Flipkart)
-   sortBy: 'relevance' | 'price_asc' | 'price_desc' | 'rating' | 'popularity' | 'newest'
-   ------------------------- */
-
-// const buildSortOptions = (sortBy) => {
-//   const sort = [];
-
-//   switch (sortBy) {
-//     case 'price_asc':
-//       // Price: Low to High
-//       sort.push({ minPrice: { order: "asc" } });
-//       sort.push({ _score: { order: "desc" } }); // Relevance as tiebreaker
-//       break;
-
-//     case 'price_desc':
-//       // Price: High to Low
-//       sort.push({ minPrice: { order: "desc" } });
-//       sort.push({ _score: { order: "desc" } });
-//       break;
-
-//     case 'rating':
-//       // Customer Rating: High to Low
-//       sort.push({ avgRating: { order: "desc" } });
-//       sort.push({ totalReviews: { order: "desc" } }); // More reviews = more trustworthy
-//       sort.push({ _score: { order: "desc" } });
-//       break;
-
-//     case 'popularity':
-//       // Popularity: Most Reviews First
-//       sort.push({ totalReviews: { order: "desc" } });
-//       sort.push({ avgRating: { order: "desc" } }); // Higher rated among popular
-//       sort.push({ _score: { order: "desc" } });
-//       break;
-
-//     case 'newest':
-//       // Newest First
-//       sort.push({ createdAt: { order: "desc" } });
-//       sort.push({ _score: { order: "desc" } });
-//       break;
-
-//     case 'relevance':
-//     default:
-//       // Default: Relevance (search score)
-//       sort.push({ _score: { order: "desc" } });
-//       sort.push({ totalReviews: { order: "desc" } }); // Popular items as tiebreaker
-//       sort.push({ minPrice: { order: "asc" } }); // Lower price as final tiebreaker
-//       break;
-//   }
-
-//   return sort;
-// };
-
-// Legacy sort option converter (for backward compatibility)
-// const convertLegacySortOptions = (sortByRating, sortByPopularity, sortByPrice) => {
-//   // Priority: price > rating > popularity (last one applied wins in UI typically)
-//   if (sortByPrice === 'asc') return 'price_asc';
-//   if (sortByPrice === 'desc') return 'price_desc';
-//   if (sortByRating === 'desc' || sortByRating === 'asc') return 'rating';
-//   if (sortByPopularity === 'desc' || sortByPopularity === 'asc') return 'popularity';
-//   return 'relevance';
-// };
 
 /**
  * Normalize sort order value to 'asc' or 'desc'

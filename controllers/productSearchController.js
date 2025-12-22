@@ -118,6 +118,223 @@ const normalizeLowes = (item) => {
 };
 
 /* -------------------------
+   DB SEARCH HELPER
+   Fallback to MongoDB when Elasticsearch fails
+   ------------------------- */
+
+const searchProductsFromDb = async (queryInfo, options = {}) => {
+  const {
+    storeIds,
+    inStockOnly,
+    minPrice,
+    maxPrice,
+    brand,
+    category,
+    minRating,
+    minReviews,
+    page = 1,
+    limit = 20,
+    sortByRating,
+    sortByPopularity,
+    sortByPrice
+  } = options;
+
+  const pageNum = Math.max(1, Number(page));
+  const limitNum = Math.min(100, Math.max(1, Number(limit)));
+  const skip = (pageNum - 1) * limitNum;
+
+  // Build the text search query
+  const searchQuery = {};
+  
+  // Use MongoDB text search for the query
+  if (queryInfo.normalized) {
+    searchQuery.$text = { $search: queryInfo.normalized };
+  }
+
+  // Brand filter
+  if (brand) {
+    const brandList = brand.split(",").map(b => b.trim());
+    searchQuery.brand = { $regex: brandList.join("|"), $options: "i" };
+  }
+
+  // Category filter
+  if (category) {
+    const categoryList = category.split(",").map(c => c.trim());
+    searchQuery.category = { $regex: categoryList.join("|"), $options: "i" };
+  }
+
+  // Build aggregation pipeline
+  const pipeline = [
+    // Match products based on text search
+    { $match: searchQuery },
+    
+    // Add text score for sorting by relevance
+    ...(queryInfo.normalized ? [{ $addFields: { textScore: { $meta: "textScore" } } }] : []),
+    
+    // Lookup inventory data
+    {
+      $lookup: {
+        from: "inventories",
+        localField: "productId",
+        foreignField: "productId",
+        as: "inventoryData"
+      }
+    },
+    
+    // Lookup images
+    {
+      $lookup: {
+        from: "images",
+        localField: "productId",
+        foreignField: "productId",
+        as: "imageData"
+      }
+    }
+  ];
+
+  // Filter by store if specified
+  if (storeIds && storeIds.length > 0) {
+    pipeline.push({
+      $addFields: {
+        inventoryData: {
+          $filter: {
+            input: "$inventoryData",
+            as: "inv",
+            cond: { $in: ["$$inv.storeId", storeIds] }
+          }
+        }
+      }
+    });
+    // Only keep products that have inventory in the specified stores
+    pipeline.push({
+      $match: { "inventoryData.0": { $exists: true } }
+    });
+  }
+
+  // Add computed fields
+  pipeline.push({
+    $addFields: {
+      minPrice: { $min: "$inventoryData.price" },
+      maxPrice: { $max: "$inventoryData.price" },
+      avgRating: { $avg: "$inventoryData.rating" },
+      totalReviews: { $sum: "$inventoryData.totalReviews" },
+      inStock: { $gt: [{ $sum: "$inventoryData.inventoryQuantity" }, 0] }
+    }
+  });
+
+  // Price filters
+  if (minPrice !== undefined) {
+    pipeline.push({ $match: { minPrice: { $gte: Number(minPrice) } } });
+  }
+  if (maxPrice !== undefined) {
+    pipeline.push({ $match: { minPrice: { $lte: Number(maxPrice) } } });
+  }
+
+  // Rating filter
+  if (minRating !== undefined) {
+    pipeline.push({ $match: { avgRating: { $gte: Number(minRating) } } });
+  }
+
+  // Reviews filter
+  if (minReviews !== undefined) {
+    pipeline.push({ $match: { totalReviews: { $gte: Number(minReviews) } } });
+  }
+
+  // In stock filter
+  if (inStockOnly === true || inStockOnly === "true") {
+    pipeline.push({ $match: { inStock: true } });
+  }
+
+  // Build sort options
+  const sortStage = {};
+  const normalizedRating = normalizeSortOrder(sortByRating, "desc");
+  const normalizedPopularity = normalizeSortOrder(sortByPopularity, "desc");
+  const normalizedPrice = normalizeSortOrder(sortByPrice, "asc");
+
+  if (normalizedRating) {
+    sortStage.avgRating = normalizedRating === "desc" ? -1 : 1;
+  }
+  if (normalizedPopularity) {
+    sortStage.totalReviews = normalizedPopularity === "desc" ? -1 : 1;
+  }
+  if (normalizedPrice) {
+    sortStage.minPrice = normalizedPrice === "desc" ? -1 : 1;
+  }
+  
+  // Default sort by text score if available, then by totalReviews
+  if (Object.keys(sortStage).length === 0) {
+    if (queryInfo.normalized) {
+      sortStage.textScore = -1;
+    }
+    sortStage.totalReviews = -1;
+    sortStage.minPrice = 1;
+  }
+
+  pipeline.push({ $sort: sortStage });
+
+  // Get total count before pagination
+  const countPipeline = [...pipeline, { $count: "total" }];
+  
+  // Add pagination
+  pipeline.push({ $skip: skip });
+  pipeline.push({ $limit: limitNum });
+
+  // Project final shape
+  pipeline.push({
+    $project: {
+      productId: 1,
+      name: 1,
+      modelNo: 1,
+      brand: 1,
+      category: 1,
+      minPrice: 1,
+      maxPrice: 1,
+      rating: "$avgRating",
+      totalReviews: 1,
+      inStock: 1,
+      textScore: 1,
+      stores: {
+        $map: {
+          input: "$inventoryData",
+          as: "inv",
+          in: {
+            storeId: "$$inv.storeId",
+            price: "$$inv.price",
+            listPrice: "$$inv.listPrice",
+            inventoryQuantity: "$$inv.inventoryQuantity",
+            rating: "$$inv.rating",
+            totalReviews: "$$inv.totalReviews",
+            url: "$$inv.url",
+            images: {
+              $map: {
+                input: "$imageData",
+                as: "img",
+                in: "$$img.url"
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // Execute aggregation
+  const [results, countResult] = await Promise.all([
+    Product.aggregate(pipeline),
+    Product.aggregate(countPipeline)
+  ]);
+
+  const totalResults = countResult[0]?.total || 0;
+
+  return {
+    results,
+    totalResults,
+    page: pageNum,
+    limit: limitNum
+  };
+};
+
+/* -------------------------
    DB save helper (fire-and-forget)
    ------------------------- */
 
@@ -843,11 +1060,102 @@ export const searchProducts = async (req, res) => {
       // No results from Elasticsearch - provide suggestions
       const suggestions = getSuggestions(queryInfo);
 
-      console.log("⚠️ No Elasticsearch results, trying fallback API");
+      console.log("⚠️ No Elasticsearch results, trying MongoDB fallback");
 
     } catch (esError) {
       console.error("⚠️ Elasticsearch error:", esError?.message || esError);
-      // Continue to fallback
+      // Continue to MongoDB fallback
+    }
+
+    // ===========================================
+    // FALLBACK TO MONGODB DATABASE
+    // ===========================================
+    try {
+      console.log("🗄️ Trying MongoDB database fallback...");
+
+      const dbResult = await searchProductsFromDb(queryInfo, {
+        storeIds,
+        inStockOnly: inStockOnly === "true" || inStockOnly === true,
+        minPrice,
+        maxPrice,
+        brand,
+        category,
+        minRating,
+        minReviews,
+        page,
+        limit,
+        sortByRating,
+        sortByPopularity,
+        sortByPrice
+      });
+
+      if (dbResult.results && dbResult.results.length > 0) {
+        // Filter false positives
+        let results = dbResult.results.filter(result => !isFalsePositive(result.name, queryInfo));
+
+        // Additional relevance filtering
+        results = filterIrrelevantResults(results, queryInfo, 15);
+
+        console.log(`✅ MongoDB: ${results.length} results found`);
+
+        // Build active filters for response
+        const activeFilters = {
+          query: queryInfo.original,
+          stores: storeIds,
+          inStockOnly: inStockOnly === "true" || inStockOnly === true,
+          priceRange: {
+            min: minPrice ? Number(minPrice) : null,
+            max: maxPrice ? Number(maxPrice) : null
+          },
+          brand: brand ? brand.split(",").map(b => b.trim()) : null,
+          category: category ? category.split(",").map(c => c.trim()) : null,
+          minRating: minRating ? Number(minRating) : null,
+          minReviews: minReviews ? Number(minReviews) : null,
+          sortByRating,
+          sortByPopularity,
+          sortByPrice
+        };
+
+        const pageNum = Math.max(1, Number(page));
+        const limitNum = Math.min(100, Math.max(1, Number(limit)));
+        const executionTime = Date.now() - startTime;
+
+        return res.status(200).json({
+          success: true,
+          results,
+          totalResults: results.length,
+          totalMatchedResults: dbResult.totalResults,
+          pagination: {
+            currentPage: pageNum,
+            hasNextPage: (pageNum * limitNum) < dbResult.totalResults,
+            totalResults: dbResult.totalResults,
+            totalPages: Math.ceil(dbResult.totalResults / limitNum),
+            limit: limitNum,
+            showing: {
+              from: ((pageNum - 1) * limitNum) + 1,
+              to: ((pageNum - 1) * limitNum) + results.length,
+              of: dbResult.totalResults
+            }
+          },
+          activeFilters,
+          searchMethod: "mongodb",
+          searchedStores: storeIds || ["all"],
+          queryInfo: {
+            original: queryInfo.original,
+            tokens: queryInfo.tokens,
+            searchIntent: queryInfo.searchIntent,
+            detectedBrand: queryInfo.detectedBrand
+          },
+          suggestions: results.length < 5 ? getSuggestions(queryInfo) : [],
+          executionTime: `${executionTime}ms`
+        });
+      }
+
+      console.log("⚠️ No MongoDB results, trying third-party API fallback");
+
+    } catch (dbError) {
+      console.error("⚠️ MongoDB error:", dbError?.message || dbError);
+      // Continue to third-party API fallback
     }
 
     // ===========================================
